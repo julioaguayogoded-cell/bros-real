@@ -8,18 +8,23 @@
 <body>
 <x-dc>
 <helmet>
-<script>window.BROS_V='2026-10-19.1';</script>
+<script>window.BROS_V='2026-10-19.2';</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>html,body{margin:0;background:#E9ECF2;font-family:Inter,system-ui,sans-serif;color:#111} a{color:#3068ED} a:hover{color:#1f4fc0} button{font-family:inherit;border:0;cursor:pointer;color:inherit;background:none}</style>
+<style>html,body{margin:0;background:#E9ECF2;font-family:Inter,system-ui,sans-serif;color:#111} a{color:#3068ED} a:hover{color:#1f4fc0} button{font-family:inherit;border:0;cursor:pointer;color:inherit;background:none} @keyframes gira{to{transform:rotate(360deg)}}</style>
 </helmet>
 <div data-screen-label="Banco de pruebas" style="min-height:100vh;display:flex;flex-direction:column">
   <div style="flex:none;display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:14px 22px;background:#fff;border-bottom:1px solid #E4E7EE">
     <img src="logo.png" alt="BroS Life" style="width:30px;height:30px">
-    <div style="flex:1;min-width:200px">
-      <div style="font-family:Outfit;font-weight:800;font-size:19px">Banco de pruebas</div>
-      <div style="font-size:12.5px;color:#4B5563;margin-top:1px">Cada móvil guarda su propia sesión. Al subir a GitHub, se actualizan solos.</div>
+    <div style="flex:1;min-width:220px">
+      <div style="font-family:Outfit;font-weight:800;font-size:19px">{{ titulo }}</div>
+      <div style="font-size:12.5px;color:#4B5563;margin-top:1px">{{ sub }}</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;background:{{ fam.bg }};color:{{ fam.tx }};font-size:12.5px;font-weight:700">
+      <sc-if value="{{ fam.girando }}" hint-placeholder-val="{{ false }}"><span style="width:12px;height:12px;border-radius:50%;border:2px solid currentColor;border-top-color:transparent;animation:gira .8s linear infinite"></span></sc-if>
+      <sc-if value="{{ fam.punto }}" hint-placeholder-val="{{ true }}"><span style="width:8px;height:8px;border-radius:50%;background:{{ fam.dot }}"></span></sc-if>
+      {{ fam.t }}
     </div>
     <div style="display:flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;background:{{ pub.bg }};color:{{ pub.tx }};font-size:12.5px;font-weight:700">
       <span style="width:8px;height:8px;border-radius:50%;background:{{ pub.dot }}"></span>{{ pub.t }}
@@ -39,10 +44,8 @@
           <span style="padding:4px 9px;border-radius:999px;font-size:11px;font-weight:700;background:{{ f.estBg }};color:{{ f.estTx }};white-space:nowrap;max-width:50%;overflow:hidden;text-overflow:ellipsis;flex:none">{{ f.est }}</span>
         </div>
         <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px">
-          <button onClick="{{ f.principal }}" style="height:32px;padding:0 6px;border-radius:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:#fff;border:1px solid #D5DAE3;font-size:12px;font-weight:700">{{ f.principalTxt }}</button>
-          <button onClick="{{ f.alta }}" style="height:32px;padding:0 6px;border-radius:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:#fff;border:1px solid #D5DAE3;font-size:12px;font-weight:700">{{ f.altaTxt }}</button>
-          <button onClick="{{ f.recargar }}" style="height:32px;padding:0 6px;border-radius:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:#fff;border:1px solid #D5DAE3;font-size:12px;font-weight:700">Recargar</button>
-          <button onClick="{{ f.borrar }}" style="height:32px;padding:0 6px;border-radius:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:#fff;border:1px solid #F3C9BE;color:#B4442B;font-size:12px;font-weight:700">Borrar</button>
+          <button onClick="{{ f.recargar }}" style="height:32px;padding:0 6px;border-radius:10px;background:#fff;border:1px solid #D5DAE3;font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Recargar</button>
+          <button onClick="{{ f.extra }}" style="height:32px;padding:0 6px;border-radius:10px;background:#fff;border:1px solid #D5DAE3;font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ f.extraTxt }}</button>
         </div>
         <div style="width:{{ f.w }};height:{{ f.h }};border-radius:{{ f.radio }};overflow:hidden;background:#000;box-shadow:0 0 0 {{ f.bisel }} #111,0 18px 40px rgba(17,17,17,.18)">
           <div style="width:390px;height:844px;transform:scale({{ f.escala }});transform-origin:0 0">
@@ -55,20 +58,16 @@
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script>
-const MARCOS = [
-  { id: 'julio', nombre: 'Julio', rol: 'Bro', color: '#3068ED', tipo: 'bro' },
-  { id: 'fer', nombre: 'Fer', rol: 'Bro', color: '#E56648', tipo: 'bro' },
-  { id: 'padres', nombre: 'Padres', rol: 'App de padres', color: '#111111', tipo: 'padres' }
-];
-const RUTA = { bro: ['Bro OS Real.dc.html', 'Primer Encendido Real.dc.html'], padres: ['Padres Real.dc.html', 'Familia Real.dc.html'] };
+const SB = 'https://nxdkjayuonzrqwjokfyu.supabase.co';
+const ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im54ZGtqYXl1b256cnF3am9rZnl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA2ODUyOTUsImV4cCI6MjEwNjI2MTI5NX0.f4hfHICq3NxJm8f5X7bnMq2WqqlRWahpaFjCEWl2FSg';
+const SESION = 'P:padres:sb-nxdkjayuonzrqwjokfyu-auth-token';
+const COL = { Azul: '#3068ED', Naranja: '#E56648', Verde: '#4E8A2A', Negro: '#111111', Rosa: '#D9467A' };
+const perfilDe = id => 'b' + String(id).replace(/-/g, '').slice(0, 12);
+const clave = (perfil, k) => 'P:' + perfil + ':' + k;
+const leerJSON = k => { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch (e) { return null; } };
 
 class Component extends DCLogic {
-  state = (() => {
-    const pag = {}; MARCOS.forEach(m => pag[m.id] = 0);
-    try { Object.assign(pag, JSON.parse(localStorage.getItem('bros-banco-pag')) || {}); } catch (e) {}
-    const t = {}; MARCOS.forEach(m => t[m.id] = Date.now());
-    return { pag, t, pub: null, info: {}, alto: window.innerHeight };
-  })();
+  state = { bros: leerJSON('bros-banco-bros') || [], t: {}, pub: null, info: {}, alto: window.innerHeight, sesion: !!leerJSON(SESION), fase: 'inicio', error: '', padresPag: leerJSON(SESION) ? 0 : 1 };
   els = {};
 
   componentDidMount() {
@@ -77,80 +76,117 @@ class Component extends DCLogic {
     this.leerVersion();
     this.tVer = setInterval(() => this.leerVersion(), 15000);
     this.tInfo = setInterval(() => this.leerMarcos(), 1500);
+    this.preparar();
   }
-  componentWillUnmount() { window.removeEventListener('resize', this.onResize); clearInterval(this.tVer); clearInterval(this.tInfo); }
+  componentWillUnmount() { window.removeEventListener('resize', this.onResize); clearInterval(this.tVer); clearInterval(this.tInfo); clearTimeout(this.tPrep); }
+
+  token() { const s = leerJSON(SESION); return s && s.access_token && (!s.expires_at || s.expires_at * 1000 > Date.now() + 20000) ? s.access_token : null; }
+  async rest(path, body, jwt) {
+    const r = await fetch(SB + path, { method: body ? 'POST' : 'GET', headers: { 'Content-Type': 'application/json', apikey: ANON, Authorization: 'Bearer ' + (jwt || ANON) }, body: body ? JSON.stringify(body) : undefined });
+    const j = await r.json().catch(() => null);
+    if (!r.ok || (j && j.error)) throw new Error((j && (j.error || j.message)) || 'Error ' + r.status);
+    return j;
+  }
+
+  // Monta la familia: lee los Bros de la cuenta de padres y activa en el banco los que falten
+  async preparar() {
+    clearTimeout(this.tPrep);
+    const jwt = this.token();
+    if (!jwt) { this.setState({ sesion: !!leerJSON(SESION), fase: leerJSON(SESION) ? 'esperando' : 'sinSesion' }); this.tPrep = setTimeout(() => this.preparar(), 2000); return; }
+    this.setState({ sesion: true, fase: 'cargando', error: '' });
+    try {
+      const bros = await this.rest('/rest/v1/bros?select=id,nombre,nacimiento,correa,familia&order=creado', null, jwt);
+      localStorage.setItem('bros-banco-bros', JSON.stringify(bros));
+      this.setState({ bros, padresPag: this.state.padresPag === 1 ? 0 : this.state.padresPag });
+      this.setState({ fase: 'activando' });
+      for (const b of bros) await this.activar(b, false);
+      this.setState({ fase: 'lista' });
+    } catch (e) { this.setState({ fase: 'error', error: e.message }); this.tPrep = setTimeout(() => this.preparar(), 8000); }
+  }
+  async activar(b, forzar) {
+    const p = perfilDe(b.id), k = clave(p, 'bros-dispositivo'), d = leerJSON(k);
+    if (d && d.token && !forzar) {
+      try { await this.rest('/rest/v1/rpc/amigos_bro', { p_token: d.token }); return; } catch (e) { if (!/no vinculado/i.test(e.message)) return; }
+    }
+    const jwt = this.token(); if (!jwt) return;
+    const codigo = await this.rest('/rest/v1/rpc/desvincular_bro', { p_bro: b.id }, jwt);
+    const j = await this.rest('/rest/v1/rpc/vincular_bro', { p_codigo: codigo });
+    const ahora = new Date().toISOString();
+    localStorage.setItem(k, JSON.stringify({ token: j.token, bro: j.bro || b.id, familia: j.familia || b.familia, nombre: j.nombre || b.nombre, nacimiento: j.nacimiento || b.nacimiento, correa: j.correa || b.correa, vinculado: ahora, encendido: ahora, avatar: null }));
+    localStorage.removeItem(clave(p, 'bro-os-real-db'));
+    localStorage.removeItem(clave(p, 'bros-primer-encendido-real'));
+    this.recargar(p);
+  }
 
   async leerVersion() {
     try {
       const r = await fetch('version.json?t=' + Date.now(), { cache: 'no-store' });
-      const v = (await r.json()).v;
-      const antes = this.state.pub;
+      const v = (await r.json()).v, antes = this.state.pub;
       this.setState({ pub: v });
-      if (antes && v !== antes) this.recargarTodo();
+      if (antes && antes !== 'sin-conexion' && v !== antes) this.recargarTodo();
     } catch (e) { this.setState({ pub: 'sin-conexion' }); }
   }
   leerMarcos() {
     const info = {};
-    for (const m of MARCOS) {
-      const el = this.els[m.id]; let x = {};
-      try {
-        const w = el && el.contentWindow;
-        if (w) {
-          x.v = w.BROS_V || null;
-          x.ruta = decodeURIComponent((w.location.pathname.split('/').pop() || ''));
-          if (m.tipo === 'bro') { const d = JSON.parse(w.localStorage.getItem('bros-dispositivo') || 'null'); x.nombre = d && d.nombre; x.ok = !!(d && d.token); }
-          else x.ok = Object.keys(localStorage).some(k => k.startsWith('P:' + m.id + ':sb-') && /auth-token/.test(k));
-        }
-      } catch (e) {}
-      info[m.id] = x;
+    for (const id of Object.keys(this.els)) {
+      const el = this.els[id]; const x = {};
+      try { const w = el && el.contentWindow; if (w) x.v = w.BROS_V || null; } catch (e) {}
+      info[id] = x;
     }
     this.setState({ info });
-    // versión vieja en un marco ya cargado: se recarga solo una vez por versión
+    if (!this.state.sesion && leerJSON(SESION)) this.preparar();
     const pub = this.state.pub;
-    if (pub && pub !== 'sin-conexion') for (const m of MARCOS) {
-      const x = info[m.id];
-      if (x.v && x.v !== pub && this.autoRec !== m.id + pub) { this.autoRec = m.id + pub; this.recargar(m.id); }
+    if (pub && pub !== 'sin-conexion') for (const id of Object.keys(info)) {
+      const x = info[id];
+      if (x.v && x.v !== pub && this.autoRec !== id + pub) { this.autoRec = id + pub; this.recargar(id); }
     }
   }
   recargar(id) { this.setState(s => ({ t: { ...s.t, [id]: Date.now() } })); }
-  recargarTodo() { const t = {}; MARCOS.forEach(m => t[m.id] = Date.now()); this.setState({ t }); }
-  ir(id, pagina) {
-    this.setState(s => { const pag = { ...s.pag, [id]: pagina }; localStorage.setItem('bros-banco-pag', JSON.stringify(pag)); return { pag, t: { ...s.t, [id]: Date.now() } }; });
-  }
-  borrar(m) {
-    if (!window.confirm('¿Borrar la sesión de ' + m.nombre + ' en este banco? Tendrás que volver a ' + (m.tipo === 'bro' ? 'encenderlo con un código nuevo.' : 'iniciar sesión.'))) return;
-    Object.keys(localStorage).filter(k => k.startsWith('P:' + m.id + ':')).forEach(k => localStorage.removeItem(k));
-    this.ir(m.id, 1);
-  }
+  recargarTodo() { const t = {}; ['padres', ...this.state.bros.map(b => perfilDe(b.id))].forEach(id => t[id] = Date.now()); this.setState({ t }); }
 
   renderVals() {
     const s = this.state;
-    const esc = Math.max(0.5, Math.min(1, (s.alto - 170) / 860));
+    const esc = Math.max(0.5, Math.min(1, (s.alto - 160) / 860));
     const pubOk = s.pub && s.pub !== 'sin-conexion';
+    const tam = { w: Math.round(390 * esc) + 'px', h: Math.round(844 * esc) + 'px', escala: esc, radio: Math.round(44 * esc) + 'px', bisel: Math.max(4, Math.round(9 * esc)) + 'px' };
+    const estado = (id, okTxt) => {
+      const x = s.info[id] || {};
+      if (!x.v) return ['Cargando…', '#F0F2F6', '#4B5563'];
+      if (pubOk && x.v !== s.pub) return ['Versión vieja', '#FFF3E0', '#9A5B0B'];
+      return [okTxt, '#EEF6E6', '#3D6B1F'];
+    };
+    const FAM = {
+      inicio: ['Preparando…', '#F0F2F6', '#4B5563', true], sinSesion: ['Inicia sesión en la app de padres', '#FFF3E0', '#9A5B0B', false],
+      esperando: ['Esperando la sesión de padres…', '#F0F2F6', '#4B5563', true], cargando: ['Cargando tu familia…', '#F0F2F6', '#4B5563', true],
+      activando: ['Activando a tus Bros…', '#EEF3FE', '#2452c2', true], lista: ['Familia activa · ' + s.bros.length + ' Bros', '#EEF6E6', '#3D6B1F', false],
+      error: ['Error: ' + s.error, '#FDECE8', '#B4442B', false]
+    }[s.fase];
+    const padres = (() => {
+      const e = !s.sesion ? ['Sin sesión', '#FDECE8', '#B4442B'] : estado('padres', 'Conectada');
+      const ruta = s.padresPag === 1 || !s.sesion ? 'Familia Real.dc.html' : 'Padres Real.dc.html';
+      return { id: 'padres', nombre: 'Padres', rol: 'App de padres', color: '#111111', ini: 'P', ...tam,
+        src: ruta + '?perfil=padres&t=' + (s.t.padres || 0), setRef: el => { this.els.padres = el; },
+        est: e[0], estBg: e[1], estTx: e[2], recargar: () => this.recargar('padres'),
+        extraTxt: s.padresPag === 1 ? 'App de padres' : 'Mi familia',
+        extra: () => { this.setState({ padresPag: s.padresPag === 1 ? 0 : 1 }); this.recargar('padres'); } };
+    })();
+    const bros = s.sesion ? s.bros.map(b => {
+      const p = perfilDe(b.id), d = leerJSON(clave(p, 'bros-dispositivo'));
+      const e = !(d && d.token) ? ['Sin activar', '#FDECE8', '#B4442B'] : estado(p, 'Activo');
+      return { id: p, nombre: b.nombre, rol: 'Bro · correa ' + String(b.correa || 'Azul').toLowerCase(), color: COL[b.correa] || '#3068ED', ini: (b.nombre || '?')[0].toUpperCase(), ...tam,
+        src: (d && d.token ? 'Bro OS Real.dc.html' : 'about:blank') + '?perfil=' + p + '&t=' + (s.t[p] || 0), setRef: el => { this.els[p] = el; },
+        est: e[0], estBg: e[1], estTx: e[2], recargar: () => this.recargar(p),
+        extraTxt: 'Reactivar', extra: async () => { if (!window.confirm('Se reactivará el Bro de ' + b.nombre + ' en el banco. Si estaba encendido en un móvil, ese móvil se desconecta. ¿Seguimos?')) return; try { await this.activar(b, true); } catch (er) { window.alert(er.message); } } };
+    }) : [];
     return {
+      titulo: s.bros.length && s.sesion ? 'Banco de pruebas · familia real' : 'Banco de pruebas',
+      sub: s.sesion ? 'Tus Bros y la app de padres, conectados de verdad. Se actualizan solos al subir a GitHub.' : 'Inicia sesión una vez en la app de padres (a la derecha). El banco activa a tus Bros solo.',
+      fam: { t: FAM[0], bg: FAM[1], tx: FAM[2], girando: FAM[3], punto: !FAM[3], dot: FAM[2] },
       pub: !s.pub ? { t: 'Comprobando GitHub…', bg: '#F0F2F6', tx: '#4B5563', dot: '#9CA3AF' }
         : !pubOk ? { t: 'Sin conexión con GitHub', bg: '#FDECE8', tx: '#B4442B', dot: '#B4442B' }
-        : { t: 'GitHub publica la versión ' + s.pub, bg: '#EEF6E6', tx: '#3D6B1F', dot: '#4E8A2A' },
+        : { t: 'Versión ' + s.pub, bg: '#EEF6E6', tx: '#3D6B1F', dot: '#4E8A2A' },
       recargarTodo: () => this.recargarTodo(),
-      marcos: MARCOS.map(m => {
-        const x = s.info[m.id] || {}, pag = s.pag[m.id] || 0, ruta = RUTA[m.tipo][pag];
-        const extra = m.tipo === 'bro' && pag === 1 && !x.ok ? '&nuevo=1' : '';
-        const vieja = pubOk && x.v && x.v !== s.pub;
-        const est = !x.v ? ['Cargando…', '#F0F2F6', '#4B5563']
-          : vieja ? ['Versión vieja', '#FFF3E0', '#9A5B0B']
-          : !x.ok ? [m.tipo === 'bro' ? 'Sin encender' : 'Sin sesión', '#FDECE8', '#B4442B']
-          : [m.tipo === 'bro' ? 'Activo · ' + (x.nombre || m.nombre) : 'Sesión iniciada', '#EEF6E6', '#3D6B1F'];
-        return {
-          ...m, ini: m.nombre[0], w: Math.round(390 * esc) + 'px', h: Math.round(844 * esc) + 'px', escala: esc,
-          radio: Math.round(44 * esc) + 'px', bisel: Math.max(4, Math.round(9 * esc)) + 'px',
-          src: ruta + '?perfil=' + m.id + extra + '&t=' + s.t[m.id],
-          setRef: el => { this.els[m.id] = el; },
-          est: est[0], estBg: est[1], estTx: est[2],
-          principalTxt: m.tipo === 'bro' ? 'Bro OS' : 'Padres', principal: () => this.ir(m.id, 0),
-          altaTxt: m.tipo === 'bro' ? 'Encender' : 'Sesión', alta: () => this.ir(m.id, 1),
-          recargar: () => this.recargar(m.id), borrar: () => this.borrar(m)
-        };
-      })
+      marcos: [...bros, padres]
     };
   }
 }
