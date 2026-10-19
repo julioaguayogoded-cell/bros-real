@@ -31,6 +31,9 @@
     </div>
     <button onClick="{{ recargarTodo }}" style="height:38px;padding:0 16px;border-radius:12px;background:#111;color:#fff;font-weight:700;font-size:13.5px">Recargar todo</button>
     <sc-if value="{{ conSesion }}" hint-placeholder-val="{{ false }}">
+      <button onClick="{{ deCero }}" style="height:38px;padding:0 14px;border-radius:12px;background:#E56648;color:#fff;font-weight:700;font-size:13.5px">{{ deCeroTxt }}</button>
+    </sc-if>
+    <sc-if value="{{ conSesion }}" hint-placeholder-val="{{ false }}">
       <button onClick="{{ salir }}" style="height:38px;padding:0 12px;border-radius:12px;background:#fff;border:1px solid #D5DAE3;font-weight:700;font-size:13px">Salir</button>
     </sc-if>
   </div>
@@ -162,6 +165,20 @@ class Component extends DCLogic {
       this.preparar();
     } catch (e) { this.setState({ entrando: false, errLogin: e.message }); }
   }
+  async deCero() {
+    if (this.state.reiniciando) return;
+    if (!window.confirm('Empezar de cero: tus Bros quedarán como recién recibidos, sin apps pedidas, amigos, mensajes, comunidades, proyectos ni rewards. La familia y los Bros siguen activos. ¿Seguimos?')) return;
+    const jwt = this.token(); if (!jwt) return window.alert('La sesión de padres ha caducado. Recarga la página.');
+    this.setState({ reiniciando: true });
+    try {
+      await this.rest('/rest/v1/rpc/reiniciar_familia_bros', {}, jwt);
+      const borrar = ['bro-os-real-db', 'bros-primer-encendido-real', 'bros-padre-bro'];
+      for (const b of this.state.bros) borrar.forEach(k => localStorage.removeItem(clave(perfilDe(b.id), k)));
+      borrar.forEach(k => localStorage.removeItem(clave('padres', k)));
+      this.recargarTodo();
+    } catch (e) { window.alert(/function/i.test(e.message) ? 'Falta ejecutar reiniciar.sql en Supabase.' : e.message); }
+    this.setState({ reiniciando: false });
+  }
   salir() {
     if (!window.confirm('¿Salir del banco? Tus Bros siguen activos; solo se cierra la sesión de padres aquí.')) return;
     localStorage.removeItem(SESION);
@@ -235,6 +252,7 @@ class Component extends DCLogic {
         : { t: 'Versión ' + s.pub, bg: '#EEF6E6', tx: '#3D6B1F', dot: '#4E8A2A' },
       recargarTodo: () => this.recargarTodo(),
       sinSesion: !s.sesion, conSesion: !!s.sesion, salir: () => this.salir(),
+      deCero: () => this.deCero(), deCeroTxt: s.reiniciando ? 'Reiniciando…' : 'Empezar de cero',
       email: s.email, pass: s.pass, onEmail: e => this.setState({ email: e.target.value }), onPass: e => this.setState({ pass: e.target.value }),
       onKey: e => { if (e.key === 'Enter') this.entrar(); }, entrar: () => this.entrar(),
       entrarTxt: s.entrando ? 'Entrando…' : 'Entrar', entrarBg: s.entrando ? '#7F9BE0' : '#3068ED',
