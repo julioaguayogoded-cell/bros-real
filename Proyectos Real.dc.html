@@ -8,6 +8,8 @@
 <body>
 <x-dc>
 <helmet>
+<script src="perfil.js?v=2026-10-19.1"></script>
+<script>window.BROS_V='2026-10-19.1';</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -314,13 +316,13 @@ class Component extends DCLogic {
   state = { pantalla: 'lista', proyectos: null, actualId: null, ideaTxt: '', prop: null, resp: [], cargando: false, bloqueoTxt: '', pasoIdx: 0, chatTxt: '', pensando: false, borradorTipo: null, generando: false, busqueda: null, videos: {}, videoAbierto: null, aviso: '', edad: Number(localStorage.getItem('bros-real-edad')) || 13 };
   scrollRef = React.createRef();
 
-  async componentDidMount() { this.listar(); this.api = await import('./api-real.js'); this.tFam = setInterval(() => this.revisarFamilia(), 6000); }
+  async componentDidMount() { this.listar(); this.api = await import('./api-real.js?v=' + (window.BROS_V || Date.now())); this.tFam = setInterval(() => this.revisarFamilia(), 6000); }
   componentWillUnmount() { clearTimeout(this.tAviso); clearTimeout(this.tGuardar); clearInterval(this.tFam); }
   async pedirPaso(i) {
     const p = this.actual(); if (!p) return;
     const x = p.datos.pasos[i];
     try {
-      if (!this.api) this.api = await import('./api-real.js');
+      if (!this.api) this.api = await import('./api-real.js?v=' + (window.BROS_V || Date.now()));
       await this.api.llamar('pedirPaso', { ref: p.id + ':' + i, titulo: x.t, detalle: (x.adulto ? x.adulto + ' · ' : '') + 'Proyecto «' + p.datos.titulo + '»' });
       this.cambiar(y => { y.pasos[i].peticion = 'pendiente'; });
       this.avisar('Petición enviada a mamá.');

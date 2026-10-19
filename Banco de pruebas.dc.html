@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<script>window.BROS_V='2026-10-19.1';</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>html,body{margin:0;background:#E9ECF2;font-family:Inter,system-ui,sans-serif;color:#111} a{color:#3068ED} a:hover{color:#1f4fc0} button{font-family:inherit;border:0;cursor:pointer;color:inherit;background:none}</style>
+</helmet>
+<div data-screen-label="Banco de pruebas" style="min-height:100vh;display:flex;flex-direction:column">
+  <div style="flex:none;display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:14px 22px;background:#fff;border-bottom:1px solid #E4E7EE">
+    <img src="logo.png" alt="BroS Life" style="width:30px;height:30px">
+    <div style="flex:1;min-width:200px">
+      <div style="font-family:Outfit;font-weight:800;font-size:19px">Banco de pruebas</div>
+      <div style="font-size:12.5px;color:#4B5563;margin-top:1px">Cada móvil guarda su propia sesión. Al subir a GitHub, se actualizan solos.</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;background:{{ pub.bg }};color:{{ pub.tx }};font-size:12.5px;font-weight:700">
+      <span style="width:8px;height:8px;border-radius:50%;background:{{ pub.dot }}"></span>{{ pub.t }}
+    </div>
+    <button onClick="{{ recargarTodo }}" style="height:38px;padding:0 16px;border-radius:12px;background:#111;color:#fff;font-weight:700;font-size:13.5px">Recargar todo</button>
+  </div>
+
+  <div style="flex:1;display:flex;gap:22px;justify-content:center;align-items:flex-end;flex-wrap:wrap;padding:18px 22px 28px">
+    <sc-for list="{{ marcos }}" as="f" hint-placeholder-count="3">
+      <div style="display:flex;flex-direction:column;gap:10px;width:{{ f.w }}">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:32px;height:32px;border-radius:50%;background:{{ f.color }};color:#fff;display:grid;place-items:center;font-family:Outfit;font-weight:800;font-size:15px;flex:none">{{ f.ini }}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-family:Outfit;font-weight:800;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ f.nombre }}</div>
+            <div style="font-size:11.5px;color:#4B5563;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ f.rol }}</div>
+          </div>
+          <span style="padding:4px 9px;border-radius:999px;font-size:11px;font-weight:700;background:{{ f.estBg }};color:{{ f.estTx }};white-space:nowrap;max-width:50%;overflow:hidden;text-overflow:ellipsis;flex:none">{{ f.est }}</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px">
+          <button onClick="{{ f.principal }}" style="height:32px;padding:0 6px;border-radius:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:#fff;border:1px solid #D5DAE3;font-size:12px;font-weight:700">{{ f.principalTxt }}</button>
+          <button onClick="{{ f.alta }}" style="height:32px;padding:0 6px;border-radius:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:#fff;border:1px solid #D5DAE3;font-size:12px;font-weight:700">{{ f.altaTxt }}</button>
+          <button onClick="{{ f.recargar }}" style="height:32px;padding:0 6px;border-radius:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:#fff;border:1px solid #D5DAE3;font-size:12px;font-weight:700">Recargar</button>
+          <button onClick="{{ f.borrar }}" style="height:32px;padding:0 6px;border-radius:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:#fff;border:1px solid #F3C9BE;color:#B4442B;font-size:12px;font-weight:700">Borrar</button>
+        </div>
+        <div style="width:{{ f.w }};height:{{ f.h }};border-radius:{{ f.radio }};overflow:hidden;background:#000;box-shadow:0 0 0 {{ f.bisel }} #111,0 18px 40px rgba(17,17,17,.18)">
+          <div style="width:390px;height:844px;transform:scale({{ f.escala }});transform-origin:0 0">
+            <iframe ref="{{ f.setRef }}" src="{{ f.src }}" title="{{ f.nombre }}" allow="microphone; camera; autoplay; clipboard-write; fullscreen" style="display:block;width:390px;height:844px;border:0;background:#fff"></iframe>
+          </div>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const MARCOS = [
+  { id: 'julio', nombre: 'Julio', rol: 'Bro', color: '#3068ED', tipo: 'bro' },
+  { id: 'fer', nombre: 'Fer', rol: 'Bro', color: '#E56648', tipo: 'bro' },
+  { id: 'padres', nombre: 'Padres', rol: 'App de padres', color: '#111111', tipo: 'padres' }
+];
+const RUTA = { bro: ['Bro OS Real.dc.html', 'Primer Encendido Real.dc.html'], padres: ['Padres Real.dc.html', 'Familia Real.dc.html'] };
+
+class Component extends DCLogic {
+  state = (() => {
+    const pag = {}; MARCOS.forEach(m => pag[m.id] = 0);
+    try { Object.assign(pag, JSON.parse(localStorage.getItem('bros-banco-pag')) || {}); } catch (e) {}
+    const t = {}; MARCOS.forEach(m => t[m.id] = Date.now());
+    return { pag, t, pub: null, info: {}, alto: window.innerHeight };
+  })();
+  els = {};
+
+  componentDidMount() {
+    this.onResize = () => this.setState({ alto: window.innerHeight });
+    window.addEventListener('resize', this.onResize);
+    this.leerVersion();
+    this.tVer = setInterval(() => this.leerVersion(), 15000);
+    this.tInfo = setInterval(() => this.leerMarcos(), 1500);
+  }
+  componentWillUnmount() { window.removeEventListener('resize', this.onResize); clearInterval(this.tVer); clearInterval(this.tInfo); }
+
+  async leerVersion() {
+    try {
+      const r = await fetch('version.json?t=' + Date.now(), { cache: 'no-store' });
+      const v = (await r.json()).v;
+      const antes = this.state.pub;
+      this.setState({ pub: v });
+      if (antes && v !== antes) this.recargarTodo();
+    } catch (e) { this.setState({ pub: 'sin-conexion' }); }
+  }
+  leerMarcos() {
+    const info = {};
+    for (const m of MARCOS) {
+      const el = this.els[m.id]; let x = {};
+      try {
+        const w = el && el.contentWindow;
+        if (w) {
+          x.v = w.BROS_V || null;
+          x.ruta = decodeURIComponent((w.location.pathname.split('/').pop() || ''));
+          if (m.tipo === 'bro') { const d = JSON.parse(w.localStorage.getItem('bros-dispositivo') || 'null'); x.nombre = d && d.nombre; x.ok = !!(d && d.token); }
+          else x.ok = Object.keys(localStorage).some(k => k.startsWith('P:' + m.id + ':sb-') && /auth-token/.test(k));
+        }
+      } catch (e) {}
+      info[m.id] = x;
+    }
+    this.setState({ info });
+    // versión vieja en un marco ya cargado: se recarga solo una vez por versión
+    const pub = this.state.pub;
+    if (pub && pub !== 'sin-conexion') for (const m of MARCOS) {
+      const x = info[m.id];
+      if (x.v && x.v !== pub && this.autoRec !== m.id + pub) { this.autoRec = m.id + pub; this.recargar(m.id); }
+    }
+  }
+  recargar(id) { this.setState(s => ({ t: { ...s.t, [id]: Date.now() } })); }
+  recargarTodo() { const t = {}; MARCOS.forEach(m => t[m.id] = Date.now()); this.setState({ t }); }
+  ir(id, pagina) {
+    this.setState(s => { const pag = { ...s.pag, [id]: pagina }; localStorage.setItem('bros-banco-pag', JSON.stringify(pag)); return { pag, t: { ...s.t, [id]: Date.now() } }; });
+  }
+  borrar(m) {
+    if (!window.confirm('¿Borrar la sesión de ' + m.nombre + ' en este banco? Tendrás que volver a ' + (m.tipo === 'bro' ? 'encenderlo con un código nuevo.' : 'iniciar sesión.'))) return;
+    Object.keys(localStorage).filter(k => k.startsWith('P:' + m.id + ':')).forEach(k => localStorage.removeItem(k));
+    this.ir(m.id, 1);
+  }
+
+  renderVals() {
+    const s = this.state;
+    const esc = Math.max(0.5, Math.min(1, (s.alto - 170) / 860));
+    const pubOk = s.pub && s.pub !== 'sin-conexion';
+    return {
+      pub: !s.pub ? { t: 'Comprobando GitHub…', bg: '#F0F2F6', tx: '#4B5563', dot: '#9CA3AF' }
+        : !pubOk ? { t: 'Sin conexión con GitHub', bg: '#FDECE8', tx: '#B4442B', dot: '#B4442B' }
+        : { t: 'GitHub publica la versión ' + s.pub, bg: '#EEF6E6', tx: '#3D6B1F', dot: '#4E8A2A' },
+      recargarTodo: () => this.recargarTodo(),
+      marcos: MARCOS.map(m => {
+        const x = s.info[m.id] || {}, pag = s.pag[m.id] || 0, ruta = RUTA[m.tipo][pag];
+        const extra = m.tipo === 'bro' && pag === 1 && !x.ok ? '&nuevo=1' : '';
+        const vieja = pubOk && x.v && x.v !== s.pub;
+        const est = !x.v ? ['Cargando…', '#F0F2F6', '#4B5563']
+          : vieja ? ['Versión vieja', '#FFF3E0', '#9A5B0B']
+          : !x.ok ? [m.tipo === 'bro' ? 'Sin encender' : 'Sin sesión', '#FDECE8', '#B4442B']
+          : [m.tipo === 'bro' ? 'Activo · ' + (x.nombre || m.nombre) : 'Sesión iniciada', '#EEF6E6', '#3D6B1F'];
+        return {
+          ...m, ini: m.nombre[0], w: Math.round(390 * esc) + 'px', h: Math.round(844 * esc) + 'px', escala: esc,
+          radio: Math.round(44 * esc) + 'px', bisel: Math.max(4, Math.round(9 * esc)) + 'px',
+          src: ruta + '?perfil=' + m.id + extra + '&t=' + s.t[m.id],
+          setRef: el => { this.els[m.id] = el; },
+          est: est[0], estBg: est[1], estTx: est[2],
+          principalTxt: m.tipo === 'bro' ? 'Bro OS' : 'Padres', principal: () => this.ir(m.id, 0),
+          altaTxt: m.tipo === 'bro' ? 'Encender' : 'Sesión', alta: () => this.ir(m.id, 1),
+          recargar: () => this.recargar(m.id), borrar: () => this.borrar(m)
+        };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>
