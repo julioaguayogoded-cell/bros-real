@@ -8,7 +8,7 @@
 <body>
 <x-dc>
 <helmet>
-<script>(function(){if(window.__brosP)return;window.__brosP=1;var q=new URLSearchParams(location.search).get('perfil');if(q)window.name='bros:'+q.replace(/[^a-z0-9_-]/gi,'').slice(0,20);var m=/^bros:(.+)$/.exec(window.name||'');if(!m)return;var P='P:'+m[1]+':',S=Storage.prototype,g=S.getItem,s=S.setItem,r=S.removeItem;var es=function(x){try{return x===window.localStorage}catch(e){return false}};S.getItem=function(a){return g.call(this,es(this)?P+a:a)};S.setItem=function(a,b){return s.call(this,es(this)?P+a:a,b)};S.removeItem=function(a){return r.call(this,es(this)?P+a:a)};window.BROS_PERFIL=m[1];})();window.BROS_V='2026-10-19.3';</script>
+<script>(function(){if(window.__brosP)return;window.__brosP=1;var q=new URLSearchParams(location.search).get('perfil');if(q)window.name='bros:'+q.replace(/[^a-z0-9_-]/gi,'').slice(0,20);var m=/^bros:(.+)$/.exec(window.name||'');if(!m)return;var P='P:'+m[1]+':',S=Storage.prototype,g=S.getItem,s=S.setItem,r=S.removeItem;var es=function(x){try{return x===window.localStorage}catch(e){return false}};S.getItem=function(a){return g.call(this,es(this)?P+a:a)};S.setItem=function(a,b){return s.call(this,es(this)?P+a:a,b)};S.removeItem=function(a){return r.call(this,es(this)?P+a:a)};window.BROS_PERFIL=m[1];})();window.BROS_V='2026-10-19.4';</script>
 <title>Bro OS</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -428,6 +428,7 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
             <div style="font-family:Outfit;font-size:20px;font-weight:800;letter-spacing:-.02em">Tus apps</div>
             <span style="font-size:12px;color:#6B7280;white-space:nowrap">{{ apps.nInstaladas }} aceptadas</span>
           </div>
+          <sc-if value="{{ apps.hayInstaladas }}" hint-placeholder-val="{{ true }}">
           <div style="margin:0 16px;background:#fff;border:1px solid #E4E7EE;border-radius:22px;padding:18px 10px 14px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px 4px">
             <sc-for list="{{ apps.instaladas }}" as="a" hint-placeholder-count="4">
               <button onClick="{{ a.onAbrir }}" style="display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0">
@@ -437,10 +438,27 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
               </button>
             </sc-for>
           </div>
+          </sc-if>
+          <sc-if value="{{ apps.sinInstaladas }}" hint-placeholder-val="{{ false }}">
+            <div style="margin:0 16px;padding:16px;border:1px dashed #D5DAE3;border-radius:20px;background:#fff;text-align:center;font-size:13.5px;color:#4B5563">Todavía no tienes apps aceptadas.</div>
+          </sc-if>
+
+          <!-- Pedir una app nueva -->
+          <div style="margin:16px 16px 0;background:#fff;border:1px solid #E4E7EE;border-radius:20px;padding:14px;display:flex;flex-direction:column;gap:10px">
+            <div style="font-family:Outfit;font-size:16px;font-weight:700">¿Quieres otra app?</div>
+            <div style="display:flex;gap:8px">
+              <input value="{{ apps.q }}" onChange="{{ apps.onQ }}" onKeyDown="{{ apps.onKey }}" placeholder="Escribe su nombre" aria-label="App que quieres" style="flex:1;min-width:0;height:46px;border:1px solid #D5DAE3;border-radius:14px;padding:0 14px;font-size:16px;outline:none;font-family:inherit;color:#111;background:#fff">
+              <button onClick="{{ apps.pedir }}" style="flex:none;height:46px;padding:0 16px;border-radius:14px;background:{{ apps.btnBg }};color:#fff;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center">{{ apps.btnTxt }}</button>
+            </div>
+            <sc-if value="{{ apps.hayRes }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:11px 13px;border-radius:14px;background:{{ apps.resBg }};color:{{ apps.resTx }};font-size:13.5px;font-weight:600;line-height:1.4;text-wrap:pretty">{{ apps.resTxt }}</div>
+            </sc-if>
+            <div style="font-size:11.5px;color:#6B7280;line-height:1.4">Bro la revisa. Si es para tu edad, se la pide a tu familia y ella decide.</div>
+          </div>
 
           <!-- Pendientes de mamá -->
           <sc-if value="{{ apps.hayPendientes }}" hint-placeholder-val="{{ true }}">
-            <div style="font-family:Outfit;font-size:16px;font-weight:700;margin:24px 18px 10px">Con mamá</div>
+            <div style="font-family:Outfit;font-size:16px;font-weight:700;margin:24px 18px 10px">Con tu familia</div>
             <div style="display:flex;flex-direction:column;gap:9px;padding:0 16px">
               <sc-for list="{{ apps.pendientes }}" as="a" hint-placeholder-count="1">
                 <div style="display:flex;gap:12px;align-items:center;background:#fff;border:1px solid #E4E7EE;border-radius:18px;padding:12px 14px;box-shadow:{{ a.sombra }}">
@@ -477,7 +495,7 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
             </div>
           </sc-if>
 
-          <div style="margin:18px 16px 0;font-size:12.5px;color:#6B7280;text-align:center;text-wrap:pretty">¿Quieres otra app? Díselo a Bro: «descarga…»</div>
+          <div style="margin:18px 16px 0;font-size:12.5px;color:#6B7280;text-align:center;text-wrap:pretty">También puedes decírselo a Bro.</div>
         </sc-if>
 
         <!-- QR: código Bro para conectar en persona -->
@@ -1635,6 +1653,28 @@ class Component extends DCLogic {
     if (window.speechSynthesis) speechSynthesis.getVoices();
   }
   videoAmigoRef = React.createRef();
+  async superAction(body) {
+    const disp = (() => { try { return JSON.parse(localStorage.getItem('bros-dispositivo')) || null; } catch (e) { return null; } })();
+    const h = { 'Content-Type': 'application/json', Authorization: 'Bearer ' + BRO_AI_KEY, apikey: BRO_AI_KEY };
+    if (disp && disp.token) h['x-bros-token'] = disp.token; else h['x-bros-codigo'] = localStorage.getItem('bros-real-codigo') || '';
+    const edad = (this.state.db && this.state.db.nino && this.state.db.nino.edad) || 12;
+    const res = await fetch(BRO_AI_URL.replace('/Bro-ai', '/super-action'), { method: 'POST', headers: h, body: JSON.stringify({ edad, ...body }) });
+    const j = await res.json().catch(() => null);
+    if (!res.ok || !j || j.error) throw new Error((j && j.error) || 'Sin conexión');
+    return j;
+  }
+  async pedirAppBuscar() {
+    const q = String(this.state.appQ || '').trim();
+    if (!q || this.state.appBuscando) return;
+    this.setState({ appBuscando: true, appRes: null });
+    try {
+      const j = await this.superAction({ tipo: 'app', q });
+      if (j.vetada) return this.setState({ appBuscando: false, appRes: { tipo: 'vetada', t: (j.nombre || q) + ' no es adecuada para ti. No se puede pedir.' } });
+      if (j.noExiste) return this.setState({ appBuscando: false, appRes: { tipo: 'nada', t: 'No encuentro «' + q + '». ¿Cómo se escribe exactamente?' } });
+      const r = await this.llamar('pedirAppNueva', j.app);
+      this.setState({ appBuscando: false, appQ: r.rechazada ? this.state.appQ : '', appRes: { tipo: r.rechazada ? 'no' : 'ok', t: r.di || 'Pedida.' } });
+    } catch (e) { this.setState({ appBuscando: false, appRes: { tipo: 'nada', t: 'No hay conexión. Prueba otra vez.' } }); }
+  }
   async rpc(nombre, args) {
     const res = await fetch(RPC_URL + nombre, { method: 'POST', headers: { 'Content-Type': 'application/json', apikey: BRO_AI_KEY, Authorization: 'Bearer ' + BRO_AI_KEY }, body: JSON.stringify(args) });
     const j = await res.json().catch(() => ({}));
@@ -2006,11 +2046,11 @@ class Component extends DCLogic {
           h['x-bros-codigo'] = codigo || '';
         }
         const edad = (this.state.db && this.state.db.nino && this.state.db.nino.edad) || 12;
-        const res = await fetch(BRO_AI_URL.replace('/Bro-ai', '/super-action'), { method: 'POST', headers: h, body: JSON.stringify({ q: texto, edad, anterior, aprobados: ((this.state.db && this.state.db.canalesAprobados) || []).map(c => c.nombre) }) });
+        const res = await fetch(BRO_AI_URL.replace('/Bro-ai', '/super-action'), { method: 'POST', headers: h, body: JSON.stringify({ q: texto, edad, anterior, aprobados: [...((this.state.db && this.state.db.canalesAprobados) || []).map(c => c.nombre), ...((this.state.db && this.state.db.temasAprobados) || [])] }) });
         if (res.status === 401 && !(disp && disp.token)) localStorage.removeItem('bros-real-codigo');
         const j = res.ok ? await res.json() : null;
         if (!j || j.error) r = { tema: texto, resultados: [], error: true };
-        else if (j.bloqueado) r = { bloqueado: true, texto, autor: j.pedible ? j.autor : null };
+        else if (j.bloqueado) r = { bloqueado: true, texto, pedible: !!j.pedible, autor: j.autor || null, tema: j.tema || null };
         else if (j.pregunta) { this.setState({ resC: { pregunta: j.pregunta }, preguntaC: { q: texto, p: j.pregunta }, qC: '' }); return this.decir && this.decir(j.pregunta); }
         else r = { tema: texto, resultados: (j.videos || []).map(v => ({ ...v, tema: v.canal })), real: true, revisados: j.revisados, autor: j.autor };
       } catch (e) { r = { tema: texto, resultados: [], error: true }; }
@@ -2603,11 +2643,18 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
           tabs: [['videos', 'Vídeos'], ['imagenes', 'Imágenes'], ['articulos', 'Artículos']].map(([id, t0]) => ({ t: t0, bg: tipo === id ? '#111' : 'transparent', tx: tipo === id ? '#fff' : '#4B5563',
             onClick: () => { this.setState({ tipoC: id, artC: null, imgC: null }); const q0 = (s.qC || '').trim(); if (q0) this.buscarC(q0, id); else this.setState({ resC: null, webC: null }); } })),
           bloqueado: !!(r && r.bloqueado),
-          pedible: !!(r && r.bloqueado && r.autor),
-          pedibleTxt: r && r.autor ? 'Los vídeos de ' + r.autor + ' están bloqueados por defecto para tu edad. Si quieres, se lo pido a tu familia.' : '',
-          pedirTxt: (() => { const ya = r && r.autor && ((s.db && s.db.solicitudes) || []).some(x => x.tipo === 'canal' && x.ref.toLowerCase() === r.autor.toLowerCase() && x.estado === 'pendiente'); return ya ? 'Pedido ✓ · esperando respuesta' : 'Pedírselo a mi familia'; })(),
-          pedirBg: r && r.autor && ((s.db && s.db.solicitudes) || []).some(x => x.tipo === 'canal' && x.ref.toLowerCase() === (r.autor || '').toLowerCase() && x.estado === 'pendiente') ? '#7F9BE0' : '#3068ED',
-          pedirCanal: async () => { if (!r || !r.autor) return; await this.llamar('pedirCanal', { nombre: r.autor }); this.avisar('Pedido. Tu familia lo verá en su app.'); },
+          ...(() => {
+            const que = r && r.bloqueado && r.pedible ? (r.autor || r.tema) : null, tipoP = r && r.autor ? 'canal' : 'contenido';
+            const sol = que ? ((s.db && s.db.solicitudes) || []).filter(x => x.tipo === tipoP && x.ref.toLowerCase() === que.toLowerCase()) : [];
+            const pend = sol.some(x => x.estado === 'pendiente'), dijoNo = sol.some(x => x.estado === 'no');
+            return {
+              pedible: !!que,
+              pedibleTxt: !que ? '' : dijoNo ? 'Tu familia ya ha dicho que no a esto.' : (r.autor ? 'Los vídeos de ' + r.autor : 'Los vídeos sobre «' + r.tema + '»') + ' están bloqueados por defecto para tu edad. Si quieres, se lo pido a tu familia.',
+              pedirTxt: dijoNo ? 'Tu familia ha dicho que no' : pend ? 'Pedido ✓ · esperando respuesta' : 'Pedírselo a mi familia',
+              pedirBg: dijoNo ? '#9CA3AF' : pend ? '#7F9BE0' : '#3068ED',
+              pedirCanal: async () => { if (!que || pend || dijoNo) return; const x = await this.llamar('pedirCanal', { nombre: que, tipo: tipoP }); this.avisar(x.di || 'Pedido. Tu familia lo verá en su app.'); }
+            };
+          })(),
           hayPregunta: !!(r && r.pregunta), pregunta: (r && r.pregunta) || '',
           buscando: !!(r && r.buscando),
           hayResultados: esV && !!(r && r.resultados && r.resultados.length),
@@ -2741,7 +2788,7 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
         }));
         const pendientes = db.apps.filter(a => a.estado === 'pendiente' || a.estado === 'persona').map(a => {
           const esp = a.estado === 'pendiente';
-          return { ...a, sombra: marca(a), nota: esp ? 'Se la has pedido. Decide ella.' : 'Quiere hablarlo contigo en persona',
+          return { ...a, sombra: marca(a), nota: esp ? (a.que ? a.que + ' · ' : '') + 'Esperando a tu familia' : 'Quieren hablarlo contigo en persona',
             pill: esp ? 'Esperando' : 'Hablar', pillBg: esp ? 'rgba(48,104,237,.1)' : 'rgba(229,102,72,.12)', pillTx: esp ? '#3068ED' : '#bf4527' };
         });
         const no = db.apps.filter(a => a.estado === 'noApta' || a.estado === 'denegada')
@@ -2749,11 +2796,15 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
           .map(a => {
             const edad = a.estado === 'noApta';
             return { ...a,
-              pill: edad ? 'Bloqueada por edad' : 'Bloqueada por mamá',
+              pill: edad ? 'Bloqueada por edad' : 'Tu familia dijo que no',
               pillBg: edad ? '#EEF0F4' : 'rgba(229,102,72,.12)', pillTx: edad ? '#57606f' : '#bf4527',
               nota: edad ? (a.motivo || 'No está disponible para perfil 13') : `«${a.motivo || 'Lo hablamos en casa'}»` };
           });
-        return { instaladas, nInstaladas: instaladas.length, pendientes, hayPendientes: pendientes.length > 0, no, nNo: no.length, hayNo: no.length > 0 };
+        const R = s.appRes, COL = { ok: ['#EEF6E6', '#3D6B1F'], no: ['#FDECE8', '#B4442B'], vetada: ['#111', '#fff'], nada: ['#F0F2F6', '#374151'] };
+        return { instaladas, nInstaladas: instaladas.length, hayInstaladas: instaladas.length > 0, sinInstaladas: instaladas.length === 0, pendientes, hayPendientes: pendientes.length > 0, no, nNo: no.length, hayNo: no.length > 0,
+          q: s.appQ || '', onQ: e => this.setState({ appQ: e.target.value, appRes: null }), onKey: e => { if (e.key === 'Enter') this.pedirAppBuscar(); },
+          pedir: () => this.pedirAppBuscar(), btnTxt: s.appBuscando ? 'Revisando…' : 'Pedir', btnBg: (s.appQ || '').trim() && !s.appBuscando ? '#3068ED' : '#7F9BE0',
+          hayRes: !!R, resTxt: R ? R.t : '', resBg: R ? COL[R.tipo][0] : '', resTx: R ? COL[R.tipo][1] : '' };
       })(),
 
       hayLlamada: !!s.llamada, llamada: s.llamada || {},

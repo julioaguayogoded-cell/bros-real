@@ -1041,14 +1041,34 @@ function pedirPaso(db, { ref, titulo, detalle }) {
   return { di: 'Se lo he pedido a Laura.' };
 }
 
-// Content real: un canal o creador bloqueado por defecto que el Bro quiere ver
-function pedirCanal(db, { nombre }) {
+// Content real: algo que Bro AI bloquea para su edad (un creador o un tema) y el Bro quiere ver
+function pedirCanal(db, { nombre, tipo }) {
   nombre = String(nombre || '').trim().slice(0, 60);
-  if (!nombre) return { error: 'Falta el canal' };
-  if ((db.canalesAprobados || []).some(c => c.nombre.toLowerCase() === nombre.toLowerCase())) return { di: 'Ese canal ya está aprobado.' };
-  if (!db.solicitudes.some(s => s.tipo === 'canal' && s.ref.toLowerCase() === nombre.toLowerCase() && s.estado === 'pendiente'))
-    db.solicitudes.unshift({ id: nuevoId(), tipo: 'canal', ref: nombre, titulo: 'Ver vídeos de ' + nombre, detalle: 'Bro lo tiene bloqueado por defecto para su edad. Si lo apruebas, podrá ver los vídeos de ese canal dentro de Bro, filtrados.', estado: 'pendiente' });
-  return { di: 'Se lo he pedido a Laura.' };
+  if (!nombre) return { error: 'Falta qué quiere ver' };
+  const t = tipo === 'contenido' ? 'contenido' : 'canal', mismo = s => s.tipo === t && s.ref.toLowerCase() === nombre.toLowerCase();
+  if (t === 'canal' && (db.canalesAprobados || []).some(c => c.nombre.toLowerCase() === nombre.toLowerCase())) return { di: 'Ya está aprobado.' };
+  if (t === 'contenido' && (db.temasAprobados || []).some(x => x.toLowerCase() === nombre.toLowerCase())) return { di: 'Ya está aprobado.' };
+  if (db.solicitudes.some(s => mismo(s) && s.estado === 'no')) return { rechazada: true, di: 'Tu familia ya ha dicho que no a esto.' };
+  if (!db.solicitudes.some(s => mismo(s) && s.estado === 'pendiente'))
+    db.solicitudes.unshift({ id: nuevoId(), tipo: t, ref: nombre, titulo: t === 'canal' ? 'Ver vídeos de ' + nombre : 'Ver vídeos sobre «' + nombre + '»',
+      detalle: 'Bro lo tiene bloqueado por defecto para su edad. Si lo apruebas, podrá verlo dentro de Bro, siempre filtrado (nada de sexualidad, violencia explícita ni apuestas).', estado: 'pendiente' });
+  return { di: 'Se lo he pedido a tu familia.' };
+}
+
+// My apps real: una app nueva que el Bro quiere (ya revisada por Bro AI y no vetada)
+function pedirAppNueva(db, { nombre, que, pegi, ic }) {
+  nombre = String(nombre || '').trim().slice(0, 40);
+  if (!nombre) return { error: 'Falta la app' };
+  const id = nombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '');
+  const ya = db.apps.find(a => a.id === id);
+  if (ya && ya.estado === 'instalada') return { di: 'Ya la tienes.' };
+  if (ya && (ya.estado === 'denegada' || ya.estado === 'noApta')) return { rechazada: true, di: 'Tu familia ya ha dicho que no a esta app.' };
+  if (ya && ya.estado === 'pendiente') return { di: 'Ya está pedida. Decide tu familia.' };
+  const COLORES = ['#EEF3FE', '#FDF0EC', '#EEF6E6', '#F3EEFE', '#FFF6E0'];
+  const app = { id, nombre, que: que || '', pegi: pegi || null, ic: ic || '📱', color: COLORES[id.length % COLORES.length], estado: 'pendiente' };
+  if (ya) Object.assign(ya, app); else db.apps.push(app);
+  db.solicitudes.unshift({ id: nuevoId(), tipo: 'app', ref: id, titulo: nombre, detalle: (que ? que + '. ' : '') + (pegi ? 'PEGI ' + pegi + '. ' : '') + db.nino.nombre + ' la quiere. Tú decides si la instala y el tiempo de uso.', estado: 'pendiente' });
+  return { di: 'Pedida. Tu familia la verá en su app.' };
 }
 
 function pedirMonedero(db) {
@@ -1063,6 +1083,7 @@ function decidir(db, { id, si, condicion, motivo }) {
   s.estado = si ? 'si' : 'no';
   if (condicion) s.condicion = condicion;
   if (s.tipo === 'plan') db.planes.find(p => p.id === s.ref).estado = si ? 'aprobado' : 'rechazado';
+  if (s.tipo === 'contenido' && si) { db.temasAprobados = db.temasAprobados || []; if (!db.temasAprobados.includes(s.ref)) db.temasAprobados.push(s.ref); }
   if (s.tipo === 'canal' && si) {
     db.canalesAprobados = db.canalesAprobados || [];
     if (!db.canalesAprobados.some(c => c.nombre.toLowerCase() === s.ref.toLowerCase()))
@@ -1071,6 +1092,7 @@ function decidir(db, { id, si, condicion, motivo }) {
   if (motivo) s.motivo = motivo;
   if (s.tipo === 'app') {
     const app = db.apps.find(a => a.id === s.ref);
+    if (!app) return {};
     app.estado = si ? 'instalada' : 'denegada';
     app.tiempo = condicion || null;
     app.motivo = motivo || null;
@@ -1270,7 +1292,7 @@ function corregirTexto(db, { texto }) {
 }
 
 // ---------- Puerta de entrada: el front llama por nombre ----------
-const RUTAS = { estado: () => ({}), pedirPaso, pedirCanal, actualizarLimite, dormir, despertar, consentir, esAdecuado, temaWeb, pedirMonedero, temaAprender, corregirTexto, buscarContenido, temasContenido: () => ({ temas: temasContenido() }), interpretar, elegirOpcion, verVideo, avanzarProyecto, flujo, enviarMensaje, leerChat, pedirApp, pedirMonedero, decidir, sumarLogro, crearAcuerdo, marcarCondicion, aprobarPrueba, pedirUnirse, pedirReserva, compartirPartido, compartirPrivado, respuestaAmigo, marcarColegio, leerAvisos };
+const RUTAS = { estado: () => ({}), pedirPaso, pedirCanal, pedirAppNueva, actualizarLimite, dormir, despertar, consentir, esAdecuado, temaWeb, pedirMonedero, temaAprender, corregirTexto, buscarContenido, temasContenido: () => ({ temas: temasContenido() }), interpretar, elegirOpcion, verVideo, avanzarProyecto, flujo, enviarMensaje, leerChat, pedirApp, pedirMonedero, decidir, sumarLogro, crearAcuerdo, marcarCondicion, aprobarPrueba, pedirUnirse, pedirReserva, compartirPartido, compartirPrivado, respuestaAmigo, marcarColegio, leerAvisos };
 
 export function ejecutar(db, ruta, datos = {}) {
   const base = datosIniciales();

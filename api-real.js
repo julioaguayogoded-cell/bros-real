@@ -5,7 +5,7 @@
 // y la app de padres leen y escriben el MISMO estado. Lo que decide mamá, se aplica en Julio.
 // Sin código de acceso o sin conexión, funciona en local como el prototipo.
 // ============================================================
-import { datosIniciales, ejecutar } from './logica.js?v=2026-10-19.3';
+import { datosIniciales, ejecutar } from './logica.js?v=2026-10-19.4';
 
 const URL = 'https://nxdkjayuonzrqwjokfyu.supabase.co/functions/v1/bro-estado';
 const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im54ZGtqYXl1b256cnF3am9rZnl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA2ODUyOTUsImV4cCI6MjEwNjI2MTI5NX0.f4hfHICq3NxJm8f5X7bnMq2WqqlRWahpaFjCEWl2FSg';
