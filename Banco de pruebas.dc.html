@@ -30,8 +30,26 @@
       <span style="width:8px;height:8px;border-radius:50%;background:{{ pub.dot }}"></span>{{ pub.t }}
     </div>
     <button onClick="{{ recargarTodo }}" style="height:38px;padding:0 16px;border-radius:12px;background:#111;color:#fff;font-weight:700;font-size:13.5px">Recargar todo</button>
+    <sc-if value="{{ conSesion }}" hint-placeholder-val="{{ false }}">
+      <button onClick="{{ salir }}" style="height:38px;padding:0 12px;border-radius:12px;background:#fff;border:1px solid #D5DAE3;font-weight:700;font-size:13px">Salir</button>
+    </sc-if>
   </div>
 
+  <sc-if value="{{ sinSesion }}" hint-placeholder-val="{{ false }}">
+    <div style="flex:1;display:grid;place-items:center;padding:28px 20px">
+      <div style="width:100%;max-width:360px;background:#fff;border:1px solid #E4E7EE;border-radius:22px;padding:24px;display:flex;flex-direction:column;gap:12px">
+        <div style="font-family:Outfit;font-weight:800;font-size:20px">Entra con tu cuenta de padres</div>
+        <div style="font-size:13px;line-height:1.45;color:#4B5563;text-wrap:pretty">Solo esta vez. El banco abre tu app de padres y activa a tus Bros sin registros ni encendidos.</div>
+        <input value="{{ email }}" onChange="{{ onEmail }}" type="email" autocomplete="username" placeholder="tu@thebros.life" style="height:48px;border:1px solid #D5DAE3;border-radius:14px;padding:0 14px;font-size:15px;outline:none;font-family:inherit">
+        <input value="{{ pass }}" onChange="{{ onPass }}" onKeyDown="{{ onKey }}" type="password" autocomplete="current-password" placeholder="Contraseña" style="height:48px;border:1px solid #D5DAE3;border-radius:14px;padding:0 14px;font-size:15px;outline:none;font-family:inherit">
+        <sc-if value="{{ hayErrLogin }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:13px;font-weight:600;color:#B4442B">{{ errLogin }}</div>
+        </sc-if>
+        <button onClick="{{ entrar }}" style="height:50px;border-radius:14px;background:{{ entrarBg }};color:#fff;font-family:Outfit;font-weight:800;font-size:15.5px">{{ entrarTxt }}</button>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ conSesion }}" hint-placeholder-val="{{ true }}">
   <div style="flex:1;display:flex;gap:22px;justify-content:center;align-items:flex-end;flex-wrap:wrap;padding:18px 22px 28px">
     <sc-for list="{{ marcos }}" as="f" hint-placeholder-count="3">
       <div style="display:flex;flex-direction:column;gap:10px;width:{{ f.w }}">
@@ -55,6 +73,7 @@
       </div>
     </sc-for>
   </div>
+  </sc-if>
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script>
@@ -67,7 +86,7 @@ const clave = (perfil, k) => 'P:' + perfil + ':' + k;
 const leerJSON = k => { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch (e) { return null; } };
 
 class Component extends DCLogic {
-  state = { bros: leerJSON('bros-banco-bros') || [], t: {}, pub: null, info: {}, alto: window.innerHeight, sesion: !!leerJSON(SESION), fase: 'inicio', error: '', padresPag: leerJSON(SESION) ? 0 : 1 };
+  state = { bros: leerJSON('bros-banco-bros') || [], t: {}, pub: null, info: {}, alto: window.innerHeight, sesion: !!leerJSON(SESION), fase: 'inicio', error: '', email: localStorage.getItem('bros-banco-email') || '', pass: '', entrando: false, errLogin: '' };
   els = {};
 
   componentDidMount() {
@@ -92,12 +111,22 @@ class Component extends DCLogic {
   async preparar() {
     clearTimeout(this.tPrep);
     const jwt = this.token();
-    if (!jwt) { this.setState({ sesion: !!leerJSON(SESION), fase: leerJSON(SESION) ? 'esperando' : 'sinSesion' }); this.tPrep = setTimeout(() => this.preparar(), 2000); return; }
+    if (!jwt) {
+      const ses = leerJSON(SESION);
+      if (ses && ses.refresh_token) { // sesión caducada: se renueva sola
+        try {
+          const r = await fetch(SB + '/auth/v1/token?grant_type=refresh_token', { method: 'POST', headers: { 'Content-Type': 'application/json', apikey: ANON }, body: JSON.stringify({ refresh_token: ses.refresh_token }) });
+          const j = await r.json();
+          if (r.ok && j.access_token) { localStorage.setItem(SESION, JSON.stringify({ ...j, expires_at: j.expires_at || Math.floor(Date.now() / 1000) + (j.expires_in || 3600) })); return this.preparar(); }
+        } catch (e) {}
+      }
+      this.setState({ sesion: false, fase: 'sinSesion' }); return;
+    }
     this.setState({ sesion: true, fase: 'cargando', error: '' });
     try {
       const bros = await this.rest('/rest/v1/bros?select=id,nombre,nacimiento,correa,familia&order=creado', null, jwt);
       localStorage.setItem('bros-banco-bros', JSON.stringify(bros));
-      this.setState({ bros, padresPag: this.state.padresPag === 1 ? 0 : this.state.padresPag });
+      this.setState({ bros });
       this.setState({ fase: 'activando' });
       for (const b of bros) await this.activar(b, false);
       this.setState({ fase: 'lista' });
@@ -118,6 +147,26 @@ class Component extends DCLogic {
     this.recargar(p);
   }
 
+  async entrar() {
+    const { email, pass } = this.state;
+    if (!email.trim() || !pass || this.state.entrando) return;
+    this.setState({ entrando: true, errLogin: '' });
+    try {
+      const r = await fetch(SB + '/auth/v1/token?grant_type=password', { method: 'POST', headers: { 'Content-Type': 'application/json', apikey: ANON }, body: JSON.stringify({ email: email.trim(), password: pass }) });
+      const j = await r.json();
+      if (!r.ok || !j.access_token) throw new Error(/confirm/i.test(j.msg || j.error_description || '') ? 'Confirma tu email antes de entrar.' : 'Email o contraseña incorrectos.');
+      localStorage.setItem(SESION, JSON.stringify({ ...j, expires_at: j.expires_at || Math.floor(Date.now() / 1000) + (j.expires_in || 3600) }));
+      localStorage.setItem('bros-banco-email', email.trim());
+      this.setState({ entrando: false, pass: '', sesion: true });
+      this.recargar('padres');
+      this.preparar();
+    } catch (e) { this.setState({ entrando: false, errLogin: e.message }); }
+  }
+  salir() {
+    if (!window.confirm('¿Salir del banco? Tus Bros siguen activos; solo se cierra la sesión de padres aquí.')) return;
+    localStorage.removeItem(SESION);
+    this.setState({ sesion: false, fase: 'sinSesion' });
+  }
   async leerVersion() {
     try {
       const r = await fetch('version.json?t=' + Date.now(), { cache: 'no-store' });
@@ -134,7 +183,6 @@ class Component extends DCLogic {
       info[id] = x;
     }
     this.setState({ info });
-    if (!this.state.sesion && leerJSON(SESION)) this.preparar();
     const pub = this.state.pub;
     if (pub && pub !== 'sin-conexion') for (const id of Object.keys(info)) {
       const x = info[id];
@@ -156,19 +204,19 @@ class Component extends DCLogic {
       return [okTxt, '#EEF6E6', '#3D6B1F'];
     };
     const FAM = {
-      inicio: ['Preparando…', '#F0F2F6', '#4B5563', true], sinSesion: ['Inicia sesión en la app de padres', '#FFF3E0', '#9A5B0B', false],
+      inicio: ['Preparando…', '#F0F2F6', '#4B5563', true], sinSesion: ['Sin sesión de padres', '#FFF3E0', '#9A5B0B', false],
       esperando: ['Esperando la sesión de padres…', '#F0F2F6', '#4B5563', true], cargando: ['Cargando tu familia…', '#F0F2F6', '#4B5563', true],
       activando: ['Activando a tus Bros…', '#EEF3FE', '#2452c2', true], lista: ['Familia activa · ' + s.bros.length + ' Bros', '#EEF6E6', '#3D6B1F', false],
       error: ['Error: ' + s.error, '#FDECE8', '#B4442B', false]
     }[s.fase];
     const padres = (() => {
-      const e = !s.sesion ? ['Sin sesión', '#FDECE8', '#B4442B'] : estado('padres', 'Conectada');
-      const ruta = s.padresPag === 1 || !s.sesion ? 'Familia Real.dc.html' : 'Padres Real.dc.html';
+      const e = estado('padres', 'Conectada');
+      const ruta = 'Padres Real.dc.html';
       return { id: 'padres', nombre: 'Padres', rol: 'App de padres', color: '#111111', ini: 'P', ...tam,
         src: ruta + '?perfil=padres&t=' + (s.t.padres || 0), setRef: el => { this.els.padres = el; },
         est: e[0], estBg: e[1], estTx: e[2], recargar: () => this.recargar('padres'),
-        extraTxt: s.padresPag === 1 ? 'App de padres' : 'Mi familia',
-        extra: () => { this.setState({ padresPag: s.padresPag === 1 ? 0 : 1 }); this.recargar('padres'); } };
+        extraTxt: 'Ir al inicio',
+        extra: () => this.recargar('padres') };
     })();
     const bros = s.sesion ? s.bros.map(b => {
       const p = perfilDe(b.id), d = leerJSON(clave(p, 'bros-dispositivo'));
@@ -180,12 +228,17 @@ class Component extends DCLogic {
     }) : [];
     return {
       titulo: s.bros.length && s.sesion ? 'Banco de pruebas · familia real' : 'Banco de pruebas',
-      sub: s.sesion ? 'Tus Bros y la app de padres, conectados de verdad. Se actualizan solos al subir a GitHub.' : 'Inicia sesión una vez en la app de padres (a la derecha). El banco activa a tus Bros solo.',
+      sub: s.sesion ? 'Tus Bros y la app de padres, conectados de verdad. Se actualizan solos al subir a GitHub.' : 'Entra una vez con tu cuenta de padres y el banco monta tu familia.',
       fam: { t: FAM[0], bg: FAM[1], tx: FAM[2], girando: FAM[3], punto: !FAM[3], dot: FAM[2] },
       pub: !s.pub ? { t: 'Comprobando GitHub…', bg: '#F0F2F6', tx: '#4B5563', dot: '#9CA3AF' }
         : !pubOk ? { t: 'Sin conexión con GitHub', bg: '#FDECE8', tx: '#B4442B', dot: '#B4442B' }
         : { t: 'Versión ' + s.pub, bg: '#EEF6E6', tx: '#3D6B1F', dot: '#4E8A2A' },
       recargarTodo: () => this.recargarTodo(),
+      sinSesion: !s.sesion, conSesion: !!s.sesion, salir: () => this.salir(),
+      email: s.email, pass: s.pass, onEmail: e => this.setState({ email: e.target.value }), onPass: e => this.setState({ pass: e.target.value }),
+      onKey: e => { if (e.key === 'Enter') this.entrar(); }, entrar: () => this.entrar(),
+      entrarTxt: s.entrando ? 'Entrando…' : 'Entrar', entrarBg: s.entrando ? '#7F9BE0' : '#3068ED',
+      hayErrLogin: !!s.errLogin, errLogin: s.errLogin,
       marcos: [...bros, padres]
     };
   }
