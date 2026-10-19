@@ -8,7 +8,7 @@
 <body>
 <x-dc>
 <helmet>
-<script>(function(){if(window.__brosP)return;window.__brosP=1;var q=new URLSearchParams(location.search).get('perfil');if(q)window.name='bros:'+q.replace(/[^a-z0-9_-]/gi,'').slice(0,20);var m=/^bros:(.+)$/.exec(window.name||'');if(!m)return;var P='P:'+m[1]+':',S=Storage.prototype,g=S.getItem,s=S.setItem,r=S.removeItem;var es=function(x){try{return x===window.localStorage}catch(e){return false}};S.getItem=function(a){return g.call(this,es(this)?P+a:a)};S.setItem=function(a,b){return s.call(this,es(this)?P+a:a,b)};S.removeItem=function(a){return r.call(this,es(this)?P+a:a)};window.BROS_PERFIL=m[1];})();window.BROS_V='2026-10-19.4';</script>
+<script>(function(){if(window.__brosP)return;window.__brosP=1;var q=new URLSearchParams(location.search).get('perfil');if(q)window.name='bros:'+q.replace(/[^a-z0-9_-]/gi,'').slice(0,20);var m=/^bros:(.+)$/.exec(window.name||'');if(!m)return;var P='P:'+m[1]+':',S=Storage.prototype,g=S.getItem,s=S.setItem,r=S.removeItem;var es=function(x){try{return x===window.localStorage}catch(e){return false}};S.getItem=function(a){return g.call(this,es(this)?P+a:a)};S.setItem=function(a,b){return s.call(this,es(this)?P+a:a,b)};S.removeItem=function(a){return r.call(this,es(this)?P+a:a)};window.BROS_PERFIL=m[1];})();window.BROS_V='2026-10-19.5';</script>
 <title>Bro OS</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -1600,6 +1600,21 @@ const PALETAS_LM = {
 const aMinL = h => { const [a, b] = h.split(':').map(Number); return a * 60 + b; };
 const aHoraL = m => { m = ((m % 1440) + 1440) % 1440; return String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'); };
 const durL = m => m < 60 ? m + ' min' : Math.floor(m / 60) + ' h' + (m % 60 ? ' ' + String(m % 60).padStart(2, '0') : '');
+// ---------- Bro AI como navegador del sistema: entiende a dónde quiere ir el Bro, dicho de muchas formas ----------
+const NAV_VERBO = /^(abre(me)?|abrir|ve(te)? a|vamos a|ir a|llevame a|lleva(me)? a|quiero ir a|quiero ver|quiero entrar en|ensename|muestrame|pon(me)?|entra(r)? en|ir al|ir a la|voy a|accede a|mira|mirar|ver|abre la|abre el|abre mis|abre mi)\b/;
+const NAV = [
+  ['inicio', ['inicio', 'home', 'pantalla principal', 'pantalla de inicio', 'menu', 'menu principal', 'salir', 'cierra', 'cerrar', 'cierralo', 'volver al inicio', 'vuelve al inicio', 'al principio']],
+  ['atras', ['atras', 'vuelve', 'volver', 'regresa', 'regresar', 'para atras']],
+  ['qr', ['mi codigo', 'mi qr', 'codigo bro', 'el qr', 'qr', 'anadir amigo', 'agregar amigo', 'anadir un amigo', 'hacerme amigo', 'nuevo amigo', 'escanear', 'escanear codigo', 'conectar con un amigo']],
+  ['comunidades', ['comunidades', 'comunidad', 'mis comunidades', 'grupos', 'mis grupos', 'amigos', 'mis amigos', 'mensajes', 'mis mensajes', 'chats', 'communities', 'connect', 'conversaciones']],
+  ['apps', ['apps', 'app', 'aplicaciones', 'mis apps', 'my apps', 'mis aplicaciones', 'mis juegos', 'tienda de apps', 'descargar', 'instalar']],
+  ['contenido', ['videos', 'video', 'youtube', 'contenido', 'content', 'algo para ver', 'pelis', 'documentales', 'canciones', 'musica']],
+  ['proyectos', ['proyectos', 'mis proyectos', 'projects', 'proyecto', 'build', 'mis ideas']],
+  ['logros', ['rewards', 'reward', 'premios', 'recompensas', 'mis premios', 'logros', 'achieve', 'retos de marcas', 'contratos']],
+  ['aura', ['aura', 'pulsera', 'mi pulsera', 'pasos', 'mis pasos', 'sueno', 'como he dormido', 'actividad', 'mi actividad', 'salud']],
+  ['monedero', ['wallet', 'cartera', 'monedero', 'mi dinero', 'dinero', 'tarjeta', 'mi tarjeta', 'paga', 'mi paga', 'ahorro', 'mis ahorros', 'hucha', 'saldo']],
+  ['aprender', ['learning', 'learning mode', 'deberes', 'estudiar', 'modo estudio', 'trabajo del cole', 'presentacion del cole']]
+];
 const DESTINOS = ['monedero', 'aprender', 'comunidades', 'comunidad', 'chat', 'proyectos', 'proyecto', 'partido', 'apps', 'logros', 'contenido', 'aura', 'qr'];
 // Código tipo QR (de muestra, no escaneable): 25×25 con las tres esquinas de posición
 function celdasQR(semilla) {
@@ -2201,6 +2216,33 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
     return m;
   }
 
+  // Devuelve { pantalla, … } si el Bro quiere ir a algún sitio; null si es otra cosa (pregunta, proyecto, flujo…)
+  navegar(texto) {
+    const n = ' ' + String(texto).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9ñ ]/g, ' ').replace(/\s+/g, ' ').trim() + ' ';
+    const t = n.trim(), palabras = t.split(' ').length, verbo = NAV_VERBO.test(t);
+    // chat con un amigo: «habla con Hugo», «escribe a Fer», «mensaje a Julio», «abre el chat de Lucía»
+    const mChat = t.match(/(?:habla(?:r)? con|escribe(?:le)? a|escribir a|mensaje a|manda(?:le)? un mensaje a|chat (?:con|de)|chatea con)\s+([a-zñ]+)/);
+    if (mChat) {
+      const nombre = mChat[1], amigos = (tokenBro() ? (this.state.amigosR || []).map(a => ({ id: a.id, nombre: a.nombre })) : ((this.state.db && this.state.db.bros) || []).map(b => ({ id: b.nombre, nombre: b.nombre })));
+      const a = amigos.find(x => String(x.nombre).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').startsWith(nombre));
+      if (a) return { pantalla: 'chat', id: a.id, di: 'Abriendo tu chat con ' + a.nombre + '.' };
+      return { pantalla: 'comunidades', di: 'No tienes a ' + nombre.charAt(0).toUpperCase() + nombre.slice(1) + ' entre tus amigos. Podéis conectar en persona con vuestro código.' };
+    }
+    // apps: «descarga Brawl Stars», «quiero la app de Duolingo», «instálame Minecraft»
+    const mApp = t.match(/(?:descarga(?:me|r)?|instala(?:me|r)?|bajame|baja(?:r)?|quiero la app(?: de)?|pideme la app(?: de)?)\s+(.+)/);
+    if (mApp && !/\b(video|videos)\b/.test(t)) return { pantalla: 'apps', app: mApp[1].replace(/^(la app de|la app|el juego|el|la)\s+/, '').trim() };
+    // vídeos con algo concreto: «pon vídeos de Mbappé», «quiero ver cómo hacer slime»
+    if (/\b(video|videos|youtube)\b/.test(t) && palabras > 2) return { pantalla: 'contenido', buscar: texto };
+    // crear, hacer, aprender… no es navegar: lo atiende Bro AI (proyectos, flujos)
+    if (/\b(crear|crea|hacer|hago|hacemos|construir|inventar|disenar|programar|montar|organizar|aprender a|ganar|gano|como se|como hago|como puedo|como gano|dame|explicame|ayudame)\b/.test(t) && !verbo) return null;
+    // destinos: con verbo («abre mis apps», «llévame a la Wallet») o frase corta («mis amigos», «atrás»)
+    let mejor = null;
+    for (const [dest, frases] of NAV) for (const f of frases) if (n.includes(' ' + f + ' ') && (!mejor || f.length > mejor.l)) mejor = { dest, l: f.length };
+    if (!mejor || (!verbo && palabras > 3)) return null;
+    if (mejor.dest === 'inicio' || mejor.dest === 'atras') return { inicio: true };
+    return { pantalla: mejor.dest };
+  }
+
   async pedir(texto) {
     texto = (texto || '').trim(); if (!texto) return;
     this.setState({ texto: '' });
@@ -2213,6 +2255,17 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
       if (f.libre) return this.responder(texto);
       this.push({ de: 'yo', txt: texto });
       return this.decir('No te he entendido. Elige una opción o dilo de otra forma.');
+    }
+    // Bro AI navega el sistema: si el Bro quiere ir a algún sitio, va directamente
+    if (this.modo() !== 'padre') {
+      const nav = this.navegar(texto);
+      if (nav) {
+        this.setSes(() => ({ conv: [], flujo: null }));
+        if (nav.inicio) { this.setState({ pantalla: 'bro', id: null }); return; }
+        if (nav.di) this.burbuja(texto, nav.di, 2200);
+        if (nav.app) { this.ejecutar({ pantalla: 'apps' }); this.setState({ appQ: nav.app, appRes: null }, () => this.pedirAppBuscar()); return; }
+        return this.ejecutar(nav);
+      }
     }
     // Fuera de un flujo, Bro no abre conversación: responde en una burbuja o te lleva directamente
     const r = await this.llamar('interpretar', { texto, quien: this.modo() });
