@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<script>window.BROS_V='2026-10-19.2';</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>html,body{margin:0;background:#E9ECF2;font-family:Inter,system-ui,sans-serif;color:#111} a{color:#3068ED} a:hover{color:#1f4fc0} button{font-family:inherit;border:0;cursor:pointer;color:inherit;background:none} @keyframes gira{to{transform:rotate(360deg)}}</style>
+</helmet>
+<div data-screen-label="Banco de pruebas" style="min-height:100vh;display:flex;flex-direction:column">
+  <div style="flex:none;display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:14px 22px;background:#fff;border-bottom:1px solid #E4E7EE">
+    <img src="logo.png" alt="BroS Life" style="width:30px;height:30px">
+    <div style="flex:1;min-width:220px">
+      <div style="font-family:Outfit;font-weight:800;font-size:19px">{{ titulo }}</div>
+      <div style="font-size:12.5px;color:#4B5563;margin-top:1px">{{ sub }}</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;background:{{ fam.bg }};color:{{ fam.tx }};font-size:12.5px;font-weight:700">
+      <sc-if value="{{ fam.girando }}" hint-placeholder-val="{{ false }}"><span style="width:12px;height:12px;border-radius:50%;border:2px solid currentColor;border-top-color:transparent;animation:gira .8s linear infinite"></span></sc-if>
+      <sc-if value="{{ fam.punto }}" hint-placeholder-val="{{ true }}"><span style="width:8px;height:8px;border-radius:50%;background:{{ fam.dot }}"></span></sc-if>
+      {{ fam.t }}
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;background:{{ pub.bg }};color:{{ pub.tx }};font-size:12.5px;font-weight:700">
+      <span style="width:8px;height:8px;border-radius:50%;background:{{ pub.dot }}"></span>{{ pub.t }}
+    </div>
+    <button onClick="{{ recargarTodo }}" style="height:38px;padding:0 16px;border-radius:12px;background:#111;color:#fff;font-weight:700;font-size:13.5px">Recargar todo</button>
+    <sc-if value="{{ conSesion }}" hint-placeholder-val="{{ false }}">
+      <button onClick="{{ deCero }}" style="height:38px;padding:0 14px;border-radius:12px;background:#E56648;color:#fff;font-weight:700;font-size:13.5px">{{ deCeroTxt }}</button>
+    </sc-if>
+    <sc-if value="{{ conSesion }}" hint-placeholder-val="{{ false }}">
+      <button onClick="{{ salir }}" style="height:38px;padding:0 12px;border-radius:12px;background:#fff;border:1px solid #D5DAE3;font-weight:700;font-size:13px">Salir</button>
+    </sc-if>
+  </div>
+
+  <sc-if value="{{ sinSesion }}" hint-placeholder-val="{{ false }}">
+    <div style="flex:1;display:grid;place-items:center;padding:28px 20px">
+      <div style="width:100%;max-width:360px;background:#fff;border:1px solid #E4E7EE;border-radius:22px;padding:24px;display:flex;flex-direction:column;gap:12px">
+        <div style="font-family:Outfit;font-weight:800;font-size:20px">Entra con tu cuenta de padres</div>
+        <div style="font-size:13px;line-height:1.45;color:#4B5563;text-wrap:pretty">Solo esta vez. El banco abre tu app de padres y activa a tus Bros sin registros ni encendidos.</div>
+        <input value="{{ email }}" onChange="{{ onEmail }}" type="email" autocomplete="username" placeholder="tu@thebros.life" style="height:48px;border:1px solid #D5DAE3;border-radius:14px;padding:0 14px;font-size:15px;outline:none;font-family:inherit">
+        <input value="{{ pass }}" onChange="{{ onPass }}" onKeyDown="{{ onKey }}" type="password" autocomplete="current-password" placeholder="Contraseña" style="height:48px;border:1px solid #D5DAE3;border-radius:14px;padding:0 14px;font-size:15px;outline:none;font-family:inherit">
+        <sc-if value="{{ hayErrLogin }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:13px;font-weight:600;color:#B4442B">{{ errLogin }}</div>
+        </sc-if>
+        <button onClick="{{ entrar }}" style="height:50px;border-radius:14px;background:{{ entrarBg }};color:#fff;font-family:Outfit;font-weight:800;font-size:15.5px">{{ entrarTxt }}</button>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ conSesion }}" hint-placeholder-val="{{ true }}">
+  <div style="flex:1;display:flex;gap:22px;justify-content:center;align-items:flex-end;flex-wrap:wrap;padding:18px 22px 28px">
+    <sc-for list="{{ marcos }}" as="f" hint-placeholder-count="3">
+      <div style="display:flex;flex-direction:column;gap:10px;width:{{ f.w }}">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:32px;height:32px;border-radius:50%;background:{{ f.color }};color:#fff;display:grid;place-items:center;font-family:Outfit;font-weight:800;font-size:15px;flex:none">{{ f.ini }}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-family:Outfit;font-weight:800;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ f.nombre }}</div>
+            <div style="font-size:11.5px;color:#4B5563;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ f.rol }}</div>
+          </div>
+          <span style="padding:4px 9px;border-radius:999px;font-size:11px;font-weight:700;background:{{ f.estBg }};color:{{ f.estTx }};white-space:nowrap;max-width:50%;overflow:hidden;text-overflow:ellipsis;flex:none">{{ f.est }}</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px">
+          <button onClick="{{ f.recargar }}" style="height:32px;padding:0 6px;border-radius:10px;background:#fff;border:1px solid #D5DAE3;font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Recargar</button>
+          <button onClick="{{ f.extra }}" style="height:32px;padding:0 6px;border-radius:10px;background:#fff;border:1px solid #D5DAE3;font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ f.extraTxt }}</button>
+        </div>
+        <div style="width:{{ f.w }};height:{{ f.h }};border-radius:{{ f.radio }};overflow:hidden;background:#000;box-shadow:0 0 0 {{ f.bisel }} #111,0 18px 40px rgba(17,17,17,.18)">
+          <div style="width:390px;height:844px;transform:scale({{ f.escala }});transform-origin:0 0">
+            <iframe ref="{{ f.setRef }}" src="{{ f.src }}" title="{{ f.nombre }}" allow="microphone; camera; autoplay; clipboard-write; fullscreen" style="display:block;width:390px;height:844px;border:0;background:#fff"></iframe>
+          </div>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const SB = 'https://nxdkjayuonzrqwjokfyu.supabase.co';
+const ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im54ZGtqYXl1b256cnF3am9rZnl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA2ODUyOTUsImV4cCI6MjEwNjI2MTI5NX0.f4hfHICq3NxJm8f5X7bnMq2WqqlRWahpaFjCEWl2FSg';
+const SESION = 'P:padres:sb-nxdkjayuonzrqwjokfyu-auth-token';
+const COL = { Azul: '#3068ED', Naranja: '#E56648', Verde: '#4E8A2A', Negro: '#111111', Rosa: '#D9467A' };
+const perfilDe = id => 'b' + String(id).replace(/-/g, '').slice(0, 12);
+const clave = (perfil, k) => 'P:' + perfil + ':' + k;
+const leerJSON = k => { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch (e) { return null; } };
+
+class Component extends DCLogic {
+  state = { bros: leerJSON('bros-banco-bros') || [], t: {}, pub: null, info: {}, alto: window.innerHeight, sesion: !!leerJSON(SESION), fase: 'inicio', error: '', email: localStorage.getItem('bros-banco-email') || '', pass: '', entrando: false, errLogin: '' };
+  els = {};
+
+  componentDidMount() {
+    this.onResize = () => this.setState({ alto: window.innerHeight });
+    window.addEventListener('resize', this.onResize);
+    this.leerVersion();
+    this.tVer = setInterval(() => this.leerVersion(), 15000);
+    this.tInfo = setInterval(() => this.leerMarcos(), 1500);
+    this.preparar();
+  }
+  componentWillUnmount() { window.removeEventListener('resize', this.onResize); clearInterval(this.tVer); clearInterval(this.tInfo); clearTimeout(this.tPrep); }
+
+  token() { const s = leerJSON(SESION); return s && s.access_token && (!s.expires_at || s.expires_at * 1000 > Date.now() + 20000) ? s.access_token : null; }
+  async rest(path, body, jwt) {
+    const r = await fetch(SB + path, { method: body ? 'POST' : 'GET', headers: { 'Content-Type': 'application/json', apikey: ANON, Authorization: 'Bearer ' + (jwt || ANON) }, body: body ? JSON.stringify(body) : undefined });
+    const j = await r.json().catch(() => null);
+    if (!r.ok || (j && j.error)) throw new Error((j && (j.error || j.message)) || 'Error ' + r.status);
+    return j;
+  }
+
+  // Monta la familia: lee los Bros de la cuenta de padres y activa en el banco los que falten
+  async preparar() {
+    clearTimeout(this.tPrep);
+    const jwt = this.token();
+    if (!jwt) {
+      const ses = leerJSON(SESION);
+      if (ses && ses.refresh_token) { // sesión caducada: se renueva sola
+        try {
+          const r = await fetch(SB + '/auth/v1/token?grant_type=refresh_token', { method: 'POST', headers: { 'Content-Type': 'application/json', apikey: ANON }, body: JSON.stringify({ refresh_token: ses.refresh_token }) });
+          const j = await r.json();
+          if (r.ok && j.access_token) { localStorage.setItem(SESION, JSON.stringify({ ...j, expires_at: j.expires_at || Math.floor(Date.now() / 1000) + (j.expires_in || 3600) })); return this.preparar(); }
+        } catch (e) {}
+      }
+      this.setState({ sesion: false, fase: 'sinSesion' }); return;
+    }
+    this.setState({ sesion: true, fase: 'cargando', error: '' });
+    try {
+      const bros = await this.rest('/rest/v1/bros?select=id,nombre,nacimiento,correa,familia&order=creado', null, jwt);
+      localStorage.setItem('bros-banco-bros', JSON.stringify(bros));
+      this.setState({ bros });
+      this.setState({ fase: 'activando' });
+      for (const b of bros) await this.activar(b, false);
+      this.setState({ fase: 'lista' });
+    } catch (e) { this.setState({ fase: 'error', error: e.message }); this.tPrep = setTimeout(() => this.preparar(), 8000); }
+  }
+  async activar(b, forzar) {
+    const p = perfilDe(b.id), k = clave(p, 'bros-dispositivo'), d = leerJSON(k);
+    if (d && d.token && !forzar) {
+      try { await this.rest('/rest/v1/rpc/amigos_bro', { p_token: d.token }); return; } catch (e) { if (!/no vinculado/i.test(e.message)) return; }
+    }
+    const jwt = this.token(); if (!jwt) return;
+    const codigo = await this.rest('/rest/v1/rpc/desvincular_bro', { p_bro: b.id }, jwt);
+    const j = await this.rest('/rest/v1/rpc/vincular_bro', { p_codigo: codigo });
+    const ahora = new Date().toISOString();
+    localStorage.setItem(k, JSON.stringify({ token: j.token, bro: j.bro || b.id, familia: j.familia || b.familia, nombre: j.nombre || b.nombre, nacimiento: j.nacimiento || b.nacimiento, correa: j.correa || b.correa, vinculado: ahora, encendido: ahora, avatar: null }));
+    localStorage.removeItem(clave(p, 'bro-os-real-db'));
+    localStorage.removeItem(clave(p, 'bros-primer-encendido-real'));
+    this.recargar(p);
+  }
+
+  async entrar() {
+    const { email, pass } = this.state;
+    if (!email.trim() || !pass || this.state.entrando) return;
+    this.setState({ entrando: true, errLogin: '' });
+    try {
+      const r = await fetch(SB + '/auth/v1/token?grant_type=password', { method: 'POST', headers: { 'Content-Type': 'application/json', apikey: ANON }, body: JSON.stringify({ email: email.trim(), password: pass }) });
+      const j = await r.json();
+      if (!r.ok || !j.access_token) throw new Error(/confirm/i.test(j.msg || j.error_description || '') ? 'Confirma tu email antes de entrar.' : 'Email o contraseña incorrectos.');
+      localStorage.setItem(SESION, JSON.stringify({ ...j, expires_at: j.expires_at || Math.floor(Date.now() / 1000) + (j.expires_in || 3600) }));
+      localStorage.setItem('bros-banco-email', email.trim());
+      this.setState({ entrando: false, pass: '', sesion: true });
+      this.recargar('padres');
+      this.preparar();
+    } catch (e) { this.setState({ entrando: false, errLogin: e.message }); }
+  }
+  async deCero() {
+    if (this.state.reiniciando) return;
+    if (!window.confirm('Empezar de cero: tus Bros quedarán como recién recibidos, sin apps pedidas, amigos, mensajes, comunidades, proyectos ni rewards. La familia y los Bros siguen activos. ¿Seguimos?')) return;
+    const jwt = this.token(); if (!jwt) return window.alert('La sesión de padres ha caducado. Recarga la página.');
+    this.setState({ reiniciando: true, congelado: true, limpieza: null });
+    await new Promise(r => setTimeout(r, 600)); // los móviles se paran para que ninguno vuelva a guardar lo viejo
+    try {
+      await this.rest('/rest/v1/rpc/reiniciar_familia_bros', {}, jwt);
+      const api = await import('./api-real.js?v=' + (window.BROS_V || Date.now()));
+      const fallos = [];
+      for (const b of this.state.bros) {
+        const p = perfilDe(b.id), d = leerJSON(clave(p, 'bros-dispositivo'));
+        ['bro-os-real-db', 'bros-primer-encendido-real'].forEach(k => localStorage.removeItem(clave(p, k)));
+        if (!d || !d.token) continue;
+        const limpio = api.datosLimpios({ ...d, tutor: undefined });
+        await this.rest('/rest/v1/rpc/estado_guardar_bro', { p_token: d.token, p_version: 0, p_datos: limpio });
+        const e = await this.rest('/rest/v1/rpc/estado_leer_bro', { p_token: d.token });
+        const x = (e && e.datos) || {}, am = await this.rest('/rest/v1/rpc/amigos_bro', { p_token: d.token });
+        const resto = (x.solicitudes || []).length + (x.comunidades || []).length + (x.rewards || []).length + (Array.isArray(am) ? am.length : 0);
+        if (resto) fallos.push(b.nombre);
+      }
+      ['bro-os-real-db', 'bros-padre-bro'].forEach(k => localStorage.removeItem(clave('padres', k)));
+      this.setState({ limpieza: fallos.length ? 'No se han limpiado: ' + fallos.join(', ') : 'ok' });
+    } catch (e) { this.setState({ limpieza: /function/i.test(e.message) ? 'Falta ejecutar reiniciar.sql en Supabase' : e.message }); }
+    this.setState({ reiniciando: false, congelado: false });
+    this.recargarTodo();
+  }
+  salir() {
+    if (!window.confirm('¿Salir del banco? Tus Bros siguen activos; solo se cierra la sesión de padres aquí.')) return;
+    localStorage.removeItem(SESION);
+    this.setState({ sesion: false, fase: 'sinSesion' });
+  }
+  async leerVersion() {
+    try {
+      const r = await fetch('version.json?t=' + Date.now(), { cache: 'no-store' });
+      const v = (await r.json()).v, antes = this.state.pub;
+      this.setState({ pub: v });
+      if (antes && antes !== 'sin-conexion' && v !== antes) this.recargarTodo();
+    } catch (e) { this.setState({ pub: 'sin-conexion' }); }
+  }
+  leerMarcos() {
+    const info = {};
+    for (const id of Object.keys(this.els)) {
+      const el = this.els[id]; const x = {};
+      try { const w = el && el.contentWindow; if (w) x.v = w.BROS_V || null; } catch (e) {}
+      info[id] = x;
+    }
+    this.setState({ info });
+    const pub = this.state.pub;
+    if (pub && pub !== 'sin-conexion') for (const id of Object.keys(info)) {
+      const x = info[id];
+      if (x.v && x.v !== pub && this.autoRec !== id + pub) { this.autoRec = id + pub; this.recargar(id); }
+    }
+  }
+  recargar(id) { this.setState(s => ({ t: { ...s.t, [id]: Date.now() } })); }
+  recargarTodo() { const t = {}; ['padres', ...this.state.bros.map(b => perfilDe(b.id))].forEach(id => t[id] = Date.now()); this.setState({ t }); }
+
+  renderVals() {
+    const s = this.state;
+    const esc = Math.max(0.5, Math.min(1, (s.alto - 160) / 860));
+    const pubOk = s.pub && s.pub !== 'sin-conexion';
+    const tam = { w: Math.round(390 * esc) + 'px', h: Math.round(844 * esc) + 'px', escala: esc, radio: Math.round(44 * esc) + 'px', bisel: Math.max(4, Math.round(9 * esc)) + 'px' };
+    const estado = (id, okTxt) => {
+      const x = s.info[id] || {};
+      if (!x.v) return ['Cargando…', '#F0F2F6', '#4B5563'];
+      if (pubOk && x.v !== s.pub) return ['Versión vieja', '#FFF3E0', '#9A5B0B'];
+      return [okTxt, '#EEF6E6', '#3D6B1F'];
+    };
+    const FAM = {
+      inicio: ['Preparando…', '#F0F2F6', '#4B5563', true], sinSesion: ['Sin sesión de padres', '#FFF3E0', '#9A5B0B', false],
+      esperando: ['Esperando la sesión de padres…', '#F0F2F6', '#4B5563', true], cargando: ['Cargando tu familia…', '#F0F2F6', '#4B5563', true],
+      activando: ['Activando a tus Bros…', '#EEF3FE', '#2452c2', true], lista: ['Familia activa · ' + s.bros.length + ' Bros', '#EEF6E6', '#3D6B1F', false],
+      error: ['Error: ' + s.error, '#FDECE8', '#B4442B', false]
+    }[s.fase];
+    if (s.fase === 'lista' && s.limpieza) { if (s.limpieza === 'ok') { FAM[0] = 'Familia activa · Bros vacíos ✓'; } else { FAM[0] = s.limpieza; FAM[1] = '#FDECE8'; FAM[2] = '#B4442B'; } }
+    if (s.reiniciando) { FAM[0] = 'Vaciando tus Bros…'; FAM[1] = '#EEF3FE'; FAM[2] = '#2452c2'; FAM[3] = true; }
+    const padres = (() => {
+      const e = estado('padres', 'Conectada');
+      const ruta = 'Padres Real.dc.html';
+      return { id: 'padres', nombre: 'Padres', rol: 'App de padres', color: '#111111', ini: 'P', ...tam,
+        src: s.congelado ? 'about:blank' : ruta + '?perfil=padres&t=' + (s.t.padres || 0), setRef: el => { this.els.padres = el; },
+        est: e[0], estBg: e[1], estTx: e[2], recargar: () => this.recargar('padres'),
+        extraTxt: 'Ir al inicio',
+        extra: () => this.recargar('padres') };
+    })();
+    const bros = s.sesion ? s.bros.map(b => {
+      const p = perfilDe(b.id), d = leerJSON(clave(p, 'bros-dispositivo'));
+      const e = !(d && d.token) ? ['Sin activar', '#FDECE8', '#B4442B'] : estado(p, 'Activo');
+      return { id: p, nombre: b.nombre, rol: 'Bro · correa ' + String(b.correa || 'Azul').toLowerCase(), color: COL[b.correa] || '#3068ED', ini: (b.nombre || '?')[0].toUpperCase(), ...tam,
+        src: (d && d.token && !s.congelado ? 'Bro OS Real.dc.html' : 'about:blank') + '?perfil=' + p + '&t=' + (s.t[p] || 0), setRef: el => { this.els[p] = el; },
+        est: e[0], estBg: e[1], estTx: e[2], recargar: () => this.recargar(p),
+        extraTxt: 'Reactivar', extra: async () => { if (!window.confirm('Se reactivará el Bro de ' + b.nombre + ' en el banco. Si estaba encendido en un móvil, ese móvil se desconecta. ¿Seguimos?')) return; try { await this.activar(b, true); } catch (er) { window.alert(er.message); } } };
+    }) : [];
+    return {
+      titulo: s.bros.length && s.sesion ? 'Banco de pruebas · familia real' : 'Banco de pruebas',
+      sub: s.sesion ? 'Tus Bros y la app de padres, conectados de verdad. Se actualizan solos al subir a GitHub.' : 'Entra una vez con tu cuenta de padres y el banco monta tu familia.',
+      fam: { t: FAM[0], bg: FAM[1], tx: FAM[2], girando: FAM[3], punto: !FAM[3], dot: FAM[2] },
+      pub: !s.pub ? { t: 'Comprobando GitHub…', bg: '#F0F2F6', tx: '#4B5563', dot: '#9CA3AF' }
+        : !pubOk ? { t: 'Sin conexión con GitHub', bg: '#FDECE8', tx: '#B4442B', dot: '#B4442B' }
+        : { t: 'Versión ' + s.pub, bg: '#EEF6E6', tx: '#3D6B1F', dot: '#4E8A2A' },
+      recargarTodo: () => this.recargarTodo(),
+      sinSesion: !s.sesion, conSesion: !!s.sesion, salir: () => this.salir(),
+      deCero: () => this.deCero(), deCeroTxt: s.reiniciando ? 'Reiniciando…' : 'Empezar de cero',
+      email: s.email, pass: s.pass, onEmail: e => this.setState({ email: e.target.value }), onPass: e => this.setState({ pass: e.target.value }),
+      onKey: e => { if (e.key === 'Enter') this.entrar(); }, entrar: () => this.entrar(),
+      entrarTxt: s.entrando ? 'Entrando…' : 'Entrar', entrarBg: s.entrando ? '#7F9BE0' : '#3068ED',
+      hayErrLogin: !!s.errLogin, errLogin: s.errLogin,
+      marcos: [...bros, padres]
+    };
+  }
+}
+</script>
+</body>
+</html>
