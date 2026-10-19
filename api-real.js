@@ -5,11 +5,12 @@
 // y la app de padres leen y escriben el MISMO estado. Lo que decide mamá, se aplica en Julio.
 // Sin código de acceso o sin conexión, funciona en local como el prototipo.
 // ============================================================
-import { datosIniciales, ejecutar } from './logica.js?v=2026-10-19.2';
+import { datosIniciales, ejecutar } from './logica.js?v=2026-10-19.3';
 
 const URL = 'https://nxdkjayuonzrqwjokfyu.supabase.co/functions/v1/bro-estado';
 const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im54ZGtqYXl1b256cnF3am9rZnl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA2ODUyOTUsImV4cCI6MjEwNjI2MTI5NX0.f4hfHICq3NxJm8f5X7bnMq2WqqlRWahpaFjCEWl2FSg';
 const FAMILIA = 'familia-julio';
+if (typeof window !== 'undefined') { (function(){if(window.__brosP)return;window.__brosP=1;var q=new URLSearchParams(location.search).get('perfil');if(q)window.name='bros:'+q.replace(/[^a-z0-9_-]/gi,'').slice(0,20);var m=/^bros:(.+)$/.exec(window.name||'');if(!m)return;var P='P:'+m[1]+':',S=Storage.prototype,g=S.getItem,s=S.setItem,r=S.removeItem;var es=function(x){try{return x===window.localStorage}catch(e){return false}};S.getItem=function(a){return g.call(this,es(this)?P+a:a)};S.setItem=function(a,b){return s.call(this,es(this)?P+a:a,b)};S.removeItem=function(a){return r.call(this,es(this)?P+a:a)};window.BROS_PERFIL=m[1];})(); }
 const LOCAL = 'bro-os-real-db';
 const RPC = 'https://nxdkjayuonzrqwjokfyu.supabase.co/rest/v1/rpc/';
 // Móvil vinculado en el primer encendido: guarda { token, bro, nombre, nacimiento, correa, avatar }
