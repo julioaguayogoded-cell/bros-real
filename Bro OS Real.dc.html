@@ -1271,6 +1271,13 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
             </button>
           </div>
+          <div style="padding:12px 16px 0">
+            <button onClick="{{ co.abrirWebs }}" style="width:100%;display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:16px;background:#fff;border:1px solid #E4E7EE;text-align:left">
+              <div style="width:40px;height:40px;border-radius:12px;background:#FF0000;display:grid;place-items:center;flex:none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"></path></svg></div>
+              <div style="flex:1;min-width:0"><div style="font-family:Outfit;font-weight:700;font-size:15px">Webs</div><div style="font-size:12.5px;color:#6B7280">Las webs aprobadas para tu edad</div></div>
+              <span style="font-size:20px;color:#9CA3AF">›</span>
+            </button>
+          </div>
 
           <sc-if value="{{ co.hayPregunta }}" hint-placeholder-val="{{ false }}">
             <div style="margin:18px 16px 0;display:flex;gap:10px;align-items:flex-start;animation:sube .25s ease-out">
@@ -2695,6 +2702,7 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
           temas: TEMAS.map(t0 => { const on = r && r.tema && t0.toLowerCase().includes(r.tema.split(' ')[0]); return { t: t0, bg: on ? '#111' : '#fff', tx: on ? '#fff' : '#111', borde: on ? '#111' : '#E4E7EE', onClick: () => this.buscarC(t0) }; }),
           tabs: [['videos', 'Vídeos'], ['imagenes', 'Imágenes'], ['articulos', 'Artículos'], ['webs', 'Webs']].map(([id, t0]) => ({ t: t0, bg: tipo === id ? '#111' : 'transparent', tx: tipo === id ? '#fff' : '#4B5563',
             onClick: () => { if (id === 'webs') { const e0 = (this.state.db && this.state.db.nino && this.state.db.nino.edad) || 12; const q = new URLSearchParams(location.search); q.set('edad', e0); location.href = 'Webs Real.dc.html?' + q.toString(); return; } this.setState({ tipoC: id, artC: null, imgC: null }); const q0 = (s.qC || '').trim(); if (q0) this.buscarC(q0, id); else this.setState({ resC: null, webC: null }); } })),
+          abrirWebs: () => { const e0 = (this.state.db && this.state.db.nino && this.state.db.nino.edad) || 12; const q = new URLSearchParams(location.search); q.set('edad', e0); location.href = 'Webs Real.dc.html?' + q.toString(); },
           bloqueado: !!(r && r.bloqueado),
           ...(() => {
             const que = r && r.bloqueado && r.pedible ? (r.autor || r.tema) : null, tipoP = r && r.autor ? 'canal' : 'contenido';
