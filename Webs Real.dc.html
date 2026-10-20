@@ -30,7 +30,7 @@
 
     <sc-if value="{{ p.lista }}" hint-placeholder-val="{{ true }}">
       <div style="padding:16px 16px 28px;display:flex;flex-direction:column;gap:16px">
-        <div style="font-size:13.5px;line-height:1.5;color:#374151;text-wrap:pretty">Webs revisadas por BroS Life para tu edad. Entras, encuentras lo que buscas y sales. Sin «lo más leído», sin anuncios.</div>
+        <div style="font-size:13.5px;line-height:1.5;color:#374151;text-wrap:pretty">Webs revisadas por BroS Life para tu edad. Entras, encuentras lo que buscas y sales.</div>
         <sc-if value="{{ cargando }}" hint-placeholder-val="{{ false }}">
           <div style="display:flex;gap:10px;align-items:center;justify-content:center;padding:30px 0;font-size:13.5px;color:#4B5563"><span style="width:16px;height:16px;border-radius:50%;border:2px solid #D5DAE3;border-top-color:#3068ED;animation:gira .8s linear infinite"></span>Cargando tus webs…</div>
         </sc-if>
@@ -130,6 +130,39 @@
     </sc-if>
   </div>
 
+  <sc-if value="{{ vi.abierto }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:4;background:#fff;display:flex;flex-direction:column">
+      <div style="flex:none;display:flex;align-items:center;gap:10px;padding:calc(10px + env(safe-area-inset-top)) 12px 10px;background:#111;color:#fff">
+        <button onClick="{{ vi.cerrar }}" aria-label="Cerrar" style="height:38px;padding:0 12px;border-radius:12px;background:rgba(255,255,255,.14);color:#fff;font-weight:700;font-size:13.5px;flex:none">‹ Mis webs</button>
+        <div style="flex:1;min-width:0;display:flex;align-items:center;gap:8px">
+          <div style="width:18px;height:18px;border-radius:4px;flex:none;background-color:#fff;background-size:contain;background-repeat:no-repeat;background-position:center;background-image:url({{ vi.icono }})"></div>
+          <span style="font-weight:700;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ vi.nombre }}</span>
+        </div>
+        <img src="logo.png" alt="" style="width:26px;height:26px;flex:none;background:#fff;border-radius:50%">
+      </div>
+      <sc-if value="{{ vi.cargando }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;display:flex;gap:10px;align-items:center;justify-content:center;font-size:13.5px;color:#4B5563"><span style="width:16px;height:16px;border-radius:50%;border:2px solid #D5DAE3;border-top-color:#3068ED;animation:gira .8s linear infinite"></span>Abriendo {{ vi.nombre }}…</div>
+      </sc-if>
+      <sc-if value="{{ vi.enMarco }}" hint-placeholder-val="{{ false }}">
+        <iframe src="{{ vi.url }}" title="{{ vi.nombre }}" referrerpolicy="strict-origin-when-cross-origin" sandbox="allow-scripts allow-same-origin allow-forms allow-popups-to-escape-sandbox" style="flex:1;width:100%;border:0;display:block"></iframe>
+      </sc-if>
+      <sc-if value="{{ vi.fuera }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:14px;padding:24px">
+          <div style="font-family:Outfit;font-weight:800;font-size:22px;line-height:1.2">{{ vi.nombre }} se abre en el navegador</div>
+          <div style="font-size:14.5px;line-height:1.5;color:#374151;text-wrap:pretty">Esta web no deja mostrarse dentro de otras apps. Está aprobada para ti, así que puedes abrirla normal. Cuando acabes, vuelve a BroS Life.</div>
+          <a href="{{ vi.url }}" target="_blank" rel="noopener" style="height:52px;border-radius:16px;background:#3068ED;color:#fff;font-family:Outfit;font-weight:800;font-size:16px;display:flex;align-items:center;justify-content:center;text-decoration:none">Abrir {{ vi.nombre }}</a>
+          <button onClick="{{ vi.cerrar }}" style="height:46px;border-radius:14px;background:#F0F2F6;font-weight:700;font-size:14.5px">Volver a mis webs</button>
+        </div>
+      </sc-if>
+      <sc-if value="{{ vi.bloqueado }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:14px;padding:24px">
+          <div style="background:#111;color:#fff;border-radius:20px;padding:20px 18px;font-family:Outfit;font-size:17px;font-weight:700;line-height:1.3">{{ vi.motivo }}</div>
+          <button onClick="{{ vi.cerrar }}" style="height:46px;border-radius:14px;background:#F0F2F6;font-weight:700;font-size:14.5px">Volver a mis webs</button>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+
   <sc-if value="{{ hayAviso }}" hint-placeholder-val="{{ false }}">
     <div style="position:absolute;left:16px;right:16px;bottom:calc(20px + env(safe-area-inset-bottom));background:#111;color:#fff;border-radius:14px;padding:12px 14px;font-size:13.5px;line-height:1.4;animation:sube .2s ease-out;z-index:5">{{ aviso }}</div>
   </sc-if>
@@ -144,7 +177,7 @@ const MOTIVO = { fuera_de_lista: 'Esta página no está en tus webs aprobadas.',
 const fav = d => 'https://www.google.com/s2/favicons?sz=64&domain=' + d;
 
 class Component extends DCLogic {
-  state = { webs: null, pila: [], lectura: null, cargandoLec: false, pedirTxt: '', aviso: '' };
+  state = { webs: null, pila: [], lectura: null, cargandoLec: false, pedirTxt: '', aviso: '', visor: null };
   scrollRef = React.createRef();
 
   edad() { const q = Number(new URLSearchParams(location.search).get('edad')); if (q) { try { localStorage.setItem('bros-web-edad', q); } catch (e) {} return q; } return Number(localStorage.getItem('bros-web-edad')) || 12; }
@@ -165,6 +198,13 @@ class Component extends DCLogic {
   avisar(t) { this.setState({ aviso: t }); clearTimeout(this.tA); this.tA = setTimeout(() => this.setState({ aviso: '' }), 3000); }
   arriba() { const el = this.scrollRef.current; if (el) el.scrollTop = 0; }
 
+  async visor(w) {
+    this.setState({ visor: { nombre: w.nombre, dominio: w.dominio, cargando: true } });
+    try {
+      const j = await this.llamar('visor', { url: w.inicio });
+      this.setState({ visor: { nombre: w.nombre, dominio: w.dominio, cargando: false, url: j.url || w.inicio, embeber: !!j.embeber, bloqueado: !!j.bloqueado, motivo: j.motivo } });
+    } catch (e) { this.setState({ visor: { nombre: w.nombre, dominio: w.dominio, cargando: false, url: w.inicio, embeber: false } }); }
+  }
   async abrir(url, nueva = true) {
     const pila = nueva ? [...this.state.pila, url] : this.state.pila;
     this.setState({ pila, lectura: null, cargandoLec: true }, () => this.arriba());
@@ -195,7 +235,7 @@ class Component extends DCLogic {
       cab: leyendo ? { titulo: L && L.sitio ? L.sitio.nombre : 'Webs', sub: L && L.tipo === 'articulo' ? 'Artículo' : 'Lectura Bro' } : { titulo: 'Webs aprobadas', sub: 'Content · revisadas por BroS Life' },
       atras: () => this.atras(), volverLista: () => this.setState({ pila: [], lectura: null }, () => this.arriba()),
       cargando: s.webs === null,
-      grupos: Object.keys(grupos).map(a => ({ areaMay: a.toUpperCase(), color: (AREA[a] || AREA.Tiendas)[0], fondo: (AREA[a] || AREA.Tiendas)[1], webs: grupos[a].map(w => ({ nombre: w.nombre, descripcion: w.descripcion || w.dominio, icono: fav(w.dominio), abrir: () => this.abrir(w.inicio) })) })),
+      grupos: Object.keys(grupos).map(a => ({ areaMay: a.toUpperCase(), color: (AREA[a] || AREA.Tiendas)[0], fondo: (AREA[a] || AREA.Tiendas)[1], webs: grupos[a].map(w => ({ nombre: w.nombre, descripcion: w.descripcion || w.dominio, icono: fav(w.dominio), abrir: () => this.visor(w) })) })),
       pedirTxt: s.pedirTxt, onPedirTxt: e => this.setState({ pedirTxt: e.target.value }),
       pedir: async () => { const t = s.pedirTxt.trim(); if (!t) return; try { await this.llamar('pedir', { texto: t }); this.setState({ pedirTxt: '' }); this.avisar('Hecho. BroS Life la revisará.'); } catch (e) { this.avisar(e.message); } },
       lec: {
@@ -208,6 +248,7 @@ class Component extends DCLogic {
         enlacesTitulo: L && L.tipo === 'portada' ? 'EN ' + (L.sitio ? L.sitio.nombre.toUpperCase() : 'ESTA WEB') : 'SEGUIR EN ' + (L && L.sitio ? L.sitio.nombre.toUpperCase() : 'ESTA WEB'),
         enlaces: L && L.enlaces ? L.enlaces.map(e => ({ t: e.t, abrir: () => this.abrir(e.url) })) : []
       },
+      vi: (() => { const v = s.visor; return v ? { abierto: true, nombre: v.nombre, icono: fav(v.dominio), url: v.url || '', cargando: !!v.cargando, enMarco: !v.cargando && !v.bloqueado && v.embeber, fuera: !v.cargando && !v.bloqueado && !v.embeber, bloqueado: !!v.bloqueado, motivo: MOTIVO[v.motivo] || MOTIVO.fuera_de_lista, cerrar: () => this.setState({ visor: null }) } : { abierto: false }; })(),
       hayAviso: !!s.aviso, aviso: s.aviso
     };
   }
