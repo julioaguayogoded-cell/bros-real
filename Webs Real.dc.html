@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<script src="./perfil.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>html,body{margin:0;height:100%;background:#F4F5F9;font-family:Inter,system-ui,sans-serif;color:#111;-webkit-text-size-adjust:100%;overscroll-behavior:none} a{color:#3068ED} a:hover{color:#1f4fc0} button{font-family:inherit;border:0;cursor:pointer;color:inherit;background:none} input{font-family:inherit;color:#111} @keyframes gira{to{transform:rotate(360deg)}} @keyframes sube{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}</style>
+</helmet>
+<div style="height:100dvh;display:flex;justify-content:center;overflow:hidden">
+<div data-screen-label="Webs aprobadas" style="width:100%;max-width:480px;height:100%;background:#F4F5F9;display:flex;flex-direction:column;position:relative">
+
+  <div style="flex:none;display:flex;align-items:center;gap:10px;padding:calc(12px + env(safe-area-inset-top)) 14px 12px;background:#fff;border-bottom:1px solid #E4E7EE">
+    <button onClick="{{ atras }}" aria-label="Atrás" style="width:42px;height:42px;border-radius:13px;background:#F0F2F6;display:grid;place-items:center;font-size:22px;flex:none">‹</button>
+    <div style="flex:1;min-width:0">
+      <div style="font-family:Outfit;font-weight:800;font-size:19px;line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ cab.titulo }}</div>
+      <div style="font-size:12px;color:#4B5563;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ cab.sub }}</div>
+    </div>
+    <img src="logo.png" alt="BroS Life" style="width:30px;height:30px;flex:none">
+  </div>
+
+  <div ref="{{ scrollRef }}" style="flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch">
+
+    <sc-if value="{{ p.lista }}" hint-placeholder-val="{{ true }}">
+      <div style="padding:16px 16px 28px;display:flex;flex-direction:column;gap:16px">
+        <div style="font-size:13.5px;line-height:1.5;color:#374151;text-wrap:pretty">Webs revisadas por BroS Life para tu edad. Entras, encuentras lo que buscas y sales. Sin «lo más leído», sin anuncios.</div>
+        <sc-if value="{{ cargando }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;gap:10px;align-items:center;justify-content:center;padding:30px 0;font-size:13.5px;color:#4B5563"><span style="width:16px;height:16px;border-radius:50%;border:2px solid #D5DAE3;border-top-color:#3068ED;animation:gira .8s linear infinite"></span>Cargando tus webs…</div>
+        </sc-if>
+        <sc-for list="{{ grupos }}" as="g" hint-placeholder-count="0">
+          <div style="display:flex;flex-direction:column;gap:9px">
+            <div style="font-size:11.5px;font-weight:800;letter-spacing:.07em;color:{{ g.color }}">{{ g.areaMay }}</div>
+            <sc-for list="{{ g.webs }}" as="w" hint-placeholder-count="0">
+              <button onClick="{{ w.abrir }}" style="display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #E4E7EE;border-radius:18px;padding:12px 14px;text-align:left;width:100%">
+                <div style="width:44px;height:44px;border-radius:13px;background:{{ g.fondo }};flex:none;display:grid;place-items:center;overflow:hidden">
+                  <div style="width:26px;height:26px;background-size:contain;background-repeat:no-repeat;background-position:center;background-image:url({{ w.icono }})"></div>
+                </div>
+                <div style="flex:1;min-width:0">
+                  <div style="font-family:Outfit;font-weight:700;font-size:16px">{{ w.nombre }}</div>
+                  <div style="font-size:12.5px;color:#4B5563;margin-top:1px">{{ w.descripcion }}</div>
+                </div>
+                <span style="font-size:22px;color:#9CA3AF">›</span>
+              </button>
+            </sc-for>
+          </div>
+        </sc-for>
+
+        <div style="margin-top:6px;background:#fff;border:1px solid #E4E7EE;border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:10px">
+          <div style="font-weight:700;font-size:14px">¿Echas de menos una web?</div>
+          <div style="display:flex;gap:8px">
+            <input value="{{ pedirTxt }}" onChange="{{ onPedirTxt }}" placeholder="Nombre o dirección de la web" style="flex:1;min-width:0;height:44px;border:1px solid #D5DAE3;border-radius:12px;padding:0 12px;font-size:16px;outline:none">
+            <button onClick="{{ pedir }}" style="flex:none;height:44px;padding:0 14px;border-radius:12px;background:#111;color:#fff;font-weight:700;font-size:14px">Pedirla</button>
+          </div>
+          <div style="font-size:12px;color:#4B5563">BroS Life la revisa antes de añadirla.</div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ p.leyendo }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:16px 16px 28px;display:flex;flex-direction:column;gap:14px;animation:sube .2s ease-out">
+        <sc-if value="{{ lec.cargando }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;gap:10px;align-items:center;justify-content:center;padding:40px 0;font-size:13.5px;color:#4B5563"><span style="width:16px;height:16px;border-radius:50%;border:2px solid #D5DAE3;border-top-color:#3068ED;animation:gira .8s linear infinite"></span>Abriendo en Lectura Bro…</div>
+        </sc-if>
+
+        <sc-if value="{{ lec.bloqueado }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#111;color:#fff;border-radius:20px;padding:20px 18px;display:flex;gap:14px;align-items:center">
+            <img src="facew.png" alt="" style="width:38px;height:38px;flex:none">
+            <div style="font-family:Outfit;font-size:17px;font-weight:700;line-height:1.3">{{ lec.motivo }}</div>
+          </div>
+          <button onClick="{{ volverLista }}" style="height:48px;border-radius:14px;background:#fff;border:1px solid #E4E7EE;font-weight:700;font-size:15px">Volver a mis webs</button>
+        </sc-if>
+
+        <sc-if value="{{ lec.listo }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:center;gap:8px">
+            <div style="width:18px;height:18px;border-radius:4px;background-size:contain;background-repeat:no-repeat;background-position:center;background-image:url({{ lec.icono }})"></div>
+            <span style="font-size:12px;font-weight:700;color:#374151">{{ lec.sitio }}</span>
+            <span style="font-size:11px;font-weight:700;color:#3D6B1F;background:#EEF6E6;padding:2px 7px;border-radius:6px">Lectura Bro</span>
+          </div>
+          <div style="font-family:Outfit;font-weight:800;font-size:25px;line-height:1.15;letter-spacing:-.01em;text-wrap:pretty">{{ lec.titulo }}</div>
+          <sc-if value="{{ lec.hayAutor }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:12.5px;color:#4B5563">{{ lec.autor }}</div>
+          </sc-if>
+          <sc-if value="{{ lec.hayImagen }}" hint-placeholder-val="{{ false }}">
+            <div role="img" style="width:100%;aspect-ratio:16/9;border-radius:16px;background-color:#E4E7EE;background-size:cover;background-position:center;background-image:url({{ lec.imagen }})"></div>
+          </sc-if>
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <sc-for list="{{ lec.bloques }}" as="x" hint-placeholder-count="0">
+              <div style="font-size:{{ x.fs }};font-weight:{{ x.fw }};line-height:1.6;color:{{ x.color }};font-family:{{ x.ff }};padding-left:{{ x.pl }};border-left:{{ x.borde }};font-style:{{ x.fst }};text-wrap:pretty">{{ x.texto }}</div>
+              <sc-if value="{{ x.esImg }}" hint-placeholder-val="{{ false }}">
+                <div role="img" aria-label="{{ x.alt }}" style="width:100%;aspect-ratio:4/3;border-radius:14px;background-color:#E4E7EE;background-size:cover;background-position:center;background-image:url({{ x.src }})"></div>
+              </sc-if>
+            </sc-for>
+          </div>
+
+          <sc-if value="{{ lec.hayEnlaces }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:6px;font-size:11.5px;font-weight:800;letter-spacing:.07em;color:#3068ED">{{ lec.enlacesTitulo }}</div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <sc-for list="{{ lec.enlaces }}" as="e" hint-placeholder-count="0">
+                <button onClick="{{ e.abrir }}" style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #E4E7EE;border-radius:14px;padding:11px 13px;text-align:left;width:100%">
+                  <span style="flex:1;font-size:14px;font-weight:600;line-height:1.35">{{ e.t }}</span>
+                  <span style="font-size:18px;color:#9CA3AF">›</span>
+                </button>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <div style="margin-top:10px;background:#111;color:#fff;border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;gap:10px;align-items:center"><img src="facew.png" alt="" style="width:30px;height:30px"><div style="font-family:Outfit;font-weight:800;font-size:18px">Ya lo tienes.</div></div>
+            <div style="font-size:14px;line-height:1.45">¿Quieres ver otra cosa o vuelves?</div>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px">
+              <button onClick="{{ volverLista }}" style="height:44px;border-radius:12px;background:rgba(255,255,255,.14);color:#fff;font-weight:700;font-size:14px">Otra web</button>
+              <a href="{{ urlBro }}" style="height:44px;border-radius:12px;background:#fff;color:#111;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;text-decoration:none">Volver a mi Bro</a>
+            </div>
+          </div>
+          <div style="font-size:11px;color:#4B5563;text-align:center">Contenido de {{ lec.sitio }}, mostrado sin módulos que enganchen.</div>
+        </sc-if>
+
+        <sc-if value="{{ lec.fallo }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#fff;border:1px solid #E4E7EE;border-radius:18px;padding:18px;font-size:14.5px;line-height:1.5;text-wrap:pretty">{{ lec.falloTxt }}</div>
+          <button onClick="{{ volverLista }}" style="height:48px;border-radius:14px;background:#111;color:#fff;font-weight:700;font-size:15px">Volver a mis webs</button>
+        </sc-if>
+      </div>
+    </sc-if>
+  </div>
+
+  <sc-if value="{{ hayAviso }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:16px;right:16px;bottom:calc(20px + env(safe-area-inset-bottom));background:#111;color:#fff;border-radius:14px;padding:12px 14px;font-size:13.5px;line-height:1.4;animation:sube .2s ease-out;z-index:5">{{ aviso }}</div>
+  </sc-if>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const FN = 'https://nxdkjayuonzrqwjokfyu.supabase.co/functions/v1/bro-web';
+const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im54ZGtqYXl1b256cnF3am9rZnl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA2ODUyOTUsImV4cCI6MjEwNjI2MTI5NX0.f4hfHICq3NxJm8f5X7bnMq2WqqlRWahpaFjCEWl2FSg';
+const AREA = { Descubrir: ['#3068ED', '#EEF3FE'], Deporte: ['#3D7A1F', '#EEF6E6'], Crear: ['#C24A2E', '#FDF0EC'], Libros: ['#6A4FE0', '#F1EEFD'], Tiendas: ['#111111', '#F0F2F6'] };
+const MOTIVO = { fuera_de_lista: 'Esta página no está en tus webs aprobadas.', redireccion: 'Esta página te lleva fuera de tus webs aprobadas.', no_adecuado: 'Este contenido no es adecuado para ti.', url: 'No he entendido esa dirección.' };
+const fav = d => 'https://www.google.com/s2/favicons?sz=64&domain=' + d;
+
+class Component extends DCLogic {
+  state = { webs: null, pila: [], lectura: null, cargandoLec: false, pedirTxt: '', aviso: '' };
+  scrollRef = React.createRef();
+
+  edad() { const q = Number(new URLSearchParams(location.search).get('edad')); if (q) { try { localStorage.setItem('bros-web-edad', q); } catch (e) {} return q; } return Number(localStorage.getItem('bros-web-edad')) || 12; }
+  componentDidMount() { this.llamar('lista').then(j => this.setState({ webs: j.webs || [] })).catch(e => { this.setState({ webs: [] }); this.avisar(e.message); }); }
+  componentWillUnmount() { clearTimeout(this.tA); }
+
+  async llamar(accion, datos = {}) {
+    const h = { 'Content-Type': 'application/json', Authorization: 'Bearer ' + KEY, apikey: KEY };
+    let disp = null; try { disp = JSON.parse(localStorage.getItem('bros-dispositivo')); } catch (e) {}
+    if (disp && disp.token) h['x-bros-token'] = disp.token;
+    else { let c = localStorage.getItem('bros-real-codigo'); if (!c) { c = (window.prompt('Código de acceso a BroS Life real') || '').trim(); if (c) localStorage.setItem('bros-real-codigo', c); } h['x-bros-codigo'] = c || ''; }
+    const r = await fetch(FN, { method: 'POST', headers: h, body: JSON.stringify({ accion, edad: this.edad(), ...datos }) });
+    if (r.status === 401) { localStorage.removeItem('bros-real-codigo'); throw new Error('Sin acceso. Vuelve a intentarlo.'); }
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok || j.error) throw new Error(j.error || 'Sin conexión');
+    return j;
+  }
+  avisar(t) { this.setState({ aviso: t }); clearTimeout(this.tA); this.tA = setTimeout(() => this.setState({ aviso: '' }), 3000); }
+  arriba() { const el = this.scrollRef.current; if (el) el.scrollTop = 0; }
+
+  async abrir(url, nueva = true) {
+    const pila = nueva ? [...this.state.pila, url] : this.state.pila;
+    this.setState({ pila, lectura: null, cargandoLec: true }, () => this.arriba());
+    try { const j = await this.llamar('abrir', { url }); this.setState({ lectura: j, cargandoLec: false }); }
+    catch (e) { this.setState({ lectura: { error_web: true }, cargandoLec: false }); this.avisar(e.message); }
+  }
+  atras() {
+    const p = this.state.pila;
+    if (p.length > 1) { const np = p.slice(0, -1); this.setState({ pila: np }); this.abrir(np[np.length - 1], false); }
+    else if (p.length === 1) this.setState({ pila: [], lectura: null }, () => this.arriba());
+    else location.href = this.urlBro();
+  }
+  urlBro() { return 'Bro OS Real.dc.html' + location.search.replace(/([?&])edad=\d+&?/, '$1').replace(/[?&]$/, ''); }
+
+  renderVals() {
+    const s = this.state, L = s.lectura, leyendo = s.pila.length > 0;
+    const grupos = {};
+    (s.webs || []).forEach(w => { (grupos[w.area] = grupos[w.area] || []).push(w); });
+    const bloques = L && L.bloques ? L.bloques.map(b => {
+      const img = b.k === 'img', h = b.k === 'h', li = b.k === 'li', cita = b.k === 'cita', pie = b.k === 'pie';
+      return { esImg: img, src: b.src || '', alt: b.alt || '', texto: img ? '' : (li ? '• ' : '') + (b.t || ''),
+        fs: h ? '19px' : pie ? '12.5px' : '15.5px', fw: h ? '800' : '400', ff: h ? 'Outfit' : 'Inter', color: pie ? '#4B5563' : '#111',
+        pl: cita ? '12px' : li ? '4px' : '0', borde: cita ? '3px solid #3068ED' : '0', fst: cita ? 'italic' : 'normal' };
+    }) : [];
+    const ok = !!L && !L.bloqueado && !L.error_web && !s.cargandoLec;
+    return {
+      p: { lista: !leyendo, leyendo }, scrollRef: this.scrollRef, urlBro: this.urlBro(),
+      cab: leyendo ? { titulo: L && L.sitio ? L.sitio.nombre : 'Webs', sub: L && L.tipo === 'articulo' ? 'Artículo' : 'Lectura Bro' } : { titulo: 'Webs aprobadas', sub: 'Content · revisadas por BroS Life' },
+      atras: () => this.atras(), volverLista: () => this.setState({ pila: [], lectura: null }, () => this.arriba()),
+      cargando: s.webs === null,
+      grupos: Object.keys(grupos).map(a => ({ areaMay: a.toUpperCase(), color: (AREA[a] || AREA.Tiendas)[0], fondo: (AREA[a] || AREA.Tiendas)[1], webs: grupos[a].map(w => ({ nombre: w.nombre, descripcion: w.descripcion || w.dominio, icono: fav(w.dominio), abrir: () => this.abrir(w.inicio) })) })),
+      pedirTxt: s.pedirTxt, onPedirTxt: e => this.setState({ pedirTxt: e.target.value }),
+      pedir: async () => { const t = s.pedirTxt.trim(); if (!t) return; try { await this.llamar('pedir', { texto: t }); this.setState({ pedirTxt: '' }); this.avisar('Hecho. BroS Life la revisará.'); } catch (e) { this.avisar(e.message); } },
+      lec: {
+        cargando: s.cargandoLec,
+        bloqueado: !!(L && L.bloqueado) && !s.cargandoLec, motivo: L && L.bloqueado ? (MOTIVO[L.motivo] || MOTIVO.fuera_de_lista) : '',
+        fallo: !!(L && L.error_web) && !s.cargandoLec, falloTxt: 'Esta página no se puede abrir ahora en Lectura Bro' + (L && L.sitio ? ' (' + L.sitio.nombre + ')' : '') + '. Prueba otra o vuelve más tarde.',
+        listo: ok, sitio: L && L.sitio ? L.sitio.nombre : '', icono: L && L.sitio ? fav(L.sitio.dominio) : '',
+        titulo: L ? L.titulo : '', autor: L ? L.autor : '', hayAutor: !!(L && L.autor), imagen: L ? L.imagen : '', hayImagen: !!(L && L.imagen) && !(L.bloques || []).some(b => b.k === 'img' && b.src === L.imagen),
+        bloques, hayEnlaces: !!(L && L.enlaces && L.enlaces.length),
+        enlacesTitulo: L && L.tipo === 'portada' ? 'EN ' + (L.sitio ? L.sitio.nombre.toUpperCase() : 'ESTA WEB') : 'SEGUIR EN ' + (L && L.sitio ? L.sitio.nombre.toUpperCase() : 'ESTA WEB'),
+        enlaces: L && L.enlaces ? L.enlaces.map(e => ({ t: e.t, abrir: () => this.abrir(e.url) })) : []
+      },
+      hayAviso: !!s.aviso, aviso: s.aviso
+    };
+  }
+}
+</script>
+</body>
+</html>

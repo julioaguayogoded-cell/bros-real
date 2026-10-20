@@ -2693,8 +2693,8 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
           onKey: e => { if (e.key === 'Enter') this.buscarC(s.qC || ''); },
           onBuscar: () => this.buscarC(s.qC || ''),
           temas: TEMAS.map(t0 => { const on = r && r.tema && t0.toLowerCase().includes(r.tema.split(' ')[0]); return { t: t0, bg: on ? '#111' : '#fff', tx: on ? '#fff' : '#111', borde: on ? '#111' : '#E4E7EE', onClick: () => this.buscarC(t0) }; }),
-          tabs: [['videos', 'Vídeos'], ['imagenes', 'Imágenes'], ['articulos', 'Artículos']].map(([id, t0]) => ({ t: t0, bg: tipo === id ? '#111' : 'transparent', tx: tipo === id ? '#fff' : '#4B5563',
-            onClick: () => { this.setState({ tipoC: id, artC: null, imgC: null }); const q0 = (s.qC || '').trim(); if (q0) this.buscarC(q0, id); else this.setState({ resC: null, webC: null }); } })),
+          tabs: [['videos', 'Vídeos'], ['imagenes', 'Imágenes'], ['articulos', 'Artículos'], ['webs', 'Webs']].map(([id, t0]) => ({ t: t0, bg: tipo === id ? '#111' : 'transparent', tx: tipo === id ? '#fff' : '#4B5563',
+            onClick: () => { if (id === 'webs') { const e0 = (this.state.db && this.state.db.nino && this.state.db.nino.edad) || 12; const q = new URLSearchParams(location.search); q.set('edad', e0); location.href = 'Webs Real.dc.html?' + q.toString(); return; } this.setState({ tipoC: id, artC: null, imgC: null }); const q0 = (s.qC || '').trim(); if (q0) this.buscarC(q0, id); else this.setState({ resC: null, webC: null }); } })),
           bloqueado: !!(r && r.bloqueado),
           ...(() => {
             const que = r && r.bloqueado && r.pedible ? (r.autor || r.tema) : null, tipoP = r && r.autor ? 'canal' : 'contenido';
