@@ -2548,7 +2548,7 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
     };
     const base = {
       t, marco, cargando: !db, listo: !!db,
-      bloqueado: !!s.bloqueo && this.props.pantallaBloqueo !== false, lock,
+      bloqueado: !!s.bloqueo && this.props.pantallaBloqueo !== false && !window.BroNativo, lock,
       bloquearDemo: () => this.bloquear(),
       verBarraDemo: conBarra,
       swNinoBg: !padre ? '#fff' : 'transparent', swNinoTx: !padre ? '#111' : 'rgba(255,255,255,.6)',
