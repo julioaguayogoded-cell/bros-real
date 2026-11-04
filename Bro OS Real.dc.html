@@ -133,10 +133,6 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
                   <img src="facew.png" alt="" style="width:60%;height:60%;filter:brightness(0)">
                 </div>
               </button>
-              <div>
-                <div style="font-family:Outfit;font-size:27px;font-weight:800;letter-spacing:-.03em;line-height:1.1">{{ saludo }}</div>
-                <div style="font-size:13.5px;color:{{ t.muted }};margin-top:6px;text-wrap:pretty">{{ saludoSub }}</div>
-              </div>
               <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;max-width:340px">
                 <sc-for list="{{ sugerencias }}" as="s" hint-placeholder-count="4">
                   
@@ -187,12 +183,12 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
                 </button>
               </sc-if>
               <sc-if value="{{ hayPilares }}" hint-placeholder-val="{{ true }}">
-                <div style="width:100%;max-width:360px;display:flex;flex-wrap:wrap;justify-content:center;row-gap:14px;column-gap:4px;margin-top:6px">
+                <div style="width:100%;max-width:330px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));row-gap:22px;column-gap:10px;margin-top:10px">
                   <sc-for list="{{ pilares }}" as="pi" hint-placeholder-count="9">
-                    <button onClick="{{ pi.onClick }}" style="display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0;width:calc((100% - 20px) / 6);transform:translateX({{ pi.dx }})">
-                      <div style="width:46px;height:46px;border-radius:14px;background:{{ pi.color }};display:grid;place-items:center;box-shadow:0 6px 14px rgba(17,17,17,.1)">
+                    <button onClick="{{ pi.onClick }}" style="display:flex;flex-direction:column;align-items:center;gap:8px;min-width:0">
+                      <div style="width:68px;height:68px;border-radius:20px;background:{{ pi.color }};display:grid;place-items:center;box-shadow:0 8px 18px rgba(17,17,17,.12)">
                         
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="{{ pi.icono }}"></path></svg></div><span style="font-size:10px;font-weight:600;color:{{ t.txt }};max-width:100%;white-space:nowrap;letter-spacing:-.01em">{{ pi.t }}</span>
+                      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="{{ pi.icono }}"></path></svg></div><span style="font-size:13px;font-weight:600;color:{{ t.txt }};max-width:100%;white-space:nowrap;letter-spacing:-.01em">{{ pi.t }}</span>
                       
                     </button>
                   </sc-for>
@@ -1607,13 +1603,15 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
         </div>
       </sc-if>
 
-      <!-- Dock: voz o chat -->
+      <!-- Dock: voz o chat (no en la pantalla de inicio: allí se habla tocando el logo de Bro) -->
+      <sc-if value="{{ verDock }}" hint-placeholder-val="{{ true }}">
       <div style="position:absolute;left:0;right:0;bottom:0;z-index:15;display:flex;gap:8px;align-items:center;padding:{{ marco.padDock }};background:{{ t.head }};border-top:1px solid {{ t.line }}">
         <input ref="{{ inputRef }}" value="{{ texto }}" onChange="{{ onTexto }}" onKeyDown="{{ onTextoKey }}" placeholder="{{ placeholder }}" style="flex:1;min-width:0;border:1px solid {{ t.line }};background:{{ t.soft }};color:{{ t.txt }};border-radius:999px;padding:13px 16px;font-size:14.5px;outline:none">
         <button onClick="{{ micOEnviar }}" aria-label="Hablar o enviar" style="width:52px;height:52px;border-radius:50%;padding:3px;flex:none;background:conic-gradient(from 140deg,#3068ED 0 25%,#E56648 0 50%,#82B94F 0 75%,#111 0);animation:{{ orbAnim }}">
           <div style="width:100%;height:100%;border-radius:50%;background:linear-gradient(135deg,#3068ED,#6f49d8);display:grid;place-items:center;color:#fff;font-size:20px">{{ micIc }}</div>
         </button>
       </div>
+      </sc-if>
     </sc-if>
 
     <!-- ===== MODO DESCANSO (Julio) ===== -->
@@ -2903,6 +2901,7 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
       })(),
       hayHoy: !padre,
       cabeceraHora: !padre && pantalla === 'bro',
+      verDock: padre || pantalla !== 'bro' || !!(s.sesion && s.sesion[this.modo()] && s.sesion[this.modo()].conv && s.sesion[this.modo()].conv.length) || !!s.escuchando || !!s.texto,
       est: (e => {
         const red = e.red, nm = Math.max(0, Math.min(4, e.nivelMovil || 0)), nw = Math.max(0, Math.min(4, e.nivelWifi == null ? 4 : e.nivelWifi));
         const bat = typeof e.bateria === 'number' ? Math.max(0, Math.min(100, e.bateria)) : null;
