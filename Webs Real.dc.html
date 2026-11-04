@@ -243,7 +243,7 @@ class Component extends DCLogic {
     const ok = !!L && !L.bloqueado && !L.error_web && !s.cargandoLec;
     return {
       p: { lista: !leyendo, leyendo }, scrollRef: this.scrollRef, urlBro: this.urlBro(),
-      cab: leyendo ? { titulo: L && L.sitio ? L.sitio.nombre : 'Webs', sub: L && L.tipo === 'articulo' ? 'Artículo' : 'Lectura Bro' } : { titulo: 'Webs aprobadas', sub: 'Content · revisadas por BroS Life' },
+      cab: leyendo ? { titulo: L && L.sitio ? L.sitio.nombre : 'Navega', sub: L && L.tipo === 'articulo' ? 'Artículo' : 'Lectura Bro' } : { titulo: 'Navega', sub: 'Content · revisadas por BroS Life' },
       atras: () => this.atras(), volverLista: () => this.setState({ pila: [], lectura: null }, () => this.arriba()),
       cargando: s.webs === null,
       grupos: Object.keys(grupos).map(a => ({ areaMay: a.toUpperCase(), color: (AREA[a] || AREA.Tiendas)[0], fondo: (AREA[a] || AREA.Tiendas)[1], webs: grupos[a].map(w => ({ nombre: w.nombre, descripcion: w.descripcion || w.dominio, icono: fav(w.dominio), abrir: () => this.visor(w) })) })),
