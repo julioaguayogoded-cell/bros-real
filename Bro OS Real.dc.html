@@ -1285,6 +1285,73 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
 
         <!-- CONTENIDO -->
         <sc-if value="{{ p.contenido }}" hint-placeholder-val="{{ false }}">
+          <!-- APRENDE LEYENDO: artículos originales de fuentes fiables -->
+          <sc-if value="{{ le.verTarjeta }}" hint-placeholder-val="{{ true }}">
+            <div style="padding:16px 16px 0">
+              <button onClick="{{ le.abrir }}" style="width:100%;display:flex;align-items:center;gap:14px;padding:16px;border-radius:20px;background:linear-gradient(135deg,#3068ED,#6f49d8);color:#fff;text-align:left;box-shadow:0 10px 24px rgba(48,104,237,.25)">
+                <div style="width:46px;height:46px;border-radius:14px;background:rgba(255,255,255,.18);display:grid;place-items:center;flex:none"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 5h7a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H2zM22 5h-7a3 3 0 0 0-3 3v12a2 2 0 0 1 2-2h8z"></path></svg></div>
+                <div style="flex:1;min-width:0"><div style="font-family:Outfit;font-weight:800;font-size:17px">Aprende leyendo</div><div style="font-size:12.5px;opacity:.85">Artículos de fuentes fiables sobre lo que quieras</div></div>
+                <span style="font-size:22px;opacity:.8">›</span>
+              </button>
+            </div>
+          </sc-if>
+          <sc-if value="{{ le.abierto }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:16px 16px 0;display:flex;align-items:center;gap:10px">
+              <button onClick="{{ le.atras }}" aria-label="Volver" style="width:36px;height:36px;border-radius:50%;background:#F0F2F6;font-size:18px;flex:none">‹</button>
+              <div style="font-family:Outfit;font-weight:800;font-size:17px">Aprende leyendo</div>
+            </div>
+            <sc-if value="{{ le.verBuscador }}" hint-placeholder-val="{{ true }}">
+              <div style="padding:12px 16px 0;display:flex;gap:8px">
+                <input value="{{ le.q }}" onChange="{{ le.onQ }}" onKeyDown="{{ le.onKey }}" placeholder="¿Sobre qué quieres leer?" style="flex:1;min-width:0;border:1px solid #E4E7EE;background:#fff;border-radius:999px;padding:12px 16px;font-size:14.5px;outline:none">
+                <button onClick="{{ le.buscar }}" aria-label="Buscar" style="width:46px;height:46px;border-radius:50%;background:#3068ED;color:#fff;display:grid;place-items:center;flex:none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg></button>
+              </div>
+              <sc-if value="{{ le.inicio }}" hint-placeholder-val="{{ true }}">
+                <div style="margin:16px 16px 0;font-size:13.5px;line-height:1.5;color:#4B5563">Bro busca solo en fuentes fiables: Vikidia, Wikipedia, National Geographic, NASA, Muy Interesante, CSIC, BBC Mundo, el Museo del Prado… Lees el artículo original, aquí dentro.</div>
+              </sc-if>
+            </sc-if>
+            <sc-if value="{{ le.cargando }}" hint-placeholder-val="{{ false }}">
+              <div style="margin:22px 16px 0;display:flex;gap:10px;align-items:center;justify-content:center;font-size:13.5px;color:#4B5563"><span style="width:16px;height:16px;border-radius:50%;border:2px solid #D5DAE3;border-top-color:#3068ED;animation:gira .8s linear infinite"></span>{{ le.cargandoTxt }}</div>
+            </sc-if>
+            <sc-if value="{{ le.bloqueado }}" hint-placeholder-val="{{ false }}">
+              <div style="margin:18px 16px 0;background:#111;color:#fff;border-radius:20px;padding:22px 18px;display:flex;gap:14px;align-items:center">
+                <div style="width:44px;height:44px;border-radius:14px;background:rgba(255,255,255,.12);display:grid;place-items:center;flex:none"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"></path><path d="M9 9l6 6M15 9l-6 6"></path></svg></div>
+                <div style="font-family:Outfit;font-size:16px;font-weight:700;line-height:1.3">{{ le.aviso }}</div>
+              </div>
+            </sc-if>
+            <sc-if value="{{ le.hayError }}" hint-placeholder-val="{{ false }}">
+              <div style="margin:16px 16px 0;background:#fff;border:1px solid #E4E7EE;border-radius:16px;padding:14px;font-size:13.5px;color:#4B5563">{{ le.error }}</div>
+            </sc-if>
+            <sc-if value="{{ le.hayResultados }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-direction:column;gap:9px;padding:14px 16px 0">
+                <sc-for list="{{ le.resultados }}" as="a" hint-placeholder-count="3">
+                  <button onClick="{{ a.onClick }}" style="display:flex;gap:11px;align-items:flex-start;width:100%;border:1px solid #E4E7EE;border-radius:16px;padding:10px;background:#fff;text-align:left">
+                    <sc-if value="{{ a.conImg }}" hint-placeholder-val="{{ false }}"><div style="width:72px;height:72px;border-radius:12px;flex:none;background-color:#F0F2F6;background-size:cover;background-position:center;background-image:url({{ a.img }})"></div></sc-if>
+                    <div style="flex:1;min-width:0">
+                      <div style="font-size:11px;font-weight:700;letter-spacing:.04em;color:#3068ED;text-transform:uppercase">{{ a.fuente }}</div>
+                      <div style="font-family:Outfit;font-weight:700;font-size:15px;line-height:1.25;margin-top:2px">{{ a.titulo }}</div>
+                      <div style="font-size:12.5px;line-height:1.4;color:#6B7280;margin-top:3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{ a.resumen }}</div>
+                    </div>
+                  </button>
+                </sc-for>
+              </div>
+            </sc-if>
+            <sc-if value="{{ le.hayArticulo }}" hint-placeholder-val="{{ false }}">
+              <article style="margin:14px 16px 0;background:#fff;border:1px solid #E4E7EE;border-radius:20px;padding:18px 16px 22px">
+                <div style="font-size:11px;font-weight:700;letter-spacing:.04em;color:#3068ED;text-transform:uppercase">{{ le.art.fuente }}</div>
+                <h1 style="font-family:Outfit;font-weight:800;font-size:22px;line-height:1.2;margin:4px 0 12px">{{ le.art.titulo }}</h1>
+                <sc-for list="{{ le.art.bloques }}" as="b" hint-placeholder-count="4">
+                  <sc-if value="{{ b.esH }}" hint-placeholder-val="{{ false }}"><h2 style="font-family:Outfit;font-weight:700;font-size:17px;margin:18px 0 6px">{{ b.t }}</h2></sc-if>
+                  <sc-if value="{{ b.esP }}" hint-placeholder-val="{{ true }}"><p style="font-size:15.5px;line-height:1.6;margin:0 0 10px;color:#1F2937">{{ b.t }}</p></sc-if>
+                  <sc-if value="{{ b.esLi }}" hint-placeholder-val="{{ false }}"><div style="font-size:15px;line-height:1.55;margin:0 0 6px 10px;color:#1F2937">• {{ b.t }}</div></sc-if>
+                  <sc-if value="{{ b.esCita }}" hint-placeholder-val="{{ false }}"><div style="font-size:15px;line-height:1.55;margin:8px 0 12px;padding-left:12px;border-left:3px solid #3068ED;color:#374151;font-style:italic">{{ b.t }}</div></sc-if>
+                  <sc-if value="{{ b.esPie }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;color:#6B7280;margin:-4px 0 12px">{{ b.t }}</div></sc-if>
+                  <sc-if value="{{ b.esImg }}" hint-placeholder-val="{{ false }}"><img src="{{ b.src }}" alt="{{ b.alt }}" loading="lazy" style="display:block;width:100%;height:auto;border-radius:12px;margin:8px 0 12px;background:#F0F2F6"></sc-if>
+                </sc-for>
+                <div style="margin-top:16px;padding-top:12px;border-top:1px solid #F0F2F6;font-size:12px;color:#6B7280;line-height:1.5">Fuente original: {{ le.art.fuente }} · {{ le.art.dominio }}<sc-if value="{{ le.art.hayLic }}" hint-placeholder-val="{{ false }}"> · {{ le.art.licencia }}</sc-if></div>
+              </article>
+            </sc-if>
+          </sc-if>
+          <sc-if value="{{ le.verResto }}" hint-placeholder-val="{{ true }}">
           <div style="padding:16px 16px 0;display:flex;gap:8px">
             <input value="{{ co.q }}" onChange="{{ co.onQ }}" onKeyDown="{{ co.onKey }}" placeholder="Busca vídeos, imágenes o artículos" style="flex:1;min-width:0;border:1px solid #E4E7EE;background:#fff;border-radius:999px;padding:12px 16px;font-size:14.5px;outline:none">
             <button onClick="{{ co.onBuscar }}" aria-label="Buscar" style="width:46px;height:46px;border-radius:50%;background:#FF0000;color:#fff;display:grid;place-items:center;flex:none">
@@ -1298,6 +1365,7 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
               <span style="font-size:20px;color:#9CA3AF">›</span>
             </button>
           </div>
+          </sc-if>
 
           <sc-if value="{{ co.hayPregunta }}" hint-placeholder-val="{{ false }}">
             <div style="margin:18px 16px 0;display:flex;gap:10px;align-items:flex-start;animation:sube .25s ease-out">
@@ -2294,6 +2362,30 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
       this.avisar(t); this.cargarMisCanales();
     } catch (e) { this.avisar('No se ha podido pedir. Prueba otra vez.'); }
   }
+  // APRENDE LEYENDO: buscar y abrir artículos de fuentes fiables (el servidor revisa y guarda lo bloqueado para la familia)
+  async leerFetch(body) {
+    const res = await fetch(BRO_AI_URL.replace('/Bro-ai', '/bro-leer'), { method: 'POST', headers: this.cabCanal().h, body: JSON.stringify({ edad: (this.state.db && this.state.db.nino && this.state.db.nino.edad) || 12, ...body }) });
+    return res.json();
+  }
+  async leerBuscar() {
+    const q = ((this.state.leerC && this.state.leerC.q) || '').trim(); if (!q) return;
+    this.setState({ leerC: { q, cargando: true } });
+    try {
+      const j = await this.leerFetch({ accion: 'buscar', q });
+      if (j.bloqueado) return this.setState({ leerC: { q: '', bloqueado: true, aviso: j.aviso } });
+      if (j.error) return this.setState({ leerC: { q, error: j.error } });
+      this.setState({ leerC: { q, resultados: j.resultados, error: j.resultados.length ? '' : 'No he encontrado artículos sobre esto en las fuentes de BroS Life. Prueba con otras palabras.' } });
+    } catch (e) { this.setState({ leerC: { q, error: 'No hay conexión. Prueba otra vez.' } }); }
+  }
+  async leerAbrir(url) {
+    const L = this.state.leerC; this.setState({ leerC: { ...L, cargando: true, abriendo: true } });
+    try {
+      const j = await this.leerFetch({ accion: 'abrir', url });
+      if (j.bloqueado || j.error) return this.setState({ leerC: { ...L, cargando: false, abriendo: false }, }, () => this.avisar(j.aviso || j.error));
+      this.setState({ leerC: { ...L, cargando: false, abriendo: false, articulo: j } });
+      if (this.scrollRef.current) this.scrollRef.current.scrollTop = 0;
+    } catch (e) { this.setState({ leerC: { ...L, cargando: false, abriendo: false } }); this.avisar('No hay conexión. Prueba otra vez.'); }
+  }
   async abrirCanal(canal_id, nombre, siguiente) {
     const prev = this.state.canalC && this.state.canalC.canal_id === canal_id ? this.state.canalC : null;
     this.setState({ listaCanales: false, canalC: { ...(prev || {}), canal_id, nombre, cargando: true, error: '', videos: siguiente && prev ? prev.videos : [] } });
@@ -2604,7 +2696,7 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
     if (a.compartir) this.compartirComunidad();
     if (a.pantalla === 'aprender' && (!this.state.lm || a.libro)) this.lmInicio(a.libro);
     if (a.test) { const r = (this.state.db.rewards || []).find(x => x.id === a.test); if (r && r.conds.some(c => c.tipo === 'test' && !c.hecho)) this.setState({ quiz: { id: a.test, i: 0, ok: 0 } }); }
-    if (a.pantalla === 'contenido') { if (a.buscar) this.buscarC(a.buscar); else this.setState({ resC: null, qC: '', videoC: null, canalC: null, listaCanales: false }); this.cargarMisCanales(); }
+    if (a.pantalla === 'contenido') { if (a.buscar) this.buscarC(a.buscar); else this.setState({ resC: null, qC: '', videoC: null, canalC: null, listaCanales: false, leerC: null }); this.cargarMisCanales(); }
     if (a.pantalla === 'qr') {
       this.qrDesde = Date.now(); this.setState({ qrSemilla: Math.floor(Math.random() * 1e6) + 1, escAmigo: false, msgAmigo: null, codigoAmigo: '' });
       if (tokenBro()) this.cargarQR();
@@ -2876,6 +2968,30 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
           compartir: async () => { try { if (navigator.share) await navigator.share({ title: d.nombre, text: `${d.nombre} · ${d.dia} ${d.hora} · ${d.lugar}`, url }); else { await navigator.clipboard.writeText(url); this.avisar('Enlace del cartel copiado.'); } } catch (e) {} }
         };
       })(),
+      le: (() => {
+        const L = s.leerC;
+        const art = L && L.articulo;
+        return {
+          verTarjeta: !L && !s.resC && !s.canalC && !s.listaCanales && !s.videoC,
+          verResto: !L,
+          abierto: !!L,
+          abrir: () => { this.setState({ leerC: { q: '' } }); if (this.scrollRef.current) this.scrollRef.current.scrollTop = 0; },
+          atras: () => { if (L && L.articulo) this.setState({ leerC: { ...L, articulo: null } }); else this.setState({ leerC: null }); if (this.scrollRef.current) this.scrollRef.current.scrollTop = 0; },
+          verBuscador: !!L && !art,
+          q: (L && L.q) || '',
+          onQ: e => this.setState({ leerC: { ...this.state.leerC, q: e.target.value } }),
+          onKey: e => { if (e.key === 'Enter') this.leerBuscar(); },
+          buscar: () => this.leerBuscar(),
+          inicio: !!L && !L.cargando && !L.resultados && !L.bloqueado && !L.error && !art,
+          cargando: !!(L && L.cargando), cargandoTxt: art || (L && L.abriendo) ? 'Abriendo el artículo…' : 'Bro está buscando en fuentes fiables…',
+          bloqueado: !!(L && L.bloqueado), aviso: (L && L.aviso) || '',
+          hayError: !!(L && L.error), error: (L && L.error) || '',
+          hayResultados: !!(L && L.resultados && L.resultados.length) && !art && !L.cargando,
+          resultados: ((L && L.resultados) || []).map(a => ({ ...a, conImg: !!a.img, onClick: () => this.leerAbrir(a.url) })),
+          hayArticulo: !!art,
+          art: art ? { ...art, hayLic: !!art.licencia, bloques: (art.bloques || []).map(b => ({ ...b, esH: b.k === 'h', esP: b.k === 'p', esLi: b.k === 'li', esCita: b.k === 'cita', esPie: b.k === 'pie', esImg: b.k === 'img' })) } : {}
+        };
+      })(),
       co: (() => {
         const r = s.resC, act = s.videoC, tipo = s.tipoC || 'videos', w = s.webC, art = s.artC, img = s.imgC;
         const esV = tipo === 'videos';
@@ -2907,7 +3023,7 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
           hayResultados: esV && !!(r && r.resultados && r.resultados.length),
           sinResultados: esV && !!(r && !r.bloqueado && !r.error && r.tema && !r.resultados.length),
           errorBusqueda: esV && !!(r && r.error),
-          inicio: esV && !r,
+          inicio: esV && !r && !s.leerC && !s.listaCanales && !s.canalC,
           inicioWeb: !esV && !w && !(r && r.bloqueado),
           txtInicioWeb: tipo === 'imagenes' ? 'Imágenes públicas y libres de Wikimedia Commons. Bro filtra lo que no es para ti.' : 'Artículos de Vikidia, la enciclopedia para 8 a 13 años, y de Wikipedia. Los lees aquí, sin salir de Bro.',
           webCargando: !!(w && w.cargando),
@@ -2950,11 +3066,11 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
           ...(() => {
             const cc = s.canalC, lista = s.misCanales || [];
             return {
-              verCanales: esV && !r && !cc && !act && !s.listaCanales,
+              verCanales: esV && !r && !cc && !act && !s.listaCanales && !s.leerC,
               canalesSub: lista.length ? lista.length + ' canales de YouTube aprobados para ti' : 'Tus canales de YouTube aprobados',
               abrirListaCanales: () => { this.setState({ listaCanales: true }); if (this.scrollRef.current) this.scrollRef.current.scrollTop = 0; },
               cerrarListaCanales: () => this.setState({ listaCanales: false }),
-              enListaCanales: esV && !r && !cc && !act && !!s.listaCanales,
+              enListaCanales: esV && !r && !cc && !act && !!s.listaCanales && !s.leerC,
               gruposCanales: (() => {
                 const AREAS = [['APRENDER', '#3068ED', ['ciencia', 'educación', 'matemáticas', 'historia', 'naturaleza', 'curiosidades', 'experimentos', 'música']],
                   ['VIDEOJUEGOS', '#6f49d8', ['videojuegos', 'streaming']], ['DIVERSIÓN Y RETOS', '#E56648', ['entretenimiento', 'deporte']]];
