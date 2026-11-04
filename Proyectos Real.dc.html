@@ -22,8 +22,8 @@
       <button onClick="{{ atras }}" aria-label="Atrás" style="width:40px;height:40px;border-radius:12px;background:#F0F2F6;display:grid;place-items:center;font-size:20px;flex:none">‹</button>
     </sc-if>
     <div style="flex:1;min-width:0">
-      <div style="font-family:Outfit;font-weight:800;font-size:20px;line-height:1.1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:{{ cab.color }}">{{ cab.titulo }}</div>
-      <div style="font-size:12px;color:#6B7280;margin-top:2px">{{ cab.sub }}</div>
+      <div style="font-family:Outfit;font-weight:800;font-size:{{ cab.tam }};line-height:1.1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:{{ cab.color }}">{{ cab.titulo }}</div>
+      <sc-if value="{{ cab.verSub }}" hint-placeholder-val="{{ true }}"><div style="font-size:12px;color:#6B7280;margin-top:2px">{{ cab.sub }}</div></sc-if>
     </div>
     <img src="logo.png" alt="BroS Life" style="width:30px;height:30px;flex:none">
   </div>
@@ -470,7 +470,7 @@ class Component extends DCLogic {
     const vids = s.busqueda ? s.videos[s.busqueda] : null;
     const setB = (campo, valor) => this.cambiar(x => { x.borradores[tipoB][campo] = valor; });
     return {
-      p, cab: { titulo: CAB[s.pantalla][0], sub: CAB[s.pantalla][1], color: CAB_COLOR[s.pantalla] || 'inherit' }, scrollRef: this.scrollRef,
+      p, cab: { titulo: CAB[s.pantalla][0], sub: CAB[s.pantalla][1], color: CAB_COLOR[s.pantalla] || 'inherit', verSub: s.pantalla !== 'lista', tam: s.pantalla === 'lista' ? '26px' : '20px' }, scrollRef: this.scrollRef,
       hayAtras: true,
       atras: () => { if (s.pantalla === 'lista') { window.location.href = 'Bro%20OS%20Real.dc.html'; return; } if (s.pantalla === 'plan' || s.pantalla === 'fin') this.listar(); this.ir(atras[s.pantalla] || 'lista'); },
       irIdea: () => this.ir('idea', { ideaTxt: '', bloqueoTxt: '' }),

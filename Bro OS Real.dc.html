@@ -73,8 +73,8 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
         </sc-if>
         <sc-if value="{{ cabeceraTitulo }}" hint-placeholder-val="{{ false }}">
           <div style="min-width:0;flex:1">
-            <div style="font-family:Outfit;font-size:19px;font-weight:700;letter-spacing:-.02em;line-height:1.15;color:{{ tituloColor }}">{{ titulo }}</div>
-            <div style="font-size:12px;color:{{ t.muted }}">{{ subtitulo }}</div>
+            <div style="font-family:Outfit;font-size:{{ tituloTam }};font-weight:{{ tituloPeso }};letter-spacing:-.02em;line-height:1.15;color:{{ tituloColor }}">{{ titulo }}</div>
+            <sc-if value="{{ verSubtitulo }}" hint-placeholder-val="{{ true }}"><div style="font-size:12px;color:{{ t.muted }}">{{ subtitulo }}</div></sc-if>
           </div>
         </sc-if>
         <div aria-label="{{ est.etiqueta }}" style="display:flex;align-items:center;gap:6px;flex:none;color:{{ t.txt }}">
@@ -2917,6 +2917,9 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
       })(s.estadoMovil || {}),
       cabeceraTitulo: padre || pantalla !== 'bro',
       // El título de cada módulo con el color de su icono (Connect azul, Enjoy safe rojo, Build verde, Achieve naranja…)
+      // Módulos (Connect, Enjoy safe, Build, Achieve, Aura): título grande en su color y sin explicación debajo
+      ...(() => { const mod = !padre && ['comunidades', 'comunidad', 'chat', 'contenido', 'proyectos', 'logros', 'aura'].includes(pantalla);
+        return { verSubtitulo: !mod, tituloTam: mod ? '26px' : '19px', tituloPeso: mod ? 800 : 700 }; })(),
       tituloColor: (!padre && ({ comunidades: '#3068ED', comunidad: '#3068ED', chat: '#3068ED', contenido: '#FF0000', proyectos: '#82B94F', logros: '#E56648', aura: '#6f49d8' })[pantalla]) || 'inherit',
       hora: (s.ahoraMismo || new Date()).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),
       fecha: (f => f.charAt(0).toUpperCase() + f.slice(1))((s.ahoraMismo || new Date()).toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'short' }).replace('.', '')),
