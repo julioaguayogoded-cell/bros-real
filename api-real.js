@@ -115,6 +115,14 @@ export async function decidirPeticion(id, si) {
   if (data && data.error) throw new Error(data.error);
   return data;
 }
+// Búsquedas que BroS Life ha bloqueado a los Bros de la familia (texto exacto; 12 meses)
+export async function busquedasFamilia(dias = 30) {
+  const c = cliente(); if (!c || !padre) return [];
+  const { data, error } = await c.rpc('busquedas_de_familia', { p_dias: dias });
+  return error ? [] : (data || []);
+}
+export async function marcarBusquedasVistas(ids) { const { data } = await cliente().rpc('marcar_busquedas_vistas', { p_ids: ids }); return data; }
+export async function borrarBusqueda(id) { const { data } = await cliente().rpc('borrar_busqueda', { p_id: id }); return data; }
 export async function elegirBro(id) {
   if (!padre || !padre.bros.some(b => b.id === id)) return llamar('estado');
   localStorage.setItem('bros-padre-bro', id);

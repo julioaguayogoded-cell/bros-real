@@ -8,7 +8,7 @@
 <body>
 <x-dc>
 <helmet>
-<script>(function(){if(window.__brosP)return;window.__brosP=1;var q=new URLSearchParams(location.search).get('perfil');if(q)window.name='bros:'+q.replace(/[^a-z0-9_-]/gi,'').slice(0,20);var m=/^bros:(.+)$/.exec(window.name||'');if(!m)return;var P='P:'+m[1]+':',S=Storage.prototype,g=S.getItem,s=S.setItem,r=S.removeItem;var es=function(x){try{return x===window.localStorage}catch(e){return false}};S.getItem=function(a){return g.call(this,es(this)?P+a:a)};S.setItem=function(a,b){return s.call(this,es(this)?P+a:a,b)};S.removeItem=function(a){return r.call(this,es(this)?P+a:a)};window.BROS_PERFIL=m[1];})();window.BROS_V='2026-11-05.1';</script>
+<script>(function(){if(window.__brosP)return;window.__brosP=1;var q=new URLSearchParams(location.search).get('perfil');if(q)window.name='bros:'+q.replace(/[^a-z0-9_-]/gi,'').slice(0,20);var m=/^bros:(.+)$/.exec(window.name||'');if(!m)return;var P='P:'+m[1]+':',S=Storage.prototype,g=S.getItem,s=S.setItem,r=S.removeItem;var es=function(x){try{return x===window.localStorage}catch(e){return false}};S.getItem=function(a){return g.call(this,es(this)?P+a:a)};S.setItem=function(a,b){return s.call(this,es(this)?P+a:a,b)};S.removeItem=function(a){return r.call(this,es(this)?P+a:a)};window.BROS_PERFIL=m[1];})();window.BROS_V='2026-11-05.2';</script>
 <title>Bro OS</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -140,6 +140,19 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
                   
                 </sc-for>
               </div>
+              <sc-if value="{{ hayGraves }}" hint-placeholder-val="{{ false }}">
+                <div style="width:100%;max-width:380px;text-align:left;display:flex;flex-direction:column;gap:8px">
+                  <div style="font-size:11px;font-weight:700;letter-spacing:.06em;color:#D92D20;padding:0 2px">AVISO IMPORTANTE</div>
+                  <sc-for list="{{ graves }}" as="q" hint-placeholder-count="0">
+                    <div style="background:#FEF3F2;border:1px solid #F3B2AC;border-radius:16px;padding:12px 13px;display:flex;flex-direction:column;gap:8px">
+                      <div style="font-size:12px;color:#B42318;font-weight:700">{{ q.bro_nombre }} · {{ q.cuando }} · {{ q.donde }}</div>
+                      <div style="font-size:15px;line-height:1.4;color:#111">Ha buscado: <b>«{{ q.texto }}»</b></div>
+                      <div style="font-size:12.5px;line-height:1.4;color:#7A271A">Tema: {{ q.cat }}. Bro no le ha enseñado nada y le ha dicho que no es adecuado para su edad. Es buen momento para hablar con {{ q.bro_nombre }} con calma.</div>
+                      <button onClick="{{ q.vista }}" style="height:40px;border-radius:12px;background:#D92D20;color:#fff;font-weight:700;font-size:13.5px">Entendido</button>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-if>
               <sc-if value="{{ hayPeticiones }}" hint-placeholder-val="{{ false }}">
                 <div style="width:100%;max-width:380px;text-align:left;display:flex;flex-direction:column;gap:8px">
                   <div style="font-size:11px;font-weight:700;letter-spacing:.06em;color:#E56648;padding:0 2px">PETICIONES</div>
@@ -153,6 +166,23 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
                       </div>
                     </div>
                   </sc-for>
+                </div>
+              </sc-if>
+              <sc-if value="{{ hayBusquedas }}" hint-placeholder-val="{{ false }}">
+                <div style="width:100%;max-width:380px;text-align:left;display:flex;flex-direction:column;gap:8px">
+                  <div style="font-size:11px;font-weight:700;letter-spacing:.06em;color:#6B7280;padding:0 2px">BÚSQUEDAS BLOQUEADAS · ÚLTIMOS 30 DÍAS</div>
+                  <div style="background:{{ t.card }};border:1px solid {{ t.line }};border-radius:16px;overflow:hidden">
+                    <sc-for list="{{ busquedas }}" as="q" hint-placeholder-count="0">
+                      <div style="padding:10px 13px;border-bottom:1px solid {{ t.line }};display:flex;gap:10px;align-items:flex-start">
+                        <div style="flex:1;min-width:0">
+                          <div style="font-size:14px;line-height:1.35;color:{{ t.txt }}">«{{ q.texto }}»</div>
+                          <div style="font-size:11.5px;color:{{ t.muted }};margin-top:2px">{{ q.bro_nombre }} · {{ q.cuando }} · {{ q.donde }} · {{ q.cat }}</div>
+                        </div>
+                        <button onClick="{{ q.borrar }}" aria-label="Borrar" style="flex:none;font-size:12px;color:{{ t.muted }};padding:4px 6px">Borrar</button>
+                      </div>
+                    </sc-for>
+                  </div>
+                  <div style="font-size:11.5px;color:{{ t.muted }};padding:0 2px">Se guardan 12 meses y después se borran solas.</div>
                 </div>
               </sc-if>
               <sc-if value="{{ hayAmistades }}" hint-placeholder-val="{{ false }}">
@@ -2047,7 +2077,10 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
     if (!this.api || !this.api.amistadesPendientes || !this.state.famReal || !this.state.famReal.sesion) return;
     try { this.setState({ amistadesR: await this.api.amistadesPendientes() }); } catch (e) {}
     try { if (this.api.peticionesFamilia) this.setState({ peticionesR: await this.api.peticionesFamilia() }); } catch (e) {}
+    try { if (this.api.busquedasFamilia) this.setState({ busquedasR: await this.api.busquedasFamilia(30) }); } catch (e) {}
   }
+  async busquedaVista(ids) { try { await this.api.marcarBusquedasVistas(ids); } catch (e) {} this.refrescarAmistades(); }
+  async busquedaBorrar(id) { try { await this.api.borrarBusqueda(id); this.avisar('Borrada.'); } catch (e) { this.avisar('No se ha podido borrar.'); } this.refrescarAmistades(); }
   async decidirPeticion(id, si) {
     try { await this.api.decidirPeticion(id, si); this.avisar(si ? 'Aprobado. Ya lo tiene en su Bro.' : 'Hecho. No lo verá en BroS Life.'); }
     catch (e) { this.avisar(e.message || 'No se ha podido guardar. Prueba otra vez.'); }
@@ -2454,7 +2487,15 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
           onClick: async () => { if (x.hijoNombre && this.state.famReal && this.state.famReal.sel !== x.hijo) await this.elegirHijo(x.hijo); this.push({ de: 'yo', txt: x.txt }); this.empezarFlujo(x.flujo); } };
       }) : [],
       hayUrgentes: padre && (this.state.urgFam || db.sugerenciasPadre || []).length > 0,
-      padreTodoOk: padre && !(this.state.urgFam || db.sugerenciasPadre || []).length && !(this.state.amistadesR || []).length && !(this.state.peticionesR || []).length,
+      padreTodoOk: padre && !(this.state.urgFam || db.sugerenciasPadre || []).length && !(this.state.amistadesR || []).length && !(this.state.peticionesR || []).length && !(this.state.busquedasR || []).some(q => q.gravedad === 'grave' && !q.vista),
+      ...(() => {
+        const L = this.state.busquedasR || [], cuando = d => { const f = new Date(d), h = new Date(); const hoy = f.toDateString() === h.toDateString();
+          return (hoy ? 'Hoy' : f.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' })) + ' · ' + f.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }); };
+        const MOD = { leer: 'Aprende leyendo', videos: 'Vídeos', webs: 'Webs' };
+        const graves = L.filter(q => q.gravedad === 'grave' && !q.vista), resto = L.filter(q => !(q.gravedad === 'grave' && !q.vista)).slice(0, 15);
+        const fila = q => ({ ...q, cuando: cuando(q.creada), donde: MOD[q.modulo] || q.modulo, cat: q.categoria || 'no adecuado', vista: () => this.busquedaVista([q.id]), borrar: () => this.busquedaBorrar(q.id) });
+        return { hayGraves: padre && graves.length > 0, graves: graves.map(fila), hayBusquedas: padre && resto.length > 0, busquedas: resto.map(fila) };
+      })(),
       hayPeticiones: padre && (this.state.peticionesR || []).length > 0,
       peticiones: (this.state.peticionesR || []).map(p => ({ ...p,
         texto: p.tipo === 'canal' ? 'quiere ver el canal de YouTube' : p.tipo === 'web' ? 'quiere entrar en la web' : 'quiere la app',
