@@ -22,7 +22,7 @@
       <button onClick="{{ atras }}" aria-label="Atrás" style="width:40px;height:40px;border-radius:12px;background:#F0F2F6;display:grid;place-items:center;font-size:20px;flex:none">‹</button>
     </sc-if>
     <div style="flex:1;min-width:0">
-      <div style="font-family:Outfit;font-weight:800;font-size:20px;line-height:1.1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ cab.titulo }}</div>
+      <div style="font-family:Outfit;font-weight:800;font-size:20px;line-height:1.1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:{{ cab.color }}">{{ cab.titulo }}</div>
       <div style="font-size:12px;color:#6B7280;margin-top:2px">{{ cab.sub }}</div>
     </div>
     <img src="logo.png" alt="BroS Life" style="width:30px;height:30px;flex:none">
@@ -462,6 +462,7 @@ class Component extends DCLogic {
     const pr = this.actual(), d = pr ? pr.datos : null;
     const color = t => COLOR[t] || COLOR.otro;
     const hechos = d ? d.pasos.filter(x => x.hecho).length : 0, total = d ? d.pasos.length : 0;
+    const CAB_COLOR = { lista: '#82B94F', bloqueado: '#82B94F' };
     const CAB = { lista: ['Build', 'Tus ideas, hechas realidad'], idea: ['Nueva idea', 'Paso 1 de 3'], preguntas: [s.prop ? s.prop.titulo : 'Tu idea', 'Paso 2 de 3 · concretar'], bloqueado: ['Build', ''], plan: [d ? d.titulo : '', 'Tu plan · ' + hechos + ' de ' + total + ' pasos'], paso: [d ? d.titulo : '', 'Con Bro AI'], borrador: [s.borradorTipo === 'cartel' ? 'Cartel' : 'Borrador', d ? d.titulo : ''], fin: ['¡Conseguido!', ''] };
     const atras = { idea: 'lista', preguntas: 'idea', bloqueado: 'lista', plan: 'lista', paso: 'plan', borrador: 'plan', fin: 'lista' };
     const ps = d ? d.pasos[s.pasoIdx] : null, chat = (d && d.chats && d.chats[s.pasoIdx]) || [];
@@ -469,7 +470,7 @@ class Component extends DCLogic {
     const vids = s.busqueda ? s.videos[s.busqueda] : null;
     const setB = (campo, valor) => this.cambiar(x => { x.borradores[tipoB][campo] = valor; });
     return {
-      p, cab: { titulo: CAB[s.pantalla][0], sub: CAB[s.pantalla][1] }, scrollRef: this.scrollRef,
+      p, cab: { titulo: CAB[s.pantalla][0], sub: CAB[s.pantalla][1], color: CAB_COLOR[s.pantalla] || 'inherit' }, scrollRef: this.scrollRef,
       hayAtras: true,
       atras: () => { if (s.pantalla === 'lista') { window.location.href = 'Bro%20OS%20Real.dc.html'; return; } if (s.pantalla === 'plan' || s.pantalla === 'fin') this.listar(); this.ir(atras[s.pantalla] || 'lista'); },
       irIdea: () => this.ir('idea', { ideaTxt: '', bloqueoTxt: '' }),
