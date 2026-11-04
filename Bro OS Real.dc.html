@@ -1332,6 +1332,9 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
                 <div style="flex:1;min-width:0"><div style="font-family:Outfit;font-size:15px;font-weight:700;line-height:1.25">{{ co.actual.t }}</div><div style="font-size:11.5px;color:#6B7280;margin-top:2px">{{ co.actual.canal }}</div></div>
                 <button onClick="{{ co.onCerrar }}" style="flex:none;padding:8px 13px;border-radius:999px;background:#F0F2F6;font-size:12.5px;font-weight:700">Cerrar</button>
               </div>
+              <sc-if value="{{ co.puedePedirCanal }}" hint-placeholder-val="{{ false }}">
+                <button onClick="{{ co.pedirEsteCanal }}" style="margin-top:9px;width:100%;height:42px;border-radius:14px;background:{{ co.pedirCanalBg }};color:#fff;font-family:Outfit;font-weight:700;font-size:14px">{{ co.pedirCanalTxt }}</button>
+              </sc-if>
             </div>
           </sc-if>
 
@@ -2877,6 +2880,18 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
           hayPlayer: !!act, actual: act || {},
           src: act ? `https://www.youtube-nocookie.com/embed/${act.yt}?autoplay=1&rel=0&modestbranding=1&playsinline=1` : '',
           onCerrar: () => this.setState({ videoC: null }),
+          ...(() => {
+            const nom = act && act.canal, lista = (s.db && s.db.canalesAprobados) || [];
+            const ya = !!nom && lista.some(c => (c.nombre || '').toLowerCase() === nom.toLowerCase());
+            const sol = nom ? ((s.db && s.db.solicitudes) || []).filter(x => x.tipo === 'canal' && (x.ref || '').toLowerCase() === nom.toLowerCase()) : [];
+            const pend = sol.some(x => x.estado === 'pendiente'), no = sol.some(x => x.estado === 'no');
+            return {
+              puedePedirCanal: !!nom && !ya && !s.canalC,
+              pedirCanalTxt: no ? 'Tu familia ha dicho que no a este canal' : pend ? 'Canal pedido ✓ · esperando respuesta' : '＋ Pedir el canal ' + nom + ' a mi familia',
+              pedirCanalBg: no ? '#9CA3AF' : pend ? '#7F9BE0' : '#3068ED',
+              pedirEsteCanal: async () => { if (pend || no) return; const x = await this.llamar('pedirCanal', { nombre: nom, tipo: 'canal' }); this.avisar(x.di || 'Pedido. Tu familia lo verá en su app.'); }
+            };
+          })(),
           ...(() => {
             const cc = s.canalC, lista = (s.db && s.db.canalesAprobados) || [];
             return {
