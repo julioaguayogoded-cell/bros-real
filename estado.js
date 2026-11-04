@@ -22,8 +22,10 @@
   }
   class BrosEstado extends HTMLElement {
     connectedCallback() {
-      this.style.cssText = 'display:flex;align-items:center;gap:6px;flex:none;color:#111';
-      this.pintar(); this.t = setInterval(() => this.pintar(), 15000);
+      // Shadow DOM: el motor de la página (React) no ve ni toca lo que pintamos aquí
+      if (!this.raiz) this.raiz = this.attachShadow({ mode: 'open' });
+      this.style.cssText = 'display:flex;flex:none';
+      this.pintar(); clearInterval(this.t); this.t = setInterval(() => this.pintar(), 15000);
     }
     disconnectedCallback() { clearInterval(this.t); }
     async pintar() {
@@ -38,8 +40,8 @@
       if (e.red === 'ninguna') h += `<span style="font:700 11px Inter,system-ui;color:#6B7280">Sin red</span>`;
       if (bat != null) h += `<span style="font:700 11.5px Inter,system-ui;line-height:1">${bat}%</span>` + svgBateria(bat, e.cargando);
       h += `<button aria-label="Mi código Bro" style="width:36px;height:36px;border-radius:50%;background:#3068ED;color:#fff;display:grid;place-items:center;font:700 16px Outfit,system-ui;border:0;margin-left:6px;cursor:pointer">${ini}</button>`;
-      this.innerHTML = h;
-      this.querySelector('button').onclick = () => { location.href = 'Bro%20OS%20Real.dc.html#qr'; };
+      this.raiz.innerHTML = `<div style="display:flex;align-items:center;gap:6px;color:#111">${h}</div>`;
+      this.raiz.querySelector('button').onclick = () => { location.href = 'Bro%20OS%20Real.dc.html#qr'; };
     }
   }
   customElements.define('bros-estado', BrosEstado);
