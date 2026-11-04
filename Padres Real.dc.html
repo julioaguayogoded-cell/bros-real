@@ -1619,10 +1619,10 @@ function celdasQR(semilla) {
   return out;
 }
 const PILARES = [
-  { t: 'Communities', dx: '-4px', pantalla: 'comunidades', color: '#3068ED', icono: 'M17 20v-1a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v1M10 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8M21 20v-1a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8' },
-  { t: 'Rewards', pantalla: 'logros', color: '#E56648', icono: 'M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM7 6H4a3 3 0 0 0 3 4M17 6h3a3 3 0 0 1-3 4' },
-  { t: 'Projects', pantalla: 'proyectos', color: '#82B94F', icono: 'M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z' },
-  { t: 'Content', pantalla: 'contenido', color: '#FF0000', icono: 'M4 5h16v14H4zM10 9l5 3-5 3z' },
+  { t: 'Connect', dx: '-4px', pantalla: 'comunidades', color: '#3068ED', icono: 'M17 20v-1a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v1M10 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8M21 20v-1a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8' },
+  { t: 'Enjoy safe', pantalla: 'contenido', color: '#FF0000', icono: 'M4 5h16v14H4zM10 9l5 3-5 3z' },
+  { t: 'Build', pantalla: 'proyectos', color: '#82B94F', icono: 'M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z' },
+  { t: 'Achieve', pantalla: 'logros', color: '#E56648', icono: 'M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM7 6H4a3 3 0 0 0 3 4M17 6h3a3 3 0 0 1-3 4' },
   { t: 'Aura', pantalla: 'aura', color: '#6f49d8', icono: 'M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z' },
   { t: 'My apps', pantalla: 'apps', color: '#111111', icono: 'M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z' }
 ];
@@ -2337,7 +2337,7 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
     if (a.pantalla === 'consentimientos') return this.setState({ pantallaPadre: 'consentimientos' });
     if (a.pantalla === 'limites') return this.setState({ pantallaPadre: 'limites' });
     if (a.pantalla === 'apps' && a.id === 'wallet') a = { pantalla: 'monedero' };
-    const BLOQ = { aura: ['aura', 'Aura'], contenido: ['contenido', 'Content'], comunidades: ['comunidades', 'Communities'], comunidad: ['comunidades', 'Communities'], chat: ['comunidades', 'los chats'], monedero: ['wallet', 'Wallet'] };
+    const BLOQ = { aura: ['aura', 'Aura'], contenido: ['contenido', 'Enjoy safe'], comunidades: ['comunidades', 'Connect'], comunidad: ['comunidades', 'Connect'], chat: ['comunidades', 'los chats'], monedero: ['wallet', 'Wallet'] };
     if (this.modo() !== 'padre' && BLOQ[a.pantalla] && !this.perm(BLOQ[a.pantalla][0])) return this.avisar(`Mamá no ha dado permiso para ${BLOQ[a.pantalla][1]}. Podéis hablarlo en casa.`);
     if (a.pantalla === 'monedero' && a.pedir) setTimeout(() => this.pedirWallet(), 500);
     if (a.llamar) return this.llamarA(a.llamar);
@@ -2439,7 +2439,7 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
     const ses = s.sesion[modo], f = ses.flujo;
     const pantalla = padre ? (s.pantallaPadre || 'bro') : s.pantalla;
     const p = { limites: pantalla === 'limites', consentimientos: pantalla === 'consentimientos', aprender: pantalla === 'aprender', comunidades: pantalla === 'comunidades', chat: pantalla === 'chat', proyectos: pantalla === 'proyectos', proyecto: pantalla === 'proyecto', partido: pantalla === 'partido', comunidad: pantalla === 'comunidad', apps: pantalla === 'apps', logros: pantalla === 'logros', contenido: pantalla === 'contenido', aura: pantalla === 'aura', qr: pantalla === 'qr', monedero: pantalla === 'monedero', otra: pantalla === 'otra' };
-    const titulos = { monedero: ['Wallet', 'Tu tarjeta Bro · Lit Pay'], aprender: ['Learning mode', 'Tú piensas, Bro te ayuda'], qr: ['Mi código Bro', 'Para conectar en persona'], aura: ['Aura', 'Sueño y movimiento'], logros: ['Rewards', 'Tus logros y acuerdos'], partido: ['Mi partido', 'De la idea a la realidad'], comunidad: ['Fútbol La Colonia', '24 Bros · los del barrio'], contenido: ['Content', 'Para ver y aprender'], comunidades: ['Comunidades', 'Y tus mensajes'], chat: [s.id, 'Conexión mutua'], proyectos: ['Proyectos', 'Lo que estás construyendo'], proyecto: ['Proyecto', 'Paso a paso, decides tú'], apps: ['My apps', 'Lo que decide mamá'], otra: ['Bro', ''] };
+    const titulos = { monedero: ['Wallet', 'Tu tarjeta Bro · Lit Pay'], aprender: ['Learning mode', 'Tú piensas, Bro te ayuda'], qr: ['Mi código Bro', 'Para conectar en persona'], aura: ['Aura', 'Sueño y movimiento'], logros: ['Achieve', 'Tus logros y rewards'], partido: ['Mi partido', 'De la idea a la realidad'], comunidad: ['Fútbol La Colonia', '24 Bros · los del barrio'], contenido: ['Enjoy safe', 'Para ver y aprender'], comunidades: ['Connect', 'Tus comunidades y mensajes'], chat: [s.id, 'Conexión mutua'], proyectos: ['Build', 'Lo que estás construyendo'], proyecto: ['Proyecto', 'Paso a paso, decides tú'], apps: ['My apps', 'Lo que decide mamá'], otra: ['Bro', ''] };
     const [titulo, subtitulo] = padre ? (pantalla === 'consentimientos' ? ['Privacidad', 'Permisos de ' + db.nino.nombre] : pantalla === 'limites' ? ['Límites y horarios', 'Móvil de ' + db.nino.nombre] : ['Bro Parent', (this.state.famReal && (this.state.famReal.bros || []).length) ? 'Tu familia · ' + this.state.famReal.bros.map(b => b.nombre).join(' y ') : db.madre.nombre + ' · ' + (db.hijos || []).map(h => h.nombre).join(' y ')]) : pantalla === 'bro' ? ['Bro', db.nino.nombre + ' · perfil ' + db.nino.edad] : titulos[pantalla];
     const hayTexto = !!s.texto.trim();
     const maxSem = Math.max(...db.aura.semana.flat());

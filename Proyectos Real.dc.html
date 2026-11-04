@@ -462,7 +462,7 @@ class Component extends DCLogic {
     const pr = this.actual(), d = pr ? pr.datos : null;
     const color = t => COLOR[t] || COLOR.otro;
     const hechos = d ? d.pasos.filter(x => x.hecho).length : 0, total = d ? d.pasos.length : 0;
-    const CAB = { lista: ['Projects', 'Tus ideas, hechas realidad'], idea: ['Nueva idea', 'Paso 1 de 3'], preguntas: [s.prop ? s.prop.titulo : 'Tu idea', 'Paso 2 de 3 · concretar'], bloqueado: ['Projects', ''], plan: [d ? d.titulo : '', 'Tu plan · ' + hechos + ' de ' + total + ' pasos'], paso: [d ? d.titulo : '', 'Con Bro AI'], borrador: [s.borradorTipo === 'cartel' ? 'Cartel' : 'Borrador', d ? d.titulo : ''], fin: ['¡Conseguido!', ''] };
+    const CAB = { lista: ['Build', 'Tus ideas, hechas realidad'], idea: ['Nueva idea', 'Paso 1 de 3'], preguntas: [s.prop ? s.prop.titulo : 'Tu idea', 'Paso 2 de 3 · concretar'], bloqueado: ['Build', ''], plan: [d ? d.titulo : '', 'Tu plan · ' + hechos + ' de ' + total + ' pasos'], paso: [d ? d.titulo : '', 'Con Bro AI'], borrador: [s.borradorTipo === 'cartel' ? 'Cartel' : 'Borrador', d ? d.titulo : ''], fin: ['¡Conseguido!', ''] };
     const atras = { idea: 'lista', preguntas: 'idea', bloqueado: 'lista', plan: 'lista', paso: 'plan', borrador: 'plan', fin: 'lista' };
     const ps = d ? d.pasos[s.pasoIdx] : null, chat = (d && d.chats && d.chats[s.pasoIdx]) || [];
     const tipoB = s.borradorTipo, B = d && d.borradores && d.borradores[tipoB];
