@@ -187,9 +187,9 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
                 </button>
               </sc-if>
               <sc-if value="{{ hayPilares }}" hint-placeholder-val="{{ true }}">
-                <div style="width:100%;max-width:360px;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;margin-top:6px">
-                  <sc-for list="{{ pilares }}" as="pi" hint-placeholder-count="6">
-                    <button onClick="{{ pi.onClick }}" style="display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0;transform:translateX({{ pi.dx }})">
+                <div style="width:100%;max-width:360px;display:flex;flex-wrap:wrap;justify-content:center;row-gap:14px;column-gap:4px;margin-top:6px">
+                  <sc-for list="{{ pilares }}" as="pi" hint-placeholder-count="9">
+                    <button onClick="{{ pi.onClick }}" style="display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0;width:calc((100% - 20px) / 6);transform:translateX({{ pi.dx }})">
                       <div style="width:46px;height:46px;border-radius:14px;background:{{ pi.color }};display:grid;place-items:center;box-shadow:0 6px 14px rgba(17,17,17,.1)">
                         
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="{{ pi.icono }}"></path></svg></div><span style="font-size:10px;font-weight:600;color:{{ t.txt }};max-width:100%;white-space:nowrap;letter-spacing:-.01em">{{ pi.t }}</span>
@@ -1663,7 +1663,11 @@ const PILARES = [
   { t: 'Projects', pantalla: 'proyectos', color: '#82B94F', icono: 'M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z' },
   { t: 'Content', pantalla: 'contenido', color: '#FF0000', icono: 'M4 5h16v14H4zM10 9l5 3-5 3z' },
   { t: 'Aura', pantalla: 'aura', color: '#6f49d8', icono: 'M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z' },
-  { t: 'My apps', pantalla: 'apps', color: '#111111', icono: 'M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z' }
+  { t: 'My apps', pantalla: 'apps', color: '#111111', icono: 'M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z' },
+  // Básicos del móvil. Llamar abre el teléfono; SOS y Contactos se configuran más adelante.
+  { t: 'Llamar', accion: 'abrirTelefono', color: '#22A559', icono: 'M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z' },
+  { t: 'Contactos', accion: 'abrirContactos', color: '#0EA5B7', icono: 'M5 3h12a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5zM5 3v18M12 12a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5M8.5 16.5a3.5 3.5 0 0 1 7 0' },
+  { t: 'SOS', accion: 'pulsarSOS', color: '#D92D20', icono: 'M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0zM12 9v4M12 17h.01' }
 ];
 // Vídeos reales (YouTube), revisados por Bro para perfil 13. Mismos que VIDEOS_AVION en logica.js
 const VIDEOS_YT = {
@@ -2194,6 +2198,11 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
     if (que === 'dormir') { await this.llamar('dormir', {}); return this.setState(s => ({ modo: 'nino', pantalla: 'bro', id: null, resumenSueno: null, sesion: { ...s.sesion, nino: { conv: [], flujo: null } } })); }
   }
   bloquear() { this.setState({ bloqueo: 'cara', escaneo: null, pin: '', pantalla: 'bro' }); }
+  // Llamar: abre el teclado del teléfono del móvil (en el launcher, el marcador está siempre permitido)
+  abrirTelefono() { try { window.location.href = 'tel:'; } catch (e) { this.avisar('No se ha podido abrir el teléfono.'); } }
+  abrirContactos() { this.avisar('Contactos: muy pronto podrás ver aquí a tu familia y amigos.'); }
+  // SOS: de momento solo se ve. Más adelante decidiremos qué hace (avisar a la familia, llamar al 112…).
+  pulsarSOS() { this.avisar('SOS: lo estamos preparando. Si es una emergencia, llama al 112.'); }
   vozOn() { return this.state.voz ?? (this.props.vozActiva === true); }
   retraso() { return { rapida: 350, normal: 800, lenta: 1500 }[this.props.velocidadBro || 'normal']; }
   async llamar(ruta, datos) { const r = await this.api.llamar(ruta, datos); if (r.estado) this.setState({ db: r.estado }); return r; }
@@ -2717,7 +2726,7 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
         color: it.urgente ? '#E5484D' : /Esperando/.test(it.k) ? '#3068ED' : /escrito|acuerdo/i.test(it.k) ? '#E56648' : '#82B94F',
         onClick: () => it.accion.aviso ? this.avisar(it.accion.aviso) : this.ejecutar(it.accion)
       })),
-      pilares: PILARES.map(x => ({ ...x, dx: x.dx || '0px', onClick: () => this.ejecutar({ pantalla: x.pantalla }) })),
+      pilares: PILARES.map(x => ({ ...x, dx: x.dx || '0px', onClick: () => x.accion ? this[x.accion]() : this.ejecutar({ pantalla: x.pantalla }) })),
       rw: this.vistaRewards(db.rewards || []),
       wa: (() => {
         const m = db.monedero || {}, tj = m.tarjeta || { titular: 'JULIO', ultimos: '4827', caduca: '10/29' };
