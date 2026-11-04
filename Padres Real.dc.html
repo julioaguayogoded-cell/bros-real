@@ -8,7 +8,7 @@
 <body>
 <x-dc>
 <helmet>
-<script>(function(){if(window.__brosP)return;window.__brosP=1;var q=new URLSearchParams(location.search).get('perfil');if(q)window.name='bros:'+q.replace(/[^a-z0-9_-]/gi,'').slice(0,20);var m=/^bros:(.+)$/.exec(window.name||'');if(!m)return;var P='P:'+m[1]+':',S=Storage.prototype,g=S.getItem,s=S.setItem,r=S.removeItem;var es=function(x){try{return x===window.localStorage}catch(e){return false}};S.getItem=function(a){return g.call(this,es(this)?P+a:a)};S.setItem=function(a,b){return s.call(this,es(this)?P+a:a,b)};S.removeItem=function(a){return r.call(this,es(this)?P+a:a)};window.BROS_PERFIL=m[1];})();window.BROS_V='2026-10-19.5';</script>
+<script>(function(){if(window.__brosP)return;window.__brosP=1;var q=new URLSearchParams(location.search).get('perfil');if(q)window.name='bros:'+q.replace(/[^a-z0-9_-]/gi,'').slice(0,20);var m=/^bros:(.+)$/.exec(window.name||'');if(!m)return;var P='P:'+m[1]+':',S=Storage.prototype,g=S.getItem,s=S.setItem,r=S.removeItem;var es=function(x){try{return x===window.localStorage}catch(e){return false}};S.getItem=function(a){return g.call(this,es(this)?P+a:a)};S.setItem=function(a,b){return s.call(this,es(this)?P+a:a,b)};S.removeItem=function(a){return r.call(this,es(this)?P+a:a)};window.BROS_PERFIL=m[1];})();window.BROS_V='2026-11-05.1';</script>
 <title>Bro OS</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -140,6 +140,21 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
                   
                 </sc-for>
               </div>
+              <sc-if value="{{ hayPeticiones }}" hint-placeholder-val="{{ false }}">
+                <div style="width:100%;max-width:380px;text-align:left;display:flex;flex-direction:column;gap:8px">
+                  <div style="font-size:11px;font-weight:700;letter-spacing:.06em;color:#E56648;padding:0 2px">PETICIONES</div>
+                  <sc-for list="{{ peticiones }}" as="p" hint-placeholder-count="0">
+                    <div style="background:{{ t.card }};border:1px solid {{ t.line }};border-radius:16px;padding:12px 13px;display:flex;flex-direction:column;gap:8px">
+                      <div style="font-size:14px;line-height:1.4;color:{{ t.txt }}"><b>{{ p.bro_nombre }}</b> {{ p.texto }} <b>{{ p.nombre }}</b>.</div>
+                      <div style="font-size:12.5px;line-height:1.4;color:{{ t.muted }}">{{ p.nota }}</div>
+                      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px">
+                        <button onClick="{{ p.no }}" style="height:40px;border-radius:12px;background:transparent;border:1px solid {{ t.line }};color:{{ t.txt }};font-weight:700;font-size:13.5px">No</button>
+                        <button onClick="{{ p.si }}" style="height:40px;border-radius:12px;background:#3068ED;color:#fff;font-weight:700;font-size:13.5px">Aprobar</button>
+                      </div>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-if>
               <sc-if value="{{ hayAmistades }}" hint-placeholder-val="{{ false }}">
                 <div style="width:100%;max-width:380px;text-align:left;display:flex;flex-direction:column;gap:8px">
                   <div style="font-size:11px;font-weight:700;letter-spacing:.06em;color:#E56648;padding:0 2px">AMISTADES POR APROBAR</div>
@@ -2026,6 +2041,12 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
   async refrescarAmistades() {
     if (!this.api || !this.api.amistadesPendientes || !this.state.famReal || !this.state.famReal.sesion) return;
     try { this.setState({ amistadesR: await this.api.amistadesPendientes() }); } catch (e) {}
+    try { if (this.api.peticionesFamilia) this.setState({ peticionesR: await this.api.peticionesFamilia() }); } catch (e) {}
+  }
+  async decidirPeticion(id, si) {
+    try { await this.api.decidirPeticion(id, si); this.avisar(si ? 'Aprobado. Ya lo tiene en su Bro.' : 'Hecho. No lo verá en BroS Life.'); }
+    catch (e) { this.avisar(e.message || 'No se ha podido guardar. Prueba otra vez.'); }
+    this.refrescarAmistades();
   }
   async decidirAmistad(id, si) {
     try { const r = await this.api.decidirAmistad(id, si); this.avisar(si ? (r && r.estado === 'activa' ? 'Aprobado. Ya pueden escribirse.' : 'Aprobado. Falta el permiso de la otra familia.') : 'Hecho. No serán amigos en BroS Life.'); }
@@ -2428,7 +2449,12 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
           onClick: async () => { if (x.hijoNombre && this.state.famReal && this.state.famReal.sel !== x.hijo) await this.elegirHijo(x.hijo); this.push({ de: 'yo', txt: x.txt }); this.empezarFlujo(x.flujo); } };
       }) : [],
       hayUrgentes: padre && (this.state.urgFam || db.sugerenciasPadre || []).length > 0,
-      padreTodoOk: padre && !(this.state.urgFam || db.sugerenciasPadre || []).length && !(this.state.amistadesR || []).length,
+      padreTodoOk: padre && !(this.state.urgFam || db.sugerenciasPadre || []).length && !(this.state.amistadesR || []).length && !(this.state.peticionesR || []).length,
+      hayPeticiones: padre && (this.state.peticionesR || []).length > 0,
+      peticiones: (this.state.peticionesR || []).map(p => ({ ...p,
+        texto: p.tipo === 'canal' ? 'quiere ver el canal de YouTube' : p.tipo === 'web' ? 'quiere entrar en la web' : 'quiere la app',
+        nota: p.tipo === 'canal' ? (p.nivel === 'con_permiso' ? `BroS Life lo recomienda a partir de ${p.edad_min} años.` : 'No está en el catálogo de BroS Life: revísalo antes.') + ' Solo verá vídeos de este canal, sin Shorts.' : '',
+        si: () => this.decidirPeticion(p.id, true), no: () => this.decidirPeticion(p.id, false) })),
       hayAmistades: padre && (this.state.amistadesR || []).length > 0,
       amistades: (this.state.amistadesR || []).map(a => ({ ...a, dif: Math.abs((a.hijoEdad || 0) - (a.amigoEdad || 0)), si: () => this.decidirAmistad(a.id, true), no: () => this.decidirAmistad(a.id, false) })),
       abrirQR: () => { if (!padre) this.ejecutar({ pantalla: 'qr' }); },

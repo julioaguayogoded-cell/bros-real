@@ -103,6 +103,18 @@ export async function decidirAmistad(id, si) {
   if (error) throw new Error(error.message);
   return data;
 }
+// Peticiones de los Bros de la familia (canales, webs…) y su decisión. La regla vive en la base de datos.
+export async function peticionesFamilia() {
+  const c = cliente(); if (!c || !padre) return [];
+  const { data, error } = await c.rpc('peticiones_de_familia');
+  return error ? [] : (data || []);
+}
+export async function decidirPeticion(id, si) {
+  const { data, error } = await cliente().rpc('decidir_peticion', { p_id: id, p_si: !!si });
+  if (error) throw new Error(error.message);
+  if (data && data.error) throw new Error(data.error);
+  return data;
+}
 export async function elegirBro(id) {
   if (!padre || !padre.bros.some(b => b.id === id)) return llamar('estado');
   localStorage.setItem('bros-padre-bro', id);
