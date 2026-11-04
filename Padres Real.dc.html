@@ -1650,6 +1650,9 @@ class Component extends DCLogic {
     document.addEventListener('pointerdown', this.alTocar, true);
     this.alRedimensionar();
     this.reloj = setInterval(() => this.setState({ ahoraMismo: new Date() }), 30000);
+    // Al volver a la pantalla (desbloquear), la hora real al instante
+    this.alVolver = () => { if (!document.hidden) this.setState({ ahoraMismo: new Date() }); };
+    document.addEventListener('visibilitychange', this.alVolver); window.addEventListener('focus', this.alVolver);
     this.api = await import('./api-real.js?v=' + (window.BROS_V || Date.now()));
     clearInterval(this.tSync); this.tSync = setInterval(async () => { try { const r = await this.api.traer(); if (r.cambio && r.estado) this.setState({ db: r.estado }); } catch (e) {} }, 4000);
     try {

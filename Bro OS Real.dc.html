@@ -1832,6 +1832,9 @@ class Component extends DCLogic {
     document.addEventListener('pointerdown', this.alTocar, true);
     this.alRedimensionar();
     this.reloj = setInterval(() => this.setState({ ahoraMismo: new Date() }), 30000);
+    // Al volver a la pantalla (desbloquear), la hora real al instante
+    this.alVolver = () => { if (!document.hidden) this.setState({ ahoraMismo: new Date() }); };
+    document.addEventListener('visibilitychange', this.alVolver); window.addEventListener('focus', this.alVolver);
     // Estado REAL del móvil (red, cobertura, batería). Nunca valores inventados.
     window.__broEstado = e => this.setState({ estadoMovil: e });
     const leerEstado = async () => {
