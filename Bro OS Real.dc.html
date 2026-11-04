@@ -98,7 +98,7 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
         <button onClick="{{ abrirQR }}" aria-label="Mi código Bro" style="width:36px;height:36px;border-radius:50%;background:{{ avatarColor }};color:#fff;display:grid;place-items:center;font-family:Outfit;font-weight:700;flex:none">{{ avatar }}</button>
       </div>
 
-      <div ref="{{ scrollRef }}" style="flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-bottom:100px;display:flex;flex-direction:column">
+      <div ref="{{ scrollRef }}" style="flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-bottom:{{ padAbajo }};display:flex;flex-direction:column">
 
         <!-- ===== BRO (pantalla principal) ===== -->
         <sc-if value="{{ enBro }}" hint-placeholder-val="{{ true }}">
@@ -1814,7 +1814,7 @@ const VIDEOS_YT = {
 const HOY_PRUEBA = true;
 const HOY_PRUEBA_ITEMS = [
   { k: 'Recordatorio', titulo: 'Llevar la mochila de natación', urgente: false, accion: { aviso: 'Tarjeta de prueba' } },
-  { k: 'Aviso de mamá', titulo: 'Hoy te recojo a las 17:30', urgente: true, accion: { aviso: 'Tarjeta de prueba' } },
+  { k: 'Mamá', titulo: 'Hoy te recojo a las 17:30', urgente: true, accion: { aviso: 'Tarjeta de prueba' } },
   { k: 'Mañana', titulo: 'Examen de inglés: unidad 4', urgente: false, accion: { aviso: 'Tarjeta de prueba' } },
   { k: 'Esperando', titulo: 'Plan del sábado con Fernando', urgente: false, accion: { aviso: 'Tarjeta de prueba' } }
 ];
@@ -2912,6 +2912,7 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
       })(),
       hayHoy: !padre,
       cabeceraHora: !padre && pantalla === 'bro',
+      padAbajo: (padre || pantalla !== 'bro') ? '100px' : '12px',
       verDock: padre || pantalla !== 'bro' || !!(s.sesion && s.sesion[this.modo()] && s.sesion[this.modo()].conv && s.sesion[this.modo()].conv.length) || !!s.escuchando || !!s.texto,
       est: (e => {
         const red = e.red, nm = Math.max(0, Math.min(4, e.nivelMovil || 0)), nw = Math.max(0, Math.min(4, e.nivelWifi == null ? 4 : e.nivelWifi));
