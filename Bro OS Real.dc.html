@@ -77,10 +77,23 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
             <div style="font-size:12px;color:{{ t.muted }}">{{ subtitulo }}</div>
           </div>
         </sc-if>
-        <div aria-label="5G, batería 82%" style="display:flex;align-items:center;gap:6px;flex:none;color:{{ t.txt }}">
-          <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="7" width="3" height="4" rx="1"></rect><rect x="4.5" y="5" width="3" height="6" rx="1"></rect><rect x="9" y="2.5" width="3" height="8.5" rx="1"></rect><rect x="13.5" y="0" width="3" height="11" rx="1"></rect></svg>
-          <span style="font-family:Inter;font-size:11.5px;font-weight:700;letter-spacing:-.01em;line-height:1">5G</span>
-          <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x=".5" y=".5" width="21" height="11" rx="3.2" stroke="currentColor" opacity=".45"></rect><rect x="2" y="2" width="15" height="8" rx="1.8" fill="currentColor"></rect><path d="M23 4v4c.8-.3 1.3-1.1 1.3-2S23.8 4.3 23 4z" fill="currentColor" opacity=".45"></path></svg>
+        <div aria-label="{{ est.etiqueta }}" style="display:flex;align-items:center;gap:6px;flex:none;color:{{ t.txt }}">
+          <sc-if value="{{ est.hayMovil }}" hint-placeholder-val="{{ false }}">
+            <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="7" width="3" height="4" rx="1" opacity="{{ est.b1 }}"></rect><rect x="4.5" y="5" width="3" height="6" rx="1" opacity="{{ est.b2 }}"></rect><rect x="9" y="2.5" width="3" height="8.5" rx="1" opacity="{{ est.b3 }}"></rect><rect x="13.5" y="0" width="3" height="11" rx="1" opacity="{{ est.b4 }}"></rect></svg>
+          </sc-if>
+          <sc-if value="{{ est.hayGen }}" hint-placeholder-val="{{ false }}">
+            <span style="font-family:Inter;font-size:11.5px;font-weight:700;letter-spacing:-.01em;line-height:1">{{ est.gen }}</span>
+          </sc-if>
+          <sc-if value="{{ est.hayWifi }}" hint-placeholder-val="{{ false }}">
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M8 12 5.6 9.4a3.4 3.4 0 0 1 4.8 0Z" opacity="{{ est.w1 }}"></path><path d="M3.5 7.3a6.4 6.4 0 0 1 9 0l-1.4 1.4a4.4 4.4 0 0 0-6.2 0Z" opacity="{{ est.w2 }}"></path><path d="M1.4 5.2a9.4 9.4 0 0 1 13.2 0l-1.4 1.4a7.4 7.4 0 0 0-10.4 0Z" opacity="{{ est.w3 }}"></path><path d="M-.6 3.1a12.4 12.4 0 0 1 17.2 0l-1.4 1.4a10.4 10.4 0 0 0-14.4 0Z" opacity="{{ est.w4 }}"></path></svg>
+          </sc-if>
+          <sc-if value="{{ est.sinRed }}" hint-placeholder-val="{{ false }}">
+            <span style="font-family:Inter;font-size:11px;font-weight:700;line-height:1;color:{{ t.muted }}">Sin red</span>
+          </sc-if>
+          <sc-if value="{{ est.hayBateria }}" hint-placeholder-val="{{ false }}">
+            <span style="font-family:Inter;font-size:11.5px;font-weight:700;line-height:1">{{ est.bateriaTxt }}</span>
+            <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x=".5" y=".5" width="21" height="11" rx="3.2" stroke="currentColor" opacity=".45"></rect><rect x="2" y="2" width="{{ est.bateriaAncho }}" height="8" rx="1.8" fill="{{ est.bateriaColor }}"></rect><path d="M23 4v4c.8-.3 1.3-1.1 1.3-2S23.8 4.3 23 4z" fill="currentColor" opacity=".45"></path></svg>
+          </sc-if>
         </div>
         <button onClick="{{ abrirQR }}" aria-label="Mi código Bro" style="width:36px;height:36px;border-radius:50%;background:{{ avatarColor }};color:#fff;display:grid;place-items:center;font-family:Outfit;font-weight:700;flex:none">{{ avatar }}</button>
       </div>
@@ -1681,6 +1694,17 @@ class Component extends DCLogic {
     document.addEventListener('pointerdown', this.alTocar, true);
     this.alRedimensionar();
     this.reloj = setInterval(() => this.setState({ ahoraMismo: new Date() }), 30000);
+    // Estado REAL del móvil (red, cobertura, batería). Nunca valores inventados.
+    window.__broEstado = e => this.setState({ estadoMovil: e });
+    const leerEstado = async () => {
+      try { if (window.BroNativo && BroNativo.estadoMovil) { this.setState({ estadoMovil: JSON.parse(BroNativo.estadoMovil()) }); return; } } catch (e) {}
+      const e = { red: navigator.onLine ? 'desconocida' : 'ninguna' };
+      const c = navigator.connection; if (c && c.type) e.red = c.type === 'wifi' ? 'wifi' : c.type === 'cellular' ? 'movil' : c.type === 'none' ? 'ninguna' : e.red;
+      try { if (navigator.getBattery) { const b = await navigator.getBattery(); e.bateria = Math.round(b.level * 100); e.cargando = b.charging; } } catch (x) {}
+      this.setState({ estadoMovil: e });
+    };
+    window.addEventListener('bronativo', leerEstado); window.addEventListener('online', leerEstado); window.addEventListener('offline', leerEstado);
+    leerEstado(); this.tEstado = setInterval(leerEstado, 15000);
     this.api = await import('./api-real.js?v=' + (window.BROS_V || Date.now()));
     clearInterval(this.tSync); this.tSync = setInterval(async () => { try { const r = await this.api.traer(); if (r.cambio && r.estado) this.setState({ db: r.estado }); } catch (e) {} }, 4000);
     this.llamar('estado');
@@ -1748,7 +1772,7 @@ class Component extends DCLogic {
     } catch (e) { this.cerrarCamaraAmigo(); }
   }
   cerrarCamaraAmigo() { cancelAnimationFrame(this.rafAmigo); if (this.streamAmigo) { this.streamAmigo.getTracks().forEach(x => x.stop()); this.streamAmigo = null; } if (this.state.camAmigo) this.setState({ camAmigo: false }); }
-  componentWillUnmount() { clearInterval(this.tAmigos); this.cerrarCamaraAmigo(); if (this.quitarGestos) this.quitarGestos(); clearTimeout(this.tInactivo); document.removeEventListener('pointerdown', this.alTocar, true); clearInterval(this.reloj); window.removeEventListener('resize', this.alRedimensionar); clearInterval(this.tCall); clearTimeout(this.tCall); if (window.speechSynthesis) speechSynthesis.cancel(); }
+  componentWillUnmount() { clearInterval(this.tAmigos); this.cerrarCamaraAmigo(); if (this.quitarGestos) this.quitarGestos(); clearTimeout(this.tInactivo); document.removeEventListener('pointerdown', this.alTocar, true); clearInterval(this.reloj); clearInterval(this.tEstado); window.removeEventListener('resize', this.alRedimensionar); clearInterval(this.tCall); clearTimeout(this.tCall); if (window.speechSynthesis) speechSynthesis.cancel(); }
   componentDidUpdate() {
     const m = this.modo(), x = this.state.sesion[m];
     const clave = m + '|' + x.conv.length + '|' + (x.flujo ? x.flujo.respuestas.length : '-');
@@ -2671,6 +2695,20 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
       })(),
       hayHoy: !padre,
       cabeceraHora: !padre && pantalla === 'bro',
+      est: (e => {
+        const red = e.red, nm = Math.max(0, Math.min(4, e.nivelMovil || 0)), nw = Math.max(0, Math.min(4, e.nivelWifi == null ? 4 : e.nivelWifi));
+        const bat = typeof e.bateria === 'number' ? Math.max(0, Math.min(100, e.bateria)) : null;
+        const op = (n, k) => n >= k ? '1' : '.25';
+        return {
+          hayMovil: red === 'movil' || !!e.sim, hayGen: red === 'movil' && !!e.gen, gen: e.gen || '',
+          b1: op(nm, 1), b2: op(nm, 2), b3: op(nm, 3), b4: op(nm, 4),
+          hayWifi: red === 'wifi', w1: op(nw, 1), w2: op(nw, 2), w3: op(nw, 3), w4: op(nw, 4),
+          sinRed: red === 'ninguna',
+          hayBateria: bat != null, bateriaTxt: bat != null ? bat + '%' : '', bateriaAncho: bat != null ? Math.max(1, Math.round(17 * bat / 100)) : 0,
+          bateriaColor: e.cargando ? '#4E9A2E' : bat != null && bat <= 15 ? '#D93B2B' : 'currentColor',
+          etiqueta: [red === 'wifi' ? 'Wifi' : red === 'movil' ? 'Datos móviles ' + (e.gen || '') : red === 'ninguna' ? 'Sin conexión' : '', bat != null ? 'batería ' + bat + '%' + (e.cargando ? ', cargando' : '') : ''].filter(Boolean).join(', ')
+        };
+      })(s.estadoMovil || {}),
       cabeceraTitulo: padre || pantalla !== 'bro',
       hora: (s.ahoraMismo || new Date()).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),
       fecha: (f => f.charAt(0).toUpperCase() + f.slice(1))((s.ahoraMismo || new Date()).toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'short' }).replace('.', '')),
