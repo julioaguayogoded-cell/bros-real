@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="./support.js"></script>
+<script src="./estado.js"></script>
 </head>
 <body>
 <x-dc>
@@ -20,10 +21,9 @@
   <div style="flex:none;display:flex;align-items:center;gap:10px;padding:calc(12px + env(safe-area-inset-top)) 14px 12px;background:#fff;border-bottom:1px solid #E4E7EE">
     <button onClick="{{ atras }}" aria-label="Atrás" style="width:42px;height:42px;border-radius:13px;background:#F0F2F6;display:grid;place-items:center;font-size:22px;flex:none">‹</button>
     <div style="flex:1;min-width:0">
-      <div style="font-family:Outfit;font-weight:800;font-size:19px;line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ cab.titulo }}</div>
-      <div style="font-size:12px;color:#4B5563;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ cab.sub }}</div>
+      <div style="font-family:Outfit;font-weight:800;font-size:26px;line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#3068ED">{{ cab.titulo }}</div>
     </div>
-    <img src="logo.png" alt="BroS Life" style="width:30px;height:30px;flex:none">
+    <bros-estado></bros-estado>
   </div>
 
   <div ref="{{ scrollRef }}" style="flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch">

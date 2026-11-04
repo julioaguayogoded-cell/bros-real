@@ -1846,6 +1846,7 @@ class Component extends DCLogic {
     this.api = await import('./api-real.js?v=' + (window.BROS_V || Date.now()));
     clearInterval(this.tSync); this.tSync = setInterval(async () => { try { const r = await this.api.traer(); if (r.cambio && r.estado) this.setState({ db: r.estado }); } catch (e) {} }, 4000);
     this.llamar('estado');
+    if (location.hash === '#qr') { history.replaceState(null, '', location.pathname + location.search); setTimeout(() => this.ejecutar({ pantalla: 'qr' }), 300); }
     if (window.speechSynthesis) speechSynthesis.getVoices();
   }
   videoAmigoRef = React.createRef();
