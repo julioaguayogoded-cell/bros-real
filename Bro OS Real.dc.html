@@ -1335,6 +1335,47 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
             </div>
           </sc-if>
 
+          <!-- MIS CANALES: solo canales aprobados por la familia. Sin Shorts, sin búsqueda, sin salir a YouTube -->
+          <sc-if value="{{ co.verCanales }}" hint-placeholder-val="{{ false }}">
+            <div style="margin:20px 16px 8px;font-size:11px;font-weight:700;letter-spacing:.06em;color:#9CA3AF">MIS CANALES</div>
+            <sc-if value="{{ co.sinCanales }}" hint-placeholder-val="{{ false }}">
+              <div style="margin:0 16px;background:#fff;border:1px solid #E4E7EE;border-radius:16px;padding:14px;font-size:13.5px;line-height:1.45;color:#4B5563">Aún no tienes canales aprobados. Busca un youtuber arriba y, si te gusta, pídeselo a tu familia.</div>
+            </sc-if>
+            <div style="display:flex;flex-direction:column;gap:8px;padding:0 16px">
+              <sc-for list="{{ co.canales }}" as="c" hint-placeholder-count="2">
+                <button onClick="{{ c.onClick }}" style="width:100%;display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:16px;background:#fff;border:1px solid #E4E7EE;text-align:left">
+                  <div style="width:40px;height:40px;border-radius:50%;background:#FF0000;color:#fff;display:grid;place-items:center;font-family:Outfit;font-weight:800;font-size:17px;flex:none">{{ c.inicial }}</div>
+                  <div style="flex:1;min-width:0"><div style="font-family:Outfit;font-weight:700;font-size:15px">{{ c.nombre }}</div><div style="font-size:12px;color:#6B7280">Aprobado por {{ c.por }}</div></div>
+                  <span style="font-size:20px;color:#9CA3AF">›</span>
+                </button>
+              </sc-for>
+            </div>
+          </sc-if>
+          <sc-if value="{{ co.enCanal }}" hint-placeholder-val="{{ false }}">
+            <div style="margin:16px 16px 10px;display:flex;align-items:center;gap:12px">
+              <button onClick="{{ co.cerrarCanal }}" aria-label="Volver" style="width:36px;height:36px;border-radius:50%;background:#F0F2F6;font-size:18px;flex:none">‹</button>
+              <div style="width:44px;height:44px;border-radius:50%;flex:none;background-color:#FF0000;background-size:cover;background-position:center;background-image:url({{ co.canalFoto }})"></div>
+              <div style="flex:1;min-width:0"><div style="font-family:Outfit;font-weight:800;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ co.canalNombre }}</div><div style="font-size:12px;color:#6B7280">Canal aprobado · sin Shorts</div></div>
+            </div>
+            <sc-if value="{{ co.canalCargando }}" hint-placeholder-val="{{ false }}">
+              <div style="margin:18px 16px;display:flex;gap:10px;align-items:center;justify-content:center;font-size:13.5px;color:#4B5563"><span style="width:16px;height:16px;border-radius:50%;border:2px solid #D5DAE3;border-top-color:#FF0000;animation:gira .8s linear infinite"></span>Cargando vídeos…</div>
+            </sc-if>
+            <sc-if value="{{ co.canalError }}" hint-placeholder-val="{{ false }}">
+              <div style="margin:0 16px;background:#fff;border:1px solid #E4E7EE;border-radius:16px;padding:14px;font-size:13.5px;color:#4B5563">{{ co.canalErrorTxt }}</div>
+            </sc-if>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px">
+              <sc-for list="{{ co.canalVideos }}" as="v" hint-placeholder-count="4">
+                <button onClick="{{ v.onClick }}" style="display:flex;flex-direction:column;gap:6px;text-align:left;min-width:0">
+                  <div style="width:100%;aspect-ratio:16/9;border-radius:12px;background-color:#E4E7EE;background-size:cover;background-position:center;background-image:url({{ v.foto }});outline:{{ v.borde }}"></div>
+                  <div style="font-size:12.5px;font-weight:600;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{ v.titulo }}</div>
+                </button>
+              </sc-for>
+            </div>
+            <sc-if value="{{ co.canalHayMas }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:12px 16px 0"><button onClick="{{ co.canalMas }}" style="width:100%;height:44px;border-radius:14px;background:#F0F2F6;font-weight:700;font-size:14px">Ver más vídeos</button></div>
+            </sc-if>
+          </sc-if>
+
           <sc-if value="{{ co.hayResultados }}" hint-placeholder-val="{{ false }}">
             <div style="display:flex;align-items:center;gap:8px;margin:20px 16px 10px">
               <img src="logo.png" alt="" style="width:20px;height:20px">
@@ -2198,6 +2239,19 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
     if (que === 'dormir') { await this.llamar('dormir', {}); return this.setState(s => ({ modo: 'nino', pantalla: 'bro', id: null, resumenSueno: null, sesion: { ...s.sesion, nino: { conv: [], flujo: null } } })); }
   }
   bloquear() { this.setState({ bloqueo: 'cara', escaneo: null, pin: '', pantalla: 'bro' }); }
+  async abrirCanal(nombre, siguiente) {
+    const prev = this.state.canalC && this.state.canalC.nombre === nombre ? this.state.canalC : null;
+    this.setState({ canalC: { ...(prev || {}), nombre, cargando: true, error: '', videos: siguiente && prev ? prev.videos : [] } });
+    try {
+      const disp = (() => { try { return JSON.parse(localStorage.getItem('bros-dispositivo')) || null; } catch (e) { return null; } })();
+      const h = { 'Content-Type': 'application/json', Authorization: 'Bearer ' + BRO_AI_KEY, apikey: BRO_AI_KEY };
+      if (disp && disp.token) h['x-bros-token'] = disp.token; else h['x-bros-codigo'] = localStorage.getItem('bros-real-codigo') || '';
+      const res = await fetch(BRO_AI_URL.replace('/Bro-ai', '/bro-canal'), { method: 'POST', headers: h, body: JSON.stringify({ accion: 'videos', canal: nombre, siguiente: siguiente || null }) });
+      const j = await res.json();
+      if (j.bloqueado || j.error) return this.setState({ canalC: { nombre, cargando: false, error: j.motivo || j.error, videos: [] } });
+      this.setState({ canalC: { nombre, cargando: false, canal: j.canal, videos: [...(siguiente && prev ? prev.videos : []), ...j.videos], siguiente: j.siguiente } });
+    } catch (e) { this.setState({ canalC: { nombre, cargando: false, error: 'No hay conexión. Prueba otra vez.', videos: [] } }); }
+  }
   // Llamar: abre el teclado del teléfono del móvil (en el launcher, el marcador está siempre permitido)
   abrirTelefono() { try { window.location.href = 'tel:'; } catch (e) { this.avisar('No se ha podido abrir el teléfono.'); } }
   abrirContactos() { this.avisar('Contactos: muy pronto podrás ver aquí a tu familia y amigos.'); }
@@ -2497,7 +2551,7 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
     if (a.compartir) this.compartirComunidad();
     if (a.pantalla === 'aprender' && (!this.state.lm || a.libro)) this.lmInicio(a.libro);
     if (a.test) { const r = (this.state.db.rewards || []).find(x => x.id === a.test); if (r && r.conds.some(c => c.tipo === 'test' && !c.hecho)) this.setState({ quiz: { id: a.test, i: 0, ok: 0 } }); }
-    if (a.pantalla === 'contenido') { if (a.buscar) this.buscarC(a.buscar); else this.setState({ resC: null, qC: '', videoC: null }); }
+    if (a.pantalla === 'contenido') { if (a.buscar) this.buscarC(a.buscar); else this.setState({ resC: null, qC: '', videoC: null, canalC: null }); }
     if (a.pantalla === 'qr') {
       this.qrDesde = Date.now(); this.setState({ qrSemilla: Math.floor(Math.random() * 1e6) + 1, escAmigo: false, msgAmigo: null, codigoAmigo: '' });
       if (tokenBro()) this.cargarQR();
@@ -2822,7 +2876,22 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
             onClick: () => { this.setState({ videoC: v }); if (this.scrollRef.current) this.scrollRef.current.scrollTop = 0; } })),
           hayPlayer: !!act, actual: act || {},
           src: act ? `https://www.youtube-nocookie.com/embed/${act.yt}?autoplay=1&rel=0&modestbranding=1&playsinline=1` : '',
-          onCerrar: () => this.setState({ videoC: null })
+          onCerrar: () => this.setState({ videoC: null }),
+          ...(() => {
+            const cc = s.canalC, lista = (s.db && s.db.canalesAprobados) || [];
+            return {
+              verCanales: esV && !r && !cc && !act,
+              sinCanales: !lista.length,
+              canales: lista.map(c => ({ nombre: c.nombre, inicial: (c.nombre || '?').trim().charAt(0).toUpperCase(), por: c.por || 'tu familia', onClick: () => this.abrirCanal(c.nombre) })),
+              enCanal: esV && !!cc && !r,
+              canalNombre: cc ? ((cc.canal && cc.canal.nombre) || cc.nombre) : '', canalFoto: (cc && cc.canal && cc.canal.foto) || '',
+              canalCargando: !!(cc && cc.cargando), canalError: !!(cc && cc.error), canalErrorTxt: (cc && cc.error) || '',
+              canalVideos: (cc && cc.videos || []).map(v => ({ ...v, borde: act && act.yt === v.id ? '3px solid #FF0000' : 'none',
+                onClick: () => { this.setState({ videoC: { yt: v.id, t: v.titulo, canal: (cc.canal && cc.canal.nombre) || cc.nombre } }); if (this.scrollRef.current) this.scrollRef.current.scrollTop = 0; } })),
+              canalHayMas: !!(cc && cc.siguiente && !cc.cargando), canalMas: () => this.abrirCanal(cc.nombre, cc.siguiente),
+              cerrarCanal: () => this.setState({ canalC: null, videoC: null })
+            };
+          })()
         };
       })(),
       avisos: padre ? db.avisos.filter(a => !a.leido) : [],
