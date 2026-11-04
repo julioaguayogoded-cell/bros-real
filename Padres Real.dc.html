@@ -1622,7 +1622,12 @@ class Component extends DCLogic {
     this.reloj = setInterval(() => this.setState({ ahoraMismo: new Date() }), 30000);
     this.api = await import('./api-real.js?v=' + (window.BROS_V || Date.now()));
     clearInterval(this.tSync); this.tSync = setInterval(async () => { try { const r = await this.api.traer(); if (r.cambio && r.estado) this.setState({ db: r.estado }); } catch (e) {} }, 4000);
-    try { const f = await this.api.familia(); this.setState({ famReal: f }); this.refrescarUrgentes(); } catch (e) {}
+    try {
+      const f = await this.api.familia();
+      // App real de padres: sin sesión, a entrar con el email (nunca datos de demo); luego vuelve aquí
+      if (!f.sesion && !/[?&](demo|perfil)/.test(location.search) && this.props.vozSimulada !== true) { location.replace('Familia Real.dc.html?volver=padres'); return; }
+      this.setState({ famReal: f }); this.refrescarUrgentes();
+    } catch (e) {}
     this.llamar('estado');
     if (window.speechSynthesis) speechSynthesis.getVoices();
   }

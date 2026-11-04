@@ -143,6 +143,7 @@
           <div style="font-family:Outfit;font-weight:800;font-size:26px;line-height:1.1">{{ home.titulo }}</div>
           <div style="font-size:13.5px;color:#6B7280;margin-top:4px">{{ home.sub }}</div>
         </div>
+        <a href="Padres Real.dc.html" style="height:52px;border-radius:16px;background:#111;color:#fff;font-family:Outfit;font-weight:800;font-size:16px;display:flex;align-items:center;justify-content:center;text-decoration:none">Abrir la app de padres</a>
         <sc-for list="{{ home.bros }}" as="b" hint-placeholder-count="2">
           <div style="background:#fff;border:1px solid #E4E7EE;border-radius:22px;padding:16px;display:flex;flex-direction:column;gap:12px">
             <div style="display:flex;align-items:center;gap:12px">
@@ -214,6 +215,7 @@ class Component extends DCLogic {
     this.sb.auth.onAuthStateChange((_e, s) => { if (s && !this.state.sesion) { this.setState({ sesion: s }); this.alEntrar(); } });
     const { data } = await this.sb.auth.getSession();
     if (data.session) { this.setState({ sesion: data.session }); await this.alEntrar(); }
+    else if (/[?&]volver=padres/.test(location.search)) this.setState({ paso: 'cuenta', modoCuenta: 'entrar' });
     else this.setState({ paso: localStorage.getItem('bros-compra') ? 'cuenta' : 'tienda' });
   }
   avisar(t) { this.setState({ aviso: t }); clearTimeout(this.tA); this.tA = setTimeout(() => this.setState({ aviso: '' }), 3200); }
@@ -226,7 +228,10 @@ class Component extends DCLogic {
       const { data: f } = await this.sb.rpc('aceptar_invitacion', { p_mi_nombre: this.state.miNombre || '' });
       if (f) { this.avisar('Te has unido a tu familia.'); mi = [{ familia: f }]; }
     }
-    if (mi && mi.length) { await this.cargarFamilia(mi[0].familia); return this.ir('home'); }
+    if (mi && mi.length) {
+      if (/[?&]volver=padres/.test(location.search)) { location.replace('Padres Real.dc.html'); return; }
+      await this.cargarFamilia(mi[0].familia); return this.ir('home');
+    }
     this.ir('familia');
   }
   async cargarFamilia(id) {
