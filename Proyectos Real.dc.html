@@ -382,8 +382,10 @@ class Component extends DCLogic {
   ir(pantalla, extra = {}) { this.setState({ pantalla, ...extra }, () => this.scroll(false)); }
 
   async listar() {
-    try { const j = await this.llamar('listar'); this.setState({ proyectos: j.proyectos || [] }); }
-    catch (e) { this.setState({ proyectos: [] }); this.avisar(e.message); }
+    const K = 'bros-cache-proyectos-' + this.broId(); // se ve al instante lo último guardado en el móvil
+    if (!Array.isArray(this.state.proyectos)) { try { const c = JSON.parse(localStorage.getItem(K)); if (Array.isArray(c)) this.setState({ proyectos: c }); } catch (e) {} }
+    try { const j = await this.llamar('listar'); const p = j.proyectos || []; this.setState({ proyectos: p }); try { localStorage.setItem(K, JSON.stringify(p)); } catch (e) {} }
+    catch (e) { if (!Array.isArray(this.state.proyectos)) this.setState({ proyectos: [] }); this.avisar(e.message); }
   }
   actual() { return (this.state.proyectos || []).find(p => p.id === this.state.actualId); }
   cambiar(fn, guardar = true) {

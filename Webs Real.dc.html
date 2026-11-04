@@ -181,7 +181,13 @@ class Component extends DCLogic {
   scrollRef = React.createRef();
 
   edad() { const q = Number(new URLSearchParams(location.search).get('edad')); if (q) { try { localStorage.setItem('bros-web-edad', q); } catch (e) {} return q; } return Number(localStorage.getItem('bros-web-edad')) || 12; }
-  componentDidMount() { this.llamar('lista').then(j => this.setState({ webs: j.webs || [] })).catch(e => { this.setState({ webs: [] }); this.avisar(e.message); }); }
+  // Arranque instantáneo: la última lista guardada se ve ya; la del servidor la sustituye al llegar
+  componentDidMount() {
+    const K = 'bros-cache-webs-' + this.edad();
+    try { const c = JSON.parse(localStorage.getItem(K)); if (Array.isArray(c)) this.setState({ webs: c }); } catch (e) {}
+    this.llamar('lista').then(j => { const w = j.webs || []; this.setState({ webs: w }); try { localStorage.setItem(K, JSON.stringify(w)); } catch (e) {} })
+      .catch(e => { if (!this.state.webs) this.setState({ webs: [] }); this.avisar(e.message); });
+  }
   componentWillUnmount() { clearTimeout(this.tA); }
 
   async llamar(accion, datos = {}) {

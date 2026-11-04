@@ -117,7 +117,7 @@ async function rpc(nombre, args) {
   return j;
 }
 
-let db = null, version = 0;
+let db = null, version = 0, cargando = null, pendienteUI = false;
 const codigo = () => localStorage.getItem('bros-real-codigo') || '';
 const copia = o => JSON.parse(JSON.stringify(o));
 const guardarLocal = () => { if (padre) return; try { localStorage.setItem(LOCAL, JSON.stringify({ db, version })); } catch (e) {} };
@@ -164,6 +164,14 @@ async function cargar() {
 export async function llamar(ruta, datos = {}) {
   if (!enLinea()) { if (!db) leerLocal(); const res = ejecutar(db, ruta, datos); if (!previewLimpio()) guardarLocal(); return res; }
   try {
+    // Arranque instantáneo: pinta ya con lo guardado en el móvil y actualiza desde el servidor por detrás
+    if (ruta === 'estado' && (!db || !version) && dispositivo() && dispositivo().token) { // solo en el móvil del Bro (nunca datos de otro en la app de padres)
+      if (!db) leerLocal();
+      const res = ejecutar(copia(db), 'estado', datos);
+      if (!cargando) cargando = cargar().then(() => { pendienteUI = true; }).catch(() => {}).finally(() => { cargando = null; });
+      return res;
+    }
+    if (cargando) await cargando;
     if (!db || !version) await cargar();
     if (ruta === 'estado') return ejecutar(copia(db), 'estado', datos);
     for (let i = 0; i < 4; i++) {
@@ -185,6 +193,8 @@ export async function llamar(ruta, datos = {}) {
 // ¿Ha cambiado algo en el otro dispositivo? Devuelve { cambio, estado }
 export async function traer() {
   if (!enLinea()) return { cambio: false };
+  if (cargando) await cargando;
+  if (pendienteUI && db) { pendienteUI = false; return { cambio: true, estado: ejecutar(copia(db), 'estado').estado }; }
   const v = await fn('leer', { solo_version: true });
   if (db && v.version === version) return { cambio: false };
   await cargar();
