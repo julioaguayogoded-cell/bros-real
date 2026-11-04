@@ -109,13 +109,16 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
                 <div style="width:100%;text-align:left;display:flex;flex-direction:column;gap:12px">
                   <div>
                     <div style="font-size:11px;font-weight:700;color:#6B7280;letter-spacing:.06em;margin-bottom:7px">MY TODAY STUFF</div>
-                    <div style="display:flex;gap:8px;overflow-x:auto;margin:0 -20px;padding:0 20px 2px;scrollbar-width:none">
+                    <div style="display:flex;gap:8px;overflow-x:auto;margin:0 -20px;padding:0 20px 4px;scroll-snap-type:x mandatory;scroll-padding:0 20px;scrollbar-width:none;-webkit-overflow-scrolling:touch">
                       <sc-for list="{{ hoy }}" as="it" hint-placeholder-count="3">
-                        <button onClick="{{ it.onClick }}" style="flex:none;width:168px;background:#fff;border:1px solid #E4E7EE;border-radius:16px;padding:11px 12px;display:flex;flex-direction:column;gap:3px;text-align:left">
-                          <span style="display:flex;align-items:center;gap:6px;font-size:10.5px;font-weight:700;color:{{ it.color }}"><i style="width:7px;height:7px;border-radius:50%;background:{{ it.color }}"></i>{{ it.k }}</span>
-                          <span style="font-family:Outfit;font-size:14px;font-weight:600;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{ it.titulo }}</span>
+                        <button onClick="{{ it.onClick }}" style="flex:none;width:calc((100vw - 56px) / 3);max-width:150px;min-height:92px;scroll-snap-align:start;background:#fff;border:1px solid #E4E7EE;border-top:4px solid {{ it.color }};border-radius:16px;padding:10px 10px 11px;display:flex;flex-direction:column;gap:4px;text-align:left;box-shadow:0 4px 12px rgba(17,17,17,.05)">
+                          <span style="font-size:10px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:{{ it.color }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ it.k }}</span>
+                          <span style="font-family:Outfit;font-size:13.5px;font-weight:700;line-height:1.25;color:#111;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden">{{ it.titulo }}</span>
                         </button>
                       </sc-for>
+                      <sc-if value="{{ hoyVacio }}" hint-placeholder-val="{{ false }}">
+                        <div style="flex:none;width:100%;background:#fff;border:1px dashed #D5DAE3;border-radius:16px;padding:14px;font-size:13px;color:#6B7280">Nada importante por hoy.</div>
+                      </sc-if>
                     </div>
                   </div>
                 </div>
@@ -128,7 +131,7 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
                 </div>
               </sc-for>
 
-              <button onClick="{{ escuchar }}" aria-label="Hablar con Bro" style="width:128px;height:128px;flex:none;border-radius:50%;padding:6px;background:conic-gradient(from 140deg,#3068ED 0 25%,#E56648 0 50%,#82B94F 0 75%,#111 0);animation:{{ orbAnim }};box-shadow:0 16px 36px rgba(48,104,237,.28)">
+              <button onClick="{{ escuchar }}" aria-label="Hablar con Bro" style="width:116px;height:116px;flex:none;border-radius:50%;padding:6px;background:conic-gradient(from 140deg,#3068ED 0 25%,#E56648 0 50%,#82B94F 0 75%,#111 0);animation:{{ orbAnim }};box-shadow:0 16px 36px rgba(48,104,237,.28)">
                 <div style="width:100%;height:100%;border-radius:50%;background:#fff;display:grid;place-items:center">
                   <img src="facew.png" alt="" style="width:60%;height:60%;filter:brightness(0)">
                 </div>
@@ -183,12 +186,12 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
                 </button>
               </sc-if>
               <sc-if value="{{ hayPilares }}" hint-placeholder-val="{{ true }}">
-                <div style="width:100%;max-width:330px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));row-gap:22px;column-gap:10px;margin-top:10px">
+                <div style="width:100%;max-width:310px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));row-gap:16px;column-gap:10px">
                   <sc-for list="{{ pilares }}" as="pi" hint-placeholder-count="9">
                     <button onClick="{{ pi.onClick }}" style="display:flex;flex-direction:column;align-items:center;gap:8px;min-width:0">
-                      <div style="width:68px;height:68px;border-radius:20px;background:{{ pi.color }};display:grid;place-items:center;box-shadow:0 8px 18px rgba(17,17,17,.12)">
+                      <div style="width:58px;height:58px;border-radius:17px;background:{{ pi.color }};display:grid;place-items:center;box-shadow:0 6px 14px rgba(17,17,17,.12)">
                         
-                      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="{{ pi.icono }}"></path></svg></div><span style="font-size:13px;font-weight:600;color:{{ t.txt }};max-width:100%;white-space:nowrap;letter-spacing:-.01em">{{ pi.t }}</span>
+                      <svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="{{ pi.icono }}"></path></svg></div><span style="font-size:12px;font-weight:600;color:{{ t.txt }};max-width:100%;white-space:nowrap;letter-spacing:-.01em">{{ pi.t }}</span>
                       
                     </button>
                   </sc-for>
@@ -1807,6 +1810,14 @@ const VIDEOS_YT = {
   v2: { yt: 'g2_CDlFquIk', t: 'Avión fácil en 1 minuto que vuela muy lejos', canal: 'Foldable Flight', dur: '1 min' },
   v3: { yt: '38ZpBSjxyDo', t: 'El «Canard», explicado por un récord mundial', canal: 'WIRED · John Collins', dur: 'Largo' }
 };
+// MY TODAY STUFF · tarjetas de PRUEBA para comprobar el deslizamiento. Poner a false para quitarlas.
+const HOY_PRUEBA = true;
+const HOY_PRUEBA_ITEMS = [
+  { k: 'Recordatorio', titulo: 'Llevar la mochila de natación', urgente: false, accion: { aviso: 'Tarjeta de prueba' } },
+  { k: 'Aviso de mamá', titulo: 'Hoy te recojo a las 17:30', urgente: true, accion: { aviso: 'Tarjeta de prueba' } },
+  { k: 'Mañana', titulo: 'Examen de inglés: unidad 4', urgente: false, accion: { aviso: 'Tarjeta de prueba' } },
+  { k: 'Esperando', titulo: 'Plan del sábado con Fernando', urgente: false, accion: { aviso: 'Tarjeta de prueba' } }
+];
 const FONDOS_VIDEO = ['linear-gradient(135deg,#3068ED,#6f49d8)', 'linear-gradient(135deg,#82B94F,#3e8e6a)', 'linear-gradient(135deg,#E56648,#c2417a)'];
 
 class Component extends DCLogic {
@@ -2924,7 +2935,8 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
       tituloColor: (!padre && ({ comunidades: '#3068ED', comunidad: '#3068ED', chat: '#3068ED', contenido: '#FF0000', proyectos: '#82B94F', logros: '#E56648', aura: '#6f49d8' })[pantalla]) || 'inherit',
       hora: (s.ahoraMismo || new Date()).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),
       fecha: (f => f.charAt(0).toUpperCase() + f.slice(1))((s.ahoraMismo || new Date()).toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'short' }).replace('.', '')),
-      hoy: (db.ahora || []).filter(it => it.accion.aviso || DESTINOS.includes(it.accion.pantalla)).slice(0, 4).map(it => ({
+      hoyVacio: !HOY_PRUEBA && !(db.ahora || []).some(it => it.accion.aviso || DESTINOS.includes(it.accion.pantalla)),
+      hoy: [...(HOY_PRUEBA ? HOY_PRUEBA_ITEMS : []), ...(db.ahora || []).filter(it => it.accion.aviso || DESTINOS.includes(it.accion.pantalla))].slice(0, 8).map(it => ({
         k: it.k, titulo: it.titulo,
         color: it.urgente ? '#E5484D' : /Esperando/.test(it.k) ? '#3068ED' : /escrito|acuerdo/i.test(it.k) ? '#E56648' : '#82B94F',
         onClick: () => it.accion.aviso ? this.avisar(it.accion.aviso) : this.ejecutar(it.accion)
