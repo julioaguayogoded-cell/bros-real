@@ -202,6 +202,11 @@ class Component extends DCLogic {
     this.setState({ visor: { nombre: w.nombre, dominio: w.dominio, cargando: true } });
     try {
       const j = await this.llamar('visor', { url: w.inicio });
+      // En el móvil Bro: visor nativo de BroS Life (navega solo dentro de la web aprobada y siempre se vuelve)
+      if (!j.bloqueado && window.BroNativo && BroNativo.abrirWeb) {
+        BroNativo.abrirWeb(j.url || w.inicio, w.nombre, (j.sitio && j.sitio.dominio) || w.dominio);
+        this.setState({ visor: null }); return;
+      }
       this.setState({ visor: { nombre: w.nombre, dominio: w.dominio, cargando: false, url: j.url || w.inicio, embeber: !!j.embeber, bloqueado: !!j.bloqueado, motivo: j.motivo } });
     } catch (e) { this.setState({ visor: { nombre: w.nombre, dominio: w.dominio, cargando: false, url: w.inicio, embeber: false } }); }
   }
