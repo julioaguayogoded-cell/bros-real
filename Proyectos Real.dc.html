@@ -351,6 +351,10 @@ class Component extends DCLogic {
     this.famBusy = false;
   }
 
+  // Móvil vinculado → su llave (cada Bro ve SUS proyectos). Sin vincular → código de demos.
+  disp() { try { const d = JSON.parse(localStorage.getItem('bros-dispositivo')); return d && d.token ? d : null; } catch (e) { return null; } }
+  acceso() { const d = this.disp(); return d ? { 'x-bros-token': d.token } : { 'x-bros-codigo': this.codigo() }; }
+  broId() { const d = this.disp(); return d ? d.bro : 'julio'; }
   codigo() {
     let c = localStorage.getItem('bros-real-codigo');
     if (!c) { c = (window.prompt('Código de acceso a BroS Life real') || '').trim(); if (c) localStorage.setItem('bros-real-codigo', c); }
@@ -358,7 +362,7 @@ class Component extends DCLogic {
   }
   async llamar(accion, datos = {}, url = FN) {
     let res;
-    try { res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + KEY, apikey: KEY, 'x-bros-codigo': this.codigo() }, body: JSON.stringify({ accion, bro: 'julio', edad: this.state.edad, ...datos }) }); }
+    try { res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + KEY, apikey: KEY, ...this.acceso() }, body: JSON.stringify({ accion, bro: this.broId(), edad: this.state.edad, ...datos }) }); }
     catch (e) { throw new Error('No hay conexión con Bro AI. Revisa internet o inténtalo en un momento.'); }
     if (res.status === 401) { localStorage.removeItem('bros-real-codigo'); throw new Error('Código incorrecto. Vuelve a intentarlo.'); }
     const j = await res.json().catch(() => ({}));
