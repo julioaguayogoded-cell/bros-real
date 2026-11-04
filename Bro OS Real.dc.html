@@ -1347,8 +1347,8 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
             <div style="display:flex;flex-direction:column;gap:8px;padding:0 16px">
               <sc-for list="{{ co.canales }}" as="c" hint-placeholder-count="2">
                 <button onClick="{{ c.onClick }}" style="width:100%;display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:16px;background:#fff;border:1px solid #E4E7EE;text-align:left">
-                  <div style="width:40px;height:40px;border-radius:50%;background:#FF0000;color:#fff;display:grid;place-items:center;font-family:Outfit;font-weight:800;font-size:17px;flex:none">{{ c.inicial }}</div>
-                  <div style="flex:1;min-width:0"><div style="font-family:Outfit;font-weight:700;font-size:15px">{{ c.nombre }}</div><div style="font-size:12px;color:#6B7280">Aprobado por {{ c.por }}</div></div>
+                  <div style="width:40px;height:40px;border-radius:50%;background-color:#FF0000;background-size:cover;background-position:center;background-image:url({{ c.foto }});color:#fff;display:grid;place-items:center;font-family:Outfit;font-weight:800;font-size:17px;flex:none">{{ c.inicial }}</div>
+                  <div style="flex:1;min-width:0"><div style="font-family:Outfit;font-weight:700;font-size:15px">{{ c.nombre }}</div><div style="font-size:12px;color:#6B7280">{{ c.por }}</div></div>
                   <span style="font-size:20px;color:#9CA3AF">›</span>
                 </button>
               </sc-for>
@@ -1379,6 +1379,17 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
             </sc-if>
           </sc-if>
 
+          <sc-if value="{{ co.hayPedibles }}" hint-placeholder-val="{{ false }}">
+            <div style="margin:18px 16px 8px;font-size:12.5px;color:#6B7280;line-height:1.4">Estos canales también tienen vídeos de esto, pero necesitas permiso de tu familia:</div>
+            <div style="display:flex;flex-direction:column;gap:8px;padding:0 16px">
+              <sc-for list="{{ co.pedibles }}" as="c" hint-placeholder-count="2">
+                <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;background:#fff;border:1px solid #E4E7EE">
+                  <div style="flex:1;min-width:0;font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.nombre }}</div>
+                  <button onClick="{{ c.onClick }}" style="flex:none;padding:8px 14px;border-radius:999px;background:{{ c.bg }};color:#fff;font-weight:700;font-size:13px">{{ c.txt }}</button>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
           <sc-if value="{{ co.hayResultados }}" hint-placeholder-val="{{ false }}">
             <div style="display:flex;align-items:center;gap:8px;margin:20px 16px 10px">
               <img src="logo.png" alt="" style="width:20px;height:20px">
@@ -2158,7 +2169,7 @@ class Component extends DCLogic {
         if (!j || j.error) r = { tema: texto, resultados: [], error: true };
         else if (j.bloqueado) r = { bloqueado: true, texto, pedible: !!j.pedible, autor: j.autor || null, tema: j.tema || null };
         else if (j.pregunta) { this.setState({ resC: { pregunta: j.pregunta }, preguntaC: { q: texto, p: j.pregunta }, qC: '' }); return this.decir && this.decir(j.pregunta); }
-        else r = { tema: texto, resultados: (j.videos || []).map(v => ({ ...v, tema: v.canal })), real: true, revisados: j.revisados, autor: j.autor };
+        else r = { tema: texto, resultados: (j.videos || []).map(v => ({ ...v, tema: v.canal })), real: true, revisados: j.revisados, autor: j.autor, pedir: j.pedir || [] };
       } catch (e) { r = { tema: texto, resultados: [], error: true }; }
       this.setState({ preguntaC: null });
       return this.setState({ resC: r, videoC: r.concreto ? r.resultados[0] : null, qC: r.bloqueado ? '' : (r.tema ? texto : ''), webC: null });
@@ -2242,19 +2253,43 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
     if (que === 'dormir') { await this.llamar('dormir', {}); return this.setState(s => ({ modo: 'nino', pantalla: 'bro', id: null, resumenSueno: null, sesion: { ...s.sesion, nino: { conv: [], flujo: null } } })); }
   }
   bloquear() { this.setState({ bloqueo: 'cara', escaneo: null, pin: '', pantalla: 'bro' }); }
-  async abrirCanal(nombre, siguiente) {
-    const prev = this.state.canalC && this.state.canalC.nombre === nombre ? this.state.canalC : null;
-    this.setState({ canalC: { ...(prev || {}), nombre, cargando: true, error: '', videos: siguiente && prev ? prev.videos : [] } });
-    try {
-      const disp = (() => { try { return JSON.parse(localStorage.getItem('bros-dispositivo')) || null; } catch (e) { return null; } })();
-      const h = { 'Content-Type': 'application/json', Authorization: 'Bearer ' + BRO_AI_KEY, apikey: BRO_AI_KEY };
-      if (disp && disp.token) h['x-bros-token'] = disp.token; else h['x-bros-codigo'] = localStorage.getItem('bros-real-codigo') || '';
-      const res = await fetch(BRO_AI_URL.replace('/Bro-ai', '/bro-canal'), { method: 'POST', headers: h, body: JSON.stringify({ accion: 'videos', canal: nombre, siguiente: siguiente || null }) });
-      const j = await res.json();
-      if (j.bloqueado || j.error) return this.setState({ canalC: { nombre, cargando: false, error: j.motivo || j.error, videos: [] } });
-      this.setState({ canalC: { nombre, cargando: false, canal: j.canal, videos: [...(siguiente && prev ? prev.videos : []), ...j.videos], siguiente: j.siguiente } });
-    } catch (e) { this.setState({ canalC: { nombre, cargando: false, error: 'No hay conexión. Prueba otra vez.', videos: [] } }); }
+  // Llamadas al servidor de canales y a la regla de permisos (con la llave del móvil)
+  cabCanal() {
+    const disp = (() => { try { return JSON.parse(localStorage.getItem('bros-dispositivo')) || null; } catch (e) { return null; } })();
+    const h = { 'Content-Type': 'application/json', Authorization: 'Bearer ' + BRO_AI_KEY, apikey: BRO_AI_KEY };
+    if (disp && disp.token) h['x-bros-token'] = disp.token; else h['x-bros-codigo'] = localStorage.getItem('bros-real-codigo') || '';
+    return { h, token: disp && disp.token };
   }
+  // Mis canales: lo permitido ahora mismo (se ve al instante lo último guardado; se actualiza del servidor)
+  async cargarMisCanales() {
+    try { const c = JSON.parse(localStorage.getItem('bros-cache-canales')); if (Array.isArray(c) && !this.state.misCanales) this.setState({ misCanales: c }); } catch (e) {}
+    const { h, token } = this.cabCanal(); if (!token) return this.setState({ misCanales: this.state.misCanales || [] });
+    try {
+      const r = await fetch(BRO_AI_URL.replace('/Bro-ai', '/bro-canal'), { method: 'POST', headers: h, body: JSON.stringify({ accion: 'mis' }) });
+      const j = await r.json(); if (!Array.isArray(j.canales)) return;
+      this.setState({ misCanales: j.canales }); try { localStorage.setItem('bros-cache-canales', JSON.stringify(j.canales)); } catch (e) {}
+      const p = await this.rpc('peticiones_de_bro', { p_token: token }); this.setState({ misPeticiones: Array.isArray(p) ? p : [] });
+    } catch (e) {}
+  }
+  async pedirCanalId(canal_id, nombre) {
+    const { token } = this.cabCanal(); if (!token) return this.avisar('Este móvil no está vinculado a un Bro.');
+    try {
+      const j = await this.rpc('pedir_canal', { p_token: token, p_canal: canal_id, p_nombre: nombre });
+      const t = { pedido: 'Se lo he pedido a tu familia. Lo verán en su app.', si: 'Ese canal ya lo puedes ver.', no: 'Tu familia ha dicho que no a ese canal.', vetado: 'BroS Life no permite ese canal.' }[j && j.permiso] || 'No se ha podido pedir. Prueba otra vez.';
+      this.avisar(t); this.cargarMisCanales();
+    } catch (e) { this.avisar('No se ha podido pedir. Prueba otra vez.'); }
+  }
+  async abrirCanal(canal_id, nombre, siguiente) {
+    const prev = this.state.canalC && this.state.canalC.canal_id === canal_id ? this.state.canalC : null;
+    this.setState({ canalC: { ...(prev || {}), canal_id, nombre, cargando: true, error: '', videos: siguiente && prev ? prev.videos : [] } });
+    try {
+      const res = await fetch(BRO_AI_URL.replace('/Bro-ai', '/bro-canal'), { method: 'POST', headers: this.cabCanal().h, body: JSON.stringify({ accion: 'videos', canal_id, siguiente: siguiente || null }) });
+      const j = await res.json();
+      if (j.bloqueado || j.error) return this.setState({ canalC: { canal_id, nombre, cargando: false, error: j.motivo || j.error, videos: [] } });
+      this.setState({ canalC: { canal_id, nombre, cargando: false, canal: j.canal, videos: [...(siguiente && prev ? prev.videos : []), ...j.videos], siguiente: j.siguiente } });
+    } catch (e) { this.setState({ canalC: { canal_id, nombre, cargando: false, error: 'No hay conexión. Prueba otra vez.', videos: [] } }); }
+  }
+
   // Llamar: abre el teclado del teléfono del móvil (en el launcher, el marcador está siempre permitido)
   abrirTelefono() { try { window.location.href = 'tel:'; } catch (e) { this.avisar('No se ha podido abrir el teléfono.'); } }
   abrirContactos() { this.avisar('Contactos: muy pronto podrás ver aquí a tu familia y amigos.'); }
@@ -2554,7 +2589,7 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
     if (a.compartir) this.compartirComunidad();
     if (a.pantalla === 'aprender' && (!this.state.lm || a.libro)) this.lmInicio(a.libro);
     if (a.test) { const r = (this.state.db.rewards || []).find(x => x.id === a.test); if (r && r.conds.some(c => c.tipo === 'test' && !c.hecho)) this.setState({ quiz: { id: a.test, i: 0, ok: 0 } }); }
-    if (a.pantalla === 'contenido') { if (a.buscar) this.buscarC(a.buscar); else this.setState({ resC: null, qC: '', videoC: null, canalC: null }); }
+    if (a.pantalla === 'contenido') { if (a.buscar) this.buscarC(a.buscar); else this.setState({ resC: null, qC: '', videoC: null, canalC: null }); this.cargarMisCanales(); }
     if (a.pantalla === 'qr') {
       this.qrDesde = Date.now(); this.setState({ qrSemilla: Math.floor(Math.random() * 1e6) + 1, escAmigo: false, msgAmigo: null, codigoAmigo: '' });
       if (tokenBro()) this.cargarQR();
@@ -2880,30 +2915,35 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
           hayPlayer: !!act, actual: act || {},
           src: act ? `https://www.youtube-nocookie.com/embed/${act.yt}?autoplay=1&rel=0&modestbranding=1&playsinline=1` : '',
           onCerrar: () => this.setState({ videoC: null }),
+          hayPedibles: esV && !!(r && r.pedir && r.pedir.length) && !s.canalC,
+          pedibles: ((r && r.pedir) || []).map(c => { const pe = (s.misPeticiones || []).find(x => x.tipo === 'canal' && x.ref === c.canal_id);
+            const est = pe ? pe.estado : null;
+            return { nombre: c.nombre, txt: est === 'pendiente' ? 'Pedido ✓' : est === 'no' ? 'Dijeron que no' : 'Pedir', bg: est ? '#9CA3AF' : '#3068ED',
+              onClick: () => { if (!est) this.pedirCanalId(c.canal_id, c.nombre); } }; }),
           ...(() => {
             const nom = act && act.canal, lista = (s.db && s.db.canalesAprobados) || [];
             const ya = !!nom && lista.some(c => (c.nombre || '').toLowerCase() === nom.toLowerCase());
             const sol = nom ? ((s.db && s.db.solicitudes) || []).filter(x => x.tipo === 'canal' && (x.ref || '').toLowerCase() === nom.toLowerCase()) : [];
             const pend = sol.some(x => x.estado === 'pendiente'), no = sol.some(x => x.estado === 'no');
             return {
-              puedePedirCanal: !!nom && !ya && !s.canalC,
+              puedePedirCanal: false,
               pedirCanalTxt: no ? 'Tu familia ha dicho que no a este canal' : pend ? 'Canal pedido ✓ · esperando respuesta' : '＋ Pedir el canal ' + nom + ' a mi familia',
               pedirCanalBg: no ? '#9CA3AF' : pend ? '#7F9BE0' : '#3068ED',
               pedirEsteCanal: async () => { if (pend || no) return; const x = await this.llamar('pedirCanal', { nombre: nom, tipo: 'canal' }); this.avisar(x.di || 'Pedido. Tu familia lo verá en su app.'); }
             };
           })(),
           ...(() => {
-            const cc = s.canalC, lista = (s.db && s.db.canalesAprobados) || [];
+            const cc = s.canalC, lista = s.misCanales || [];
             return {
               verCanales: esV && !r && !cc && !act,
-              sinCanales: !lista.length,
-              canales: lista.map(c => ({ nombre: c.nombre, inicial: (c.nombre || '?').trim().charAt(0).toUpperCase(), por: c.por || 'tu familia', onClick: () => this.abrirCanal(c.nombre) })),
+              sinCanales: !!s.misCanales && !lista.length,
+              canales: lista.map(c => ({ nombre: c.nombre, inicial: (c.nombre || '?').trim().charAt(0).toUpperCase(), foto: c.foto || '', por: c.familia ? 'Aprobado por ' + (c.por || 'tu familia') : 'Recomendado por BroS Life', onClick: () => this.abrirCanal(c.canal_id, c.nombre) })),
               enCanal: esV && !!cc && !r,
               canalNombre: cc ? ((cc.canal && cc.canal.nombre) || cc.nombre) : '', canalFoto: (cc && cc.canal && cc.canal.foto) || '',
               canalCargando: !!(cc && cc.cargando), canalError: !!(cc && cc.error), canalErrorTxt: (cc && cc.error) || '',
               canalVideos: (cc && cc.videos || []).map(v => ({ ...v, borde: act && act.yt === v.id ? '3px solid #FF0000' : 'none',
                 onClick: () => { this.setState({ videoC: { yt: v.id, t: v.titulo, canal: (cc.canal && cc.canal.nombre) || cc.nombre } }); if (this.scrollRef.current) this.scrollRef.current.scrollTop = 0; } })),
-              canalHayMas: !!(cc && cc.siguiente && !cc.cargando), canalMas: () => this.abrirCanal(cc.nombre, cc.siguiente),
+              canalHayMas: !!(cc && cc.siguiente && !cc.cargando), canalMas: () => this.abrirCanal(cc.canal_id, cc.nombre, cc.siguiente),
               cerrarCanal: () => this.setState({ canalC: null, videoC: null })
             };
           })()
