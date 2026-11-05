@@ -8,7 +8,7 @@
 <body>
 <x-dc>
 <helmet>
-<script>(function(){if(window.__brosP)return;window.__brosP=1;var q=new URLSearchParams(location.search).get('perfil');if(q)window.name='bros:'+q.replace(/[^a-z0-9_-]/gi,'').slice(0,20);var m=/^bros:(.+)$/.exec(window.name||'');if(!m)return;var P='P:'+m[1]+':',S=Storage.prototype,g=S.getItem,s=S.setItem,r=S.removeItem;var es=function(x){try{return x===window.localStorage}catch(e){return false}};S.getItem=function(a){return g.call(this,es(this)?P+a:a)};S.setItem=function(a,b){return s.call(this,es(this)?P+a:a,b)};S.removeItem=function(a){return r.call(this,es(this)?P+a:a)};window.BROS_PERFIL=m[1];})();window.BROS_V='2026-11-06.4';</script>
+<script>(function(){if(window.__brosP)return;window.__brosP=1;var q=new URLSearchParams(location.search).get('perfil');if(q)window.name='bros:'+q.replace(/[^a-z0-9_-]/gi,'').slice(0,20);var m=/^bros:(.+)$/.exec(window.name||'');if(!m)return;var P='P:'+m[1]+':',S=Storage.prototype,g=S.getItem,s=S.setItem,r=S.removeItem;var es=function(x){try{return x===window.localStorage}catch(e){return false}};S.getItem=function(a){return g.call(this,es(this)?P+a:a)};S.setItem=function(a,b){return s.call(this,es(this)?P+a:a,b)};S.removeItem=function(a){return r.call(this,es(this)?P+a:a)};window.BROS_PERFIL=m[1];})();window.BROS_V='2026-11-06.6';</script>
 <title>Bro OS</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -172,6 +172,18 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
                   </div></sc-if>
                   <button onClick="{{ nr.enviar }}" style="margin-top:6px;height:50px;border-radius:16px;text-align:center;background:{{ nr.enviarBg }};color:#fff;font-family:Outfit;font-weight:800;font-size:16px">Proponer el trato a {{ nr.hijo }}</button>
                   <div style="font-size:11.5px;color:{{ t.muted }};text-align:center">Empieza cuando {{ nr.hijo }} diga «¡Trato hecho!».</div>
+                </div>
+              </sc-if>
+              <!-- Rewards conseguidos que la familia aún tiene que cumplir -->
+              <sc-if value="{{ nr.hayCumplir }}" hint-placeholder-val="{{ false }}">
+                <div style="width:100%;max-width:380px;text-align:left;display:flex;flex-direction:column;gap:8px">
+                  <div style="font-size:11px;font-weight:700;letter-spacing:.06em;color:#1E7A3A;padding:0 2px">🏆 {{ nr.hijoMay }} LO HA CONSEGUIDO · TE TOCA CUMPLIR</div>
+                  <sc-for list="{{ nr.cumplir }}" as="c" hint-placeholder-count="0">
+                    <div style="background:{{ t.card }};border:1px solid {{ t.line }};border-radius:16px;padding:12px 13px;display:flex;flex-direction:column;gap:8px">
+                      <div style="font-size:14px;line-height:1.4;color:{{ t.txt }}">Ha conseguido <b>{{ c.titulo }}</b>. Su tarjeta vale por <b>{{ c.outcome }}</b>.</div>
+                      <button onClick="{{ c.cumplir }}" style="height:42px;border-radius:12px;background:#1E7A3A;color:#fff;font-weight:800;font-size:14px;text-align:center">Ya lo hemos cumplido ✓</button>
+                    </div>
+                  </sc-for>
                 </div>
               </sc-if>
               <!-- Propuestas del Bro -->
@@ -2584,6 +2596,9 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
           enviarBg: listo ? '#E56648' : '#E8B3A6',
           enviar: async () => { if (!listo) return this.avisar('Elige el reto y el reward.'); const quien = (this.state.famReal && this.state.famReal.miNombre) || 'Tu familia';
             const x = await this.llamar('crearRewardFamilia', { ...F, de: quien }); this.setState({ nrw: null }); this.avisar(x.di || 'Enviado.'); },
+          hayCumplir: padre && (db.rewards || []).some(r => r.estado === 'conseguido' && r.origen !== 'marca' && !r.cumplido),
+          cumplir: (db.rewards || []).filter(r => r.estado === 'conseguido' && r.origen !== 'marca' && !r.cumplido).map(r => ({ ...r,
+            cumplir: async () => { await this.llamar('marcarCumplido', { id: r.id, quien: (this.state.famReal && this.state.famReal.miNombre) || 'Tu familia' }); this.avisar('¡Trato cumplido!'); } })),
           hayProps: padre && props.length > 0,
           props: props.map(r => { const aj = (this.state.ajusteRw || {})[r.id];
             return { ...r, k: { ...textoContrato({ ...r, firmas: [...(r.firmas || []), { rol: 'familia', quien: (this.state.famReal && this.state.famReal.miNombre) || 'Tu familia' }] }, hijo), nota: hijo + ' ya ha dicho que sí · faltas tú' }, ajustando: aj !== undefined, nuevo: aj || '', ajustarTxt: aj !== undefined ? 'Enviar cambio' : 'Cambiar',

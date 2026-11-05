@@ -1278,6 +1278,13 @@ function responderPropuesta(db, { id, si, outcome, titulo, de }) {
   return { di: 'Aceptado.' };
 }
 
+function marcarCumplido(db, { id, quien }) {
+  const rw = (db.rewards || []).find(x => x.id === id);
+  if (!rw || rw.estado !== 'conseguido' || rw.cumplido) return {};
+  rw.cumplido = { quien: quien || 'Tu familia', fecha: new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' }) };
+  return { di: '¡Trato cumplido!' };
+}
+
 function pedirUnirse(db, { id }) {
   const rw = db.rewards.find(x => x.id === id);
   if (rw && rw.estado === 'propuesta') rw.estado = 'pide_unirse';
@@ -1337,7 +1344,7 @@ function corregirTexto(db, { texto }) {
 }
 
 // ---------- Puerta de entrada: el front llama por nombre ----------
-const RUTAS = { estado: () => ({}), crearRewardFamilia, aceptarReto, proponerReward, responderPropuesta, pedirPaso, pedirCanal, pedirAppNueva, actualizarLimite, dormir, despertar, consentir, esAdecuado, temaWeb, pedirMonedero, temaAprender, corregirTexto, buscarContenido, temasContenido: () => ({ temas: temasContenido() }), interpretar, elegirOpcion, verVideo, avanzarProyecto, flujo, enviarMensaje, leerChat, pedirApp, pedirMonedero, decidir, sumarLogro, crearAcuerdo, marcarCondicion, aprobarPrueba, pedirUnirse, pedirReserva, compartirPartido, compartirPrivado, respuestaAmigo, marcarColegio, leerAvisos };
+const RUTAS = { estado: () => ({}), marcarCumplido, crearRewardFamilia, aceptarReto, proponerReward, responderPropuesta, pedirPaso, pedirCanal, pedirAppNueva, actualizarLimite, dormir, despertar, consentir, esAdecuado, temaWeb, pedirMonedero, temaAprender, corregirTexto, buscarContenido, temasContenido: () => ({ temas: temasContenido() }), interpretar, elegirOpcion, verVideo, avanzarProyecto, flujo, enviarMensaje, leerChat, pedirApp, pedirMonedero, decidir, sumarLogro, crearAcuerdo, marcarCondicion, aprobarPrueba, pedirUnirse, pedirReserva, compartirPartido, compartirPrivado, respuestaAmigo, marcarColegio, leerAvisos };
 
 export function ejecutar(db, ruta, datos = {}) {
   const base = datosIniciales();

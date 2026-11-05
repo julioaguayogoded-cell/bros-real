@@ -8,7 +8,7 @@
 <body>
 <x-dc>
 <helmet>
-<script>(function(){if(window.__brosP)return;window.__brosP=1;var q=new URLSearchParams(location.search).get('perfil');if(q)window.name='bros:'+q.replace(/[^a-z0-9_-]/gi,'').slice(0,20);var m=/^bros:(.+)$/.exec(window.name||'');if(!m)return;var P='P:'+m[1]+':',S=Storage.prototype,g=S.getItem,s=S.setItem,r=S.removeItem;var es=function(x){try{return x===window.localStorage}catch(e){return false}};S.getItem=function(a){return g.call(this,es(this)?P+a:a)};S.setItem=function(a,b){return s.call(this,es(this)?P+a:a,b)};S.removeItem=function(a){return r.call(this,es(this)?P+a:a)};window.BROS_PERFIL=m[1];})();window.BROS_V='2026-11-06.5';</script>
+<script>(function(){if(window.__brosP)return;window.__brosP=1;var q=new URLSearchParams(location.search).get('perfil');if(q)window.name='bros:'+q.replace(/[^a-z0-9_-]/gi,'').slice(0,20);var m=/^bros:(.+)$/.exec(window.name||'');if(!m)return;var P='P:'+m[1]+':',S=Storage.prototype,g=S.getItem,s=S.setItem,r=S.removeItem;var es=function(x){try{return x===window.localStorage}catch(e){return false}};S.getItem=function(a){return g.call(this,es(this)?P+a:a)};S.setItem=function(a,b){return s.call(this,es(this)?P+a:a,b)};S.removeItem=function(a){return r.call(this,es(this)?P+a:a)};window.BROS_PERFIL=m[1];})();window.BROS_V='2026-11-06.6';</script>
 <title>Bro OS</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -1040,8 +1040,8 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
 
           <sc-if value="{{ rw.hayConseguidos }}" hint-placeholder-val="{{ true }}">
             <div style="margin:24px 16px 10px;display:flex;align-items:baseline;justify-content:space-between"><span style="font-family:Outfit;font-size:17px;font-weight:800;color:#111">🏆 Mi Achievement Library</span><span style="font-size:12px;color:#6B7280">{{ rw.nConseguidos }}</span></div>
-            <sc-for list="{{ rw.conseguidos }}" as="g" hint-placeholder-count="0">
-              <div style="margin:0 16px 10px">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px"><sc-for list="{{ rw.conseguidos }}" as="g" hint-placeholder-count="0">
+              <div style="grid-column:{{ g.col }};min-width:0">
                 <sc-if value="{{ g.esMarca }}" hint-placeholder-val="{{ false }}">
                   <div style="border-radius:20px;padding:16px;background:{{ g.fondo }};color:{{ g.tx }};border:1px solid {{ g.borde }};animation:sube .3s ease-out">
                     <div style="display:flex;align-items:center;gap:10px">
@@ -1063,14 +1063,14 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
                 <div style="font-family:Outfit;font-weight:900;font-size:17px;line-height:1.05;color:#111;margin-top:3px">{{ g.v.outcome }}</div>
                 <div style="height:1px;background:#EFE3C9;margin:8px 0"></div>
                 <div style="font-size:10.5px;line-height:1.45;color:#374151">Porque <b>{{ g.v.bro }}</b> ha conseguido:<br><b style="color:#111">{{ g.v.titulo }}</b></div>
-                <div style="font-size:9.5px;color:#6B7280;margin-top:6px">{{ g.v.quien }}</div>
+                <div style="font-size:9.5px;color:#6B7280;margin-top:6px">{{ g.v.quien }}</div><sc-if value="{{ g.v.hayCumplido }}" hint-placeholder-val="{{ false }}"><div style="margin-top:6px;display:inline-flex;align-items:center;gap:6px;padding:3px 7px;border-radius:999px;background:#E9F6EC;color:#1E7A3A;font-size:8.5px;font-weight:800">✓ CUMPLIDO · {{ g.v.cumplidoTxt }}</div></sc-if>
                 <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-top:4px;min-height:46px">
                   <div style="font-size:8.5px;color:#9A5B00;line-height:1.4;white-space:pre-line">{{ g.v.promesa }}</div>
                   <img src="bros-word.svg" alt="Sello BroS Word" style="width:64px;height:64px;margin:-30px -6px -10px 0;mix-blend-mode:multiply;transform:rotate(-14deg);opacity:.93;margin:-14px -4px -4px 0">
                 </div>
               </div></button></sc-if>
               </div>
-            </sc-for>
+            </sc-for></div>
           </sc-if>
           <div style="height:16px"></div>
         </sc-if>
@@ -1931,7 +1931,7 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
                 <div style="font-family:Outfit;font-weight:900;font-size:34px;line-height:1.05;color:#111;margin-top:3px">{{ vale.v.outcome }}</div>
                 <div style="height:1px;background:#EFE3C9;margin:14px 0"></div>
                 <div style="font-size:13.5px;line-height:1.45;color:#374151">Porque <b>{{ vale.v.bro }}</b> ha conseguido:<br><b style="color:#111">{{ vale.v.titulo }}</b></div>
-                <div style="font-size:12px;color:#6B7280;margin-top:6px">{{ vale.v.quien }}</div>
+                <div style="font-size:12px;color:#6B7280;margin-top:6px">{{ vale.v.quien }}</div><sc-if value="{{ vale.v.hayCumplido }}" hint-placeholder-val="{{ false }}"><div style="margin-top:10px;display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;background:#E9F6EC;color:#1E7A3A;font-size:11px;font-weight:800">✓ CUMPLIDO · {{ vale.v.cumplidoTxt }}</div></sc-if>
                 <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-top:16px;min-height:90px">
                   <div style="font-size:11px;color:#9A5B00;line-height:1.4;white-space:pre-line">{{ vale.v.promesa }}</div>
                   <img src="bros-word.svg" alt="Sello BroS Word" style="width:124px;height:124px;margin:-30px -6px -10px 0;mix-blend-mode:multiply;transform:rotate(-14deg);opacity:.93;animation:sello .6s .55s cubic-bezier(.2,1.4,.4,1) both">
@@ -2160,6 +2160,22 @@ function textoContrato(r, nino) {
     ellos: `Si lo consigo, ${fam} se compromete a: ${r.outcome}.`, como: r.validacion || '',
     firmaBro: fBro ? `${fBro.quien} · ${fBro.fecha}` : '', firmaFam: fFam ? `${fFam.quien} · ${fFam.fecha}` : '',
     completo: !!(fBro && fFam) };
+}
+// SONIDO DE REWARD: campana sintetizada (sin archivos). Ajuste 'bros-sonido-reward' (campana | ninguno) para personalizarlo más adelante.
+function sonarReward() {
+  let tipo = 'campana'; try { tipo = localStorage.getItem('bros-sonido-reward') || 'campana'; } catch (e) {}
+  try { navigator.vibrate && navigator.vibrate([0, 60, 80, 120]); } catch (e) {}
+  if (tipo === 'ninguno') return;
+  try {
+    const C = window.AudioContext || window.webkitAudioContext; if (!C) return;
+    const ac = sonarReward.ac || (sonarReward.ac = new C()); if (ac.state === 'suspended') ac.resume();
+    const t0 = ac.currentTime + 0.02, master = ac.createGain(); master.gain.value = 0.35; master.connect(ac.destination);
+    [[880, 1, 2.6], [1760, 0.5, 1.6], [2640, 0.28, 1.1], [3520, 0.16, 0.8], [1318.5, 0.35, 2.0]].forEach(([f, v, d]) => {
+      const o = ac.createOscillator(), g = ac.createGain(); o.type = 'sine'; o.frequency.value = f;
+      g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(v, t0 + 0.008); g.gain.exponentialRampToValueAtTime(0.0008, t0 + d);
+      o.connect(g); g.connect(master); o.start(t0); o.stop(t0 + d + 0.05);
+    });
+  } catch (e) {}
 }
 // MY TODAY STUFF · tarjetas de PRUEBA para comprobar el deslizamiento. Poner a false para quitarlas.
 // ENTRETENIMIENTO aprobado por defecto por BroS Life (música, pelis, series, podcast, audiolibros)
@@ -2621,7 +2637,7 @@ class Component extends DCLogic {
       };
     });
     const conseguidos = lista.filter(r => r.estado === 'conseguido').sort((a, b) => String(b.conseguidoEn || '').localeCompare(String(a.conseguidoEn || ''))).map(r => ({
-      ...marcaVista(r), esMarca: r.origen === 'marca', noMarca: r.origen !== 'marca', v: this.datosVale(r), abrir: () => this.setState({ valeVer: r.id }),
+      ...marcaVista(r), esMarca: r.origen === 'marca', noMarca: r.origen !== 'marca', col: r.origen === 'marca' ? '1 / -1' : 'auto', v: this.datosVale(r), abrir: () => this.setState({ valeVer: r.id }),
       sub: r.outcome ? 'Reward: ' + r.outcome : 'Sin reward · lo conseguiste tú'
     }));
     const Q = QUIZ_PRINCIPITO, q = s.quiz;
@@ -2661,6 +2677,7 @@ class Component extends DCLogic {
     const f = r.conseguidoEn ? new Date(r.conseguidoEn) : null;
     return { outcome: r.outcome || 'Lo has conseguido tú', titulo: r.titulo, bro: nino, fecha: (f ? f.toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' }) : (r.fecha || '')).toUpperCase(),
       quien: (r.firmas && r.firmas.length >= 2 ? 'Trato entre ' + fam + ' y ' + nino + ' · ' : '') + 'validado por ' + (r.validadoPor || fam),
+      hayCumplido: !!r.cumplido, cumplidoTxt: r.cumplido ? r.cumplido.quien + ' · ' + r.cumplido.fecha : '',
       promesa: r.outcome ? fam + ' se compromete\na cumplirlo.' : 'Esto lo has\nhecho tú.' };
   }
   async marcarCond(r, i) {
@@ -3432,6 +3449,7 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
         const L = (db.rewards || []).filter(r => r.estado === 'conseguido' && r.origen !== 'marca');
         const nuevo = !padre && L.find(r => r.conseguidoEn && !vistos.includes(r.id));
         const ver = s.valeVer && L.find(r => r.id === s.valeVer), r = ver || nuevo;
+        if (nuevo && this.valeSonado !== nuevo.id) { this.valeSonado = nuevo.id; setTimeout(sonarReward, 750); }
         return { abierto: !!r, nuevo: !ver && !!nuevo, v: r ? this.datosVale(r) : {}, btnTxt: ver ? 'Cerrar' : 'Guardar en mi Achievement Library',
           cerrar: () => { if (!ver && nuevo) { try { localStorage.setItem('bros-vales-vistos', JSON.stringify([...vistos, nuevo.id])); } catch (e) {} } this.setState({ valeVer: null }); this.forceUpdate(); } };
       })(),
