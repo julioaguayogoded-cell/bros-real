@@ -8,7 +8,7 @@
 <body>
 <x-dc>
 <helmet>
-<script>(function(){if(window.__brosP)return;window.__brosP=1;var q=new URLSearchParams(location.search).get('perfil');if(q)window.name='bros:'+q.replace(/[^a-z0-9_-]/gi,'').slice(0,20);var m=/^bros:(.+)$/.exec(window.name||'');if(!m)return;var P='P:'+m[1]+':',S=Storage.prototype,g=S.getItem,s=S.setItem,r=S.removeItem;var es=function(x){try{return x===window.localStorage}catch(e){return false}};S.getItem=function(a){return g.call(this,es(this)?P+a:a)};S.setItem=function(a,b){return s.call(this,es(this)?P+a:a,b)};S.removeItem=function(a){return r.call(this,es(this)?P+a:a)};window.BROS_PERFIL=m[1];})();window.BROS_V='2026-11-06.4';</script>
+<script>(function(){if(window.__brosP)return;window.__brosP=1;var q=new URLSearchParams(location.search).get('perfil');if(q)window.name='bros:'+q.replace(/[^a-z0-9_-]/gi,'').slice(0,20);var m=/^bros:(.+)$/.exec(window.name||'');if(!m)return;var P='P:'+m[1]+':',S=Storage.prototype,g=S.getItem,s=S.setItem,r=S.removeItem;var es=function(x){try{return x===window.localStorage}catch(e){return false}};S.getItem=function(a){return g.call(this,es(this)?P+a:a)};S.setItem=function(a,b){return s.call(this,es(this)?P+a:a,b)};S.removeItem=function(a){return r.call(this,es(this)?P+a:a)};window.BROS_PERFIL=m[1];})();window.BROS_V='2026-11-06.5';</script>
 <title>Bro OS</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -32,7 +32,7 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
 @keyframes escaneo{0%{top:8%}50%{top:86%}100%{top:8%}}
 @keyframes tiembla{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-10px)}40%,80%{transform:translateX(10px)}}
 @keyframes abre{from{opacity:1;transform:none}to{opacity:0;transform:translateY(-40px) scale(1.04)}}
-@keyframes latido{0%,100%{opacity:.55}50%{opacity:1}}
+@keyframes sello{0%{opacity:0;transform:scale(2.6) rotate(-40deg)}60%{opacity:1;transform:scale(.92) rotate(-12deg)}75%{transform:scale(1.06) rotate(-15deg)}100%{opacity:.93;transform:scale(1) rotate(-14deg)}} @keyframes valeEntra{from{opacity:0;transform:translateY(30px) scale(.94)}to{opacity:1;transform:none}} @keyframes latido{0%,100%{opacity:.55}50%{opacity:1}}
 </style>
 <script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <script src="gestos.js"></script>
@@ -1039,7 +1039,7 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
           </sc-if>
 
           <sc-if value="{{ rw.hayConseguidos }}" hint-placeholder-val="{{ true }}">
-            <div style="font-size:11.5px;font-weight:700;color:#82B94F;letter-spacing:.05em;margin:22px 16px 10px">CONSEGUIDOS</div>
+            <div style="margin:24px 16px 10px;display:flex;align-items:baseline;justify-content:space-between"><span style="font-family:Outfit;font-size:17px;font-weight:800;color:#111">🏆 Mi Achievement Library</span><span style="font-size:12px;color:#6B7280">{{ rw.nConseguidos }}</span></div>
             <sc-for list="{{ rw.conseguidos }}" as="g" hint-placeholder-count="0">
               <div style="margin:0 16px 10px">
                 <sc-if value="{{ g.esMarca }}" hint-placeholder-val="{{ false }}">
@@ -1056,13 +1056,19 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
                     <div style="font-size:12px;opacity:.8;margin-top:8px">Tus padres pueden usarlo con {{ g.marca }}.</div>
                   </div>
                 </sc-if>
-                <sc-if value="{{ g.noMarca }}" hint-placeholder-val="{{ true }}">
-                  <div style="display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #E4E7EE;border-radius:16px;padding:12px 14px">
-                    <div style="width:30px;height:30px;border-radius:50%;background:#82B94F;color:#fff;display:grid;place-items:center;font-weight:800;font-size:14px;flex:none">✓</div>
-                    <div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:700">{{ g.titulo }}</div><div style="font-size:12px;color:#6B7280;margin-top:1px">{{ g.sub }}</div></div>
-                    <span style="font-size:11.5px;color:#6B7280;flex:none">{{ g.fecha }}</span>
-                  </div>
-                </sc-if>
+                <sc-if value="{{ g.noMarca }}" hint-placeholder-val="{{ true }}"><button onClick="{{ g.abrir }}" style="display:block;width:100%;padding:0;background:none;border:0"><div style="position:relative;width:100%;max-width:340px;border-radius:24px;background:#FFFDF8;padding:22px 20px 20px;box-sizing:border-box;overflow:hidden;text-align:left;box-shadow:0 4px 14px rgba(17,17,17,.08);padding:12px 12px 10px;border-radius:16px">
+                <div style="position:absolute;inset:5px;border:2px dashed #E9D9B6;border-radius:18px;pointer-events:none"></div>
+                <div style="font-size:8px;font-weight:700;letter-spacing:.14em;color:#9A5B00">ACHIEVEMENT · {{ g.v.fecha }}</div>
+                <div style="font-family:Outfit;font-weight:900;font-size:9px;letter-spacing:.06em;color:#E56648;margin-top:6px">ESTA TARJETA VALE POR</div>
+                <div style="font-family:Outfit;font-weight:900;font-size:17px;line-height:1.05;color:#111;margin-top:3px">{{ g.v.outcome }}</div>
+                <div style="height:1px;background:#EFE3C9;margin:8px 0"></div>
+                <div style="font-size:10.5px;line-height:1.45;color:#374151">Porque <b>{{ g.v.bro }}</b> ha conseguido:<br><b style="color:#111">{{ g.v.titulo }}</b></div>
+                <div style="font-size:9.5px;color:#6B7280;margin-top:6px">{{ g.v.quien }}</div>
+                <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-top:4px;min-height:46px">
+                  <div style="font-size:8.5px;color:#9A5B00;line-height:1.4;white-space:pre-line">{{ g.v.promesa }}</div>
+                  <img src="bros-word.svg" alt="Sello BroS Word" style="width:64px;height:64px;margin:-30px -6px -10px 0;mix-blend-mode:multiply;transform:rotate(-14deg);opacity:.93;margin:-14px -4px -4px 0">
+                </div>
+              </div></button></sc-if>
               </div>
             </sc-for>
           </sc-if>
@@ -1914,6 +1920,26 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
         </div>
       </sc-if>
 
+      <!-- VALE CONSEGUIDO: tarjeta sellada con el sello BroS Word -->
+      <sc-if value="{{ vale.abierto }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;inset:0;z-index:60;background:radial-gradient(circle at 50% 35%,#2a2a33,#0d0d10);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:24px">
+          <sc-if value="{{ vale.nuevo }}" hint-placeholder-val="{{ true }}"><div style="font-family:Outfit;font-weight:900;font-size:28px;color:#fff;text-align:center;animation:valeEntra .4s ease-out">¡Lo has conseguido!</div></sc-if>
+          <div style="position:relative;width:100%;max-width:340px;border-radius:24px;background:#FFFDF8;padding:22px 20px 20px;box-sizing:border-box;overflow:hidden;text-align:left;box-shadow:0 24px 60px rgba(0,0,0,.5);animation:valeEntra .45s ease-out">
+                <div style="position:absolute;inset:8px;border:2px dashed #E9D9B6;border-radius:18px;pointer-events:none"></div>
+                <div style="font-size:11px;font-weight:700;letter-spacing:.14em;color:#9A5B00">ACHIEVEMENT · {{ vale.v.fecha }}</div>
+                <div style="font-family:Outfit;font-weight:900;font-size:15px;letter-spacing:.06em;color:#E56648;margin-top:12px">ESTA TARJETA VALE POR</div>
+                <div style="font-family:Outfit;font-weight:900;font-size:34px;line-height:1.05;color:#111;margin-top:3px">{{ vale.v.outcome }}</div>
+                <div style="height:1px;background:#EFE3C9;margin:14px 0"></div>
+                <div style="font-size:13.5px;line-height:1.45;color:#374151">Porque <b>{{ vale.v.bro }}</b> ha conseguido:<br><b style="color:#111">{{ vale.v.titulo }}</b></div>
+                <div style="font-size:12px;color:#6B7280;margin-top:6px">{{ vale.v.quien }}</div>
+                <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-top:16px;min-height:90px">
+                  <div style="font-size:11px;color:#9A5B00;line-height:1.4;white-space:pre-line">{{ vale.v.promesa }}</div>
+                  <img src="bros-word.svg" alt="Sello BroS Word" style="width:124px;height:124px;margin:-30px -6px -10px 0;mix-blend-mode:multiply;transform:rotate(-14deg);opacity:.93;animation:sello .6s .55s cubic-bezier(.2,1.4,.4,1) both">
+                </div>
+              </div>
+          <button onClick="{{ vale.cerrar }}" style="width:100%;max-width:340px;height:52px;border-radius:16px;background:#E56648;color:#fff;font-family:Outfit;font-weight:800;font-size:16px;text-align:center">{{ vale.btnTxt }}</button>
+        </div>
+      </sc-if>
       <!-- Bro AI flotante en los módulos: se arrastra a donde quieras y al tocarlo te escucha -->
       <sc-if value="{{ verFlotante }}" hint-placeholder-val="{{ false }}"><bro-flotante></bro-flotante></sc-if>
 
@@ -2594,8 +2620,8 @@ class Component extends DCLogic {
         })
       };
     });
-    const conseguidos = lista.filter(r => r.estado === 'conseguido').map(r => ({
-      ...marcaVista(r), esMarca: r.origen === 'marca', noMarca: r.origen !== 'marca',
+    const conseguidos = lista.filter(r => r.estado === 'conseguido').sort((a, b) => String(b.conseguidoEn || '').localeCompare(String(a.conseguidoEn || ''))).map(r => ({
+      ...marcaVista(r), esMarca: r.origen === 'marca', noMarca: r.origen !== 'marca', v: this.datosVale(r), abrir: () => this.setState({ valeVer: r.id }),
       sub: r.outcome ? 'Reward: ' + r.outcome : 'Sin reward · lo conseguiste tú'
     }));
     const Q = QUIZ_PRINCIPITO, q = s.quiz;
@@ -2611,7 +2637,7 @@ class Component extends DCLogic {
       hayContrato: !!ab, contrato: ab ? { ...ab, logoSrc: LOGOS[ab.id] || ab.logo || 'logo.png', puedeJoin: ab.estado === 'propuesta', onJoin: unirse(ab.id) } : { conds: [] },
       cerrarContrato: () => this.setState({ contratoAbierto: null }),
       enMarcha, hayEnMarcha: enMarcha.length > 0,
-      conseguidos, hayConseguidos: conseguidos.length > 0,
+      conseguidos, hayConseguidos: conseguidos.length > 0, nConseguidos: conseguidos.length + (conseguidos.length === 1 ? ' tarjeta' : ' tarjetas'),
       // Retos que te propone tu familia: los aceptas tú
       familiaProp: lista.filter(r => r.origen === 'familia' && r.estado === 'propuesta').map(r => ({ ...r, de: r.de || 'Tu familia', k: K(r),
         aceptar: async () => { const x = await this.llamar('aceptarReto', { id: r.id, quien: nino }); this.avisar(x.di || '¡Reto aceptado!'); } })),
@@ -2627,6 +2653,15 @@ class Component extends DCLogic {
         const x = await this.llamar('proponerReward', { ...P, quien: nino }); this.setState({ rwProp: null }); this.avisar(x.di || 'Enviado a tu familia.'); },
       sinNada: !lista.some(r => r.estado !== 'rechazado') && !s.rwProp
     };
+  }
+  // Datos de la tarjeta "Vale por…" de un reward conseguido
+  datosVale(r) {
+    const nino = (this.state.db && this.state.db.nino && this.state.db.nino.nombre) || 'Bro';
+    const fam = ((r.firmas || []).find(f => f.rol === 'familia') || {}).quien || (r.origen === 'marca' ? r.marca : r.de) || 'Tu familia';
+    const f = r.conseguidoEn ? new Date(r.conseguidoEn) : null;
+    return { outcome: r.outcome || 'Lo has conseguido tú', titulo: r.titulo, bro: nino, fecha: (f ? f.toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' }) : (r.fecha || '')).toUpperCase(),
+      quien: (r.firmas && r.firmas.length >= 2 ? 'Trato entre ' + fam + ' y ' + nino + ' · ' : '') + 'validado por ' + (r.validadoPor || fam),
+      promesa: r.outcome ? fam + ' se compromete\na cumplirlo.' : 'Esto lo has\nhecho tú.' };
   }
   async marcarCond(r, i) {
     const x = await this.llamar('marcarCondicion', { id: r.id, i });
@@ -3393,6 +3428,13 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
       })),
       pilares: PILARES.map(x => ({ ...x, dx: x.dx || '0px', onClick: () => x.accion ? this[x.accion]() : this.ejecutar({ pantalla: x.pantalla }) })),
       rw: this.vistaRewards(db.rewards || []),
+      vale: (() => { let vistos = []; try { vistos = JSON.parse(localStorage.getItem('bros-vales-vistos')) || []; } catch (e) {}
+        const L = (db.rewards || []).filter(r => r.estado === 'conseguido' && r.origen !== 'marca');
+        const nuevo = !padre && L.find(r => r.conseguidoEn && !vistos.includes(r.id));
+        const ver = s.valeVer && L.find(r => r.id === s.valeVer), r = ver || nuevo;
+        return { abierto: !!r, nuevo: !ver && !!nuevo, v: r ? this.datosVale(r) : {}, btnTxt: ver ? 'Cerrar' : 'Guardar en mi Achievement Library',
+          cerrar: () => { if (!ver && nuevo) { try { localStorage.setItem('bros-vales-vistos', JSON.stringify([...vistos, nuevo.id])); } catch (e) {} } this.setState({ valeVer: null }); this.forceUpdate(); } };
+      })(),
       wa: (() => {
         const m = db.monedero || {}, tj = m.tarjeta || { titular: 'JULIO', ultimos: '4827', caduca: '10/29' };
         const pend = db.solicitudes.some(x => x.tipo === 'monedero' && x.estado === 'pendiente');

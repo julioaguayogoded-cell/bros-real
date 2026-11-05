@@ -1202,7 +1202,14 @@ function pedirReserva(db) { if (db.partido && db.partido.reserva === 'sin_pedir'
 
 function actualizarReward(rw) {
   if (['propuesta', 'pide_unirse', 'conseguido', 'propuesto', 'rechazado'].includes(rw.estado)) return;
-  if (rw.conds.length && rw.conds.every(c => c.hecho)) { rw.estado = 'conseguido'; rw.fecha = 'Hoy'; return; }
+  if (rw.conds.length && rw.conds.every(c => c.hecho)) {
+    rw.estado = 'conseguido'; rw.fecha = 'Hoy';
+    rw.conseguidoEn = new Date().toISOString();
+    const fam = ((rw.firmas || []).find(f => f.rol === 'familia') || {}).quien || 'tu familia';
+    const tipos = rw.conds.map(c => c.tipo);
+    rw.validadoPor = tipos.includes('mama') ? fam : tipos.includes('test') ? 'Bro AI' : tipos.includes('aura') ? 'Aura' : 'ti';
+    return;
+  }
   rw.estado = rw.conds.some(c => c.esperando && !c.hecho) ? 'por_validar' : 'en_marcha';
 }
 
