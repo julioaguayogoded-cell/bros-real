@@ -572,7 +572,7 @@ class Component extends DCLogic {
     this.setState({ cpPensando: true }, () => this.scroll(true));
     const s = this.state;
     try {
-      const j = await this.llamar('coplan', { nombre: s.npNombre, objetivo: s.npObjetivo, desde: s.npDesde, hasta: s.npHasta, pasos: s.cpPasos || [], historial: hist });
+      const j = await this.llamar('coplan', { quien: (this.disp() && this.disp().nombre) || '', nombre: s.npNombre, objetivo: s.npObjetivo, desde: s.npDesde, hasta: s.npHasta, pasos: s.cpPasos || [], historial: hist });
       if (j.bloqueado) return this.ir('bloqueado', { bloqueoTxt: j.texto, cpPensando: false });
       this.setState(st => {
         let P = [...(st.cpPasos || []), ...(j.nuevos || []).map(t => ({ t, fecha: '' }))];
