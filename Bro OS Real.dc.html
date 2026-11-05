@@ -778,61 +778,105 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
         </sc-if>
         <!-- AURA -->
         <sc-if value="{{ p.aura }}" hint-placeholder-val="{{ false }}">
-          <div style="margin:14px 16px 0;display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;background:{{ au.estadoBg }}">
-            <span style="width:8px;height:8px;border-radius:50%;flex:none;background:{{ au.estadoDot }}"></span>
-            <span style="flex:1;min-width:0;font-size:13px;font-weight:600;color:#111">{{ au.estadoTxt }}</span>
-            <sc-if value="{{ au.verPermiso }}" hint-placeholder-val="{{ false }}">
-              <button onClick="{{ au.pedirPermiso }}" style="flex:none;height:32px;padding:0 12px;border-radius:9px;background:#111;color:#fff;font-weight:700;font-size:12.5px">Dar permiso</button>
-            </sc-if>
+          <!-- AURA · inspirado en Body Battery (Garmin), Readiness (Oura), anillos (Apple) y fases de sueño (Fitbit). Para niños: sin calorías, sin peso, sin rankings. -->
+          <div style="margin:12px 16px 0;display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:12px;background:{{ ar.estadoBg }}">
+            <span style="width:8px;height:8px;border-radius:50%;flex:none;background:{{ ar.estadoDot }}"></span>
+            <span style="flex:1;min-width:0;font-size:12.5px;font-weight:600;color:#374151">{{ ar.estadoTxt }}</span>
+            <sc-if value="{{ ar.verPermiso }}" hint-placeholder-val="{{ false }}"><button onClick="{{ ar.pedirPermiso }}" style="flex:none;height:30px;padding:0 12px;border-radius:9px;background:#111;color:#fff;font-weight:700;font-size:12px">Dar permiso</button></sc-if>
           </div>
-          <div style="margin:16px;background:#fff;border:1px solid #E4E7EE;border-radius:20px;padding:16px">
-            <div style="display:flex;gap:16px;align-items:center">
-              <svg width="108" height="108" viewBox="0 0 104 104" style="flex:none">
-                <circle cx="52" cy="52" r="44" fill="none" stroke="#F0F2F6" stroke-width="10"></circle>
-                <circle cx="52" cy="52" r="44" fill="none" stroke="#82B94F" stroke-width="10" stroke-linecap="round" stroke-dasharray="{{ au.r1.c }}" stroke-dashoffset="{{ au.r1.off }}" transform="rotate(-90 52 52)"></circle>
-                <circle cx="52" cy="52" r="31" fill="none" stroke="#F0F2F6" stroke-width="10"></circle>
-                <circle cx="52" cy="52" r="31" fill="none" stroke="#3068ED" stroke-width="10" stroke-linecap="round" stroke-dasharray="{{ au.r2.c }}" stroke-dashoffset="{{ au.r2.off }}" transform="rotate(-90 52 52)"></circle>
-                <circle cx="52" cy="52" r="18" fill="none" stroke="#F0F2F6" stroke-width="10"></circle>
-                <circle cx="52" cy="52" r="18" fill="none" stroke="#E56648" stroke-width="10" stroke-linecap="round" stroke-dasharray="{{ au.r3.c }}" stroke-dashoffset="{{ au.r3.off }}" transform="rotate(-90 52 52)"></circle>
+
+          <!-- 1. TU ENERGÍA (batería) -->
+          <div style="margin:12px 16px 0;border-radius:26px;padding:20px 18px;background:linear-gradient(160deg,#2B1B5E 0%,#4C2FA8 55%,#6f49d8 100%);color:#fff;position:relative;overflow:hidden">
+            <div style="position:absolute;right:-40px;top:-40px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.18),transparent 70%)"></div>
+            <div style="display:flex;align-items:center;gap:18px;position:relative">
+              <div style="position:relative;width:132px;height:132px;flex:none">
+              <svg width="132" height="132" viewBox="0 0 132 132">
+                <circle cx="66" cy="66" r="56" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="12"></circle>
+                <circle cx="66" cy="66" r="56" fill="none" stroke="{{ ar.energiaColor }}" stroke-width="12" stroke-linecap="round" stroke-dasharray="{{ ar.eC }}" stroke-dashoffset="{{ ar.eOff }}" transform="rotate(-90 66 66)" style="transition:stroke-dashoffset 1s ease-out"></circle>
               </svg>
-              <div style="flex:1;display:flex;flex-direction:column;gap:9px;min-width:0">
-                <div style="display:flex;gap:7px;align-items:center"><i style="width:8px;height:8px;border-radius:50%;background:#82B94F"></i><b style="font-family:Outfit;font-size:16px">{{ au.pasos }}</b><span style="font-size:11px;color:#6B7280">pasos</span></div>
-                <div style="display:flex;gap:7px;align-items:center"><i style="width:8px;height:8px;border-radius:50%;background:#3068ED"></i><b style="font-family:Outfit;font-size:16px">{{ au.activos }} min</b><span style="font-size:11px;color:#6B7280">activo</span></div>
-                <div style="display:flex;gap:7px;align-items:center"><i style="width:8px;height:8px;border-radius:50%;background:#E56648"></i><b style="font-family:Outfit;font-size:16px">{{ au.movimiento }}</b><span style="font-size:11px;color:#6B7280">kcal</span></div>
+              <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center"><div style="font-family:Outfit;font-weight:800;font-size:42px;line-height:1">{{ ar.energia }}</div><div style="font-size:10.5px;font-weight:700;letter-spacing:.12em;opacity:.7;margin-top:4px">ENERGÍA</div></div>
+              </div>
+              <div style="flex:1;min-width:0">
+                <div style="font-size:11px;font-weight:700;letter-spacing:.08em;opacity:.7">HOY ESTÁS</div>
+                <div style="font-family:Outfit;font-weight:800;font-size:26px;line-height:1.1;margin-top:2px">{{ ar.estadoEnergia }}</div>
+                <div style="font-size:13px;line-height:1.45;opacity:.85;margin-top:6px">{{ ar.fraseEnergia }}</div>
               </div>
             </div>
-            <div style="margin-top:14px;padding-top:12px;border-top:1px solid #E4E7EE">
-              <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px"><b style="font-family:Outfit;font-size:15px">Sueño · {{ au.sueno.total }}</b><span style="font-size:11px;color:#6B7280">{{ au.sueno.dormir }} → {{ au.sueno.despertar }}</span></div>
-              <div style="display:flex;height:32px;gap:2px;border-radius:7px;overflow:hidden">
-                <sc-for list="{{ au.fases }}" as="f" hint-placeholder-count="9">
-                  <div style="flex:{{ f.flex }};background:{{ f.color }};border-radius:3px"></div>
+            <div style="display:flex;gap:6px;margin-top:16px;position:relative">
+              <sc-for list="{{ ar.factores }}" as="f" hint-placeholder-count="3">
+                <div style="flex:1;background:rgba(255,255,255,.12);border-radius:12px;padding:8px 10px"><div style="font-size:10.5px;opacity:.7;font-weight:700">{{ f.k }}</div><div style="font-size:13px;font-weight:800;margin-top:1px">{{ f.v }}</div></div>
+              </sc-for>
+            </div>
+          </div>
+
+          <!-- 2. LOS 3 ANILLOS DEL DÍA -->
+          <div style="margin:12px 16px 0;background:#fff;border:1px solid #E4E7EE;border-radius:22px;padding:16px">
+            <div style="font-family:Outfit;font-weight:800;font-size:16px;margin-bottom:12px">Tus 3 anillos de hoy</div>
+            <div style="display:flex;align-items:center;gap:16px">
+              <svg width="120" height="120" viewBox="0 0 120 120" style="flex:none">
+                <sc-for list="{{ ar.anillos }}" as="a" hint-placeholder-count="3">
+                  <circle cx="60" cy="60" r="{{ a.r }}" fill="none" stroke="{{ a.fondo }}" stroke-width="11"></circle>
+                  <circle cx="60" cy="60" r="{{ a.r }}" fill="none" stroke="{{ a.color }}" stroke-width="11" stroke-linecap="round" stroke-dasharray="{{ a.c }}" stroke-dashoffset="{{ a.off }}" transform="rotate(-90 60 60)"></circle>
                 </sc-for>
-              </div>
-              <div style="display:flex;gap:11px;margin-top:8px;flex-wrap:wrap;font-size:10.5px;color:#6B7280">
-                <span style="display:flex;gap:4px;align-items:center"><i style="width:8px;height:8px;border-radius:2px;background:#3068ED"></i>Profundo</span>
-                <span style="display:flex;gap:4px;align-items:center"><i style="width:8px;height:8px;border-radius:2px;background:#7fa4ff"></i>Ligero</span>
-                <span style="display:flex;gap:4px;align-items:center"><i style="width:8px;height:8px;border-radius:2px;background:#6f49d8"></i>REM</span>
-                <span style="display:flex;gap:4px;align-items:center"><i style="width:8px;height:8px;border-radius:2px;background:#E56648"></i>Despierto</span>
-              </div>
-            </div>
-            <div style="margin-top:14px;padding-top:12px;border-top:1px solid #E4E7EE">
-              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:9px"><b style="font-family:Outfit;font-size:14.5px">Pantalla y movimiento</b><span style="padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;background:rgba(130,185,79,.16);color:#54812b">En equilibrio</span></div>
-              <div style="display:flex;height:26px;gap:2px;border-radius:9px;overflow:hidden">
-                <div style="flex:{{ au.pantalla }};background:#4b5563;color:#fff;font-size:10.5px;font-weight:700;display:grid;place-items:center">{{ au.pantallaTxt }}</div>
-                <div style="flex:{{ au.actividad }};background:#82B94F;color:#fff;font-size:10.5px;font-weight:700;display:grid;place-items:center">{{ au.actividadTxt }}</div>
-              </div>
-              <div style="margin-top:14px;font-size:12px;color:#6B7280">Últimos 7 días</div>
-              <div style="display:flex;align-items:flex-end;gap:6px;height:84px;margin-top:6px">
-                <sc-for list="{{ au.semana }}" as="d" hint-placeholder-count="7">
-                  <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;gap:2px">
-                    <div style="height:{{ d.hp }};background:#4b5563;border-radius:3px"></div>
-                    <div style="height:{{ d.hm }};background:#82B94F;border-radius:3px"></div>
-                    <div style="font-size:9.5px;color:#9AA1AE;text-align:center">{{ d.d }}</div>
-                  </div>
+              </svg>
+              <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:10px">
+                <sc-for list="{{ ar.anillos }}" as="a" hint-placeholder-count="3">
+                  <div><div style="display:flex;align-items:center;gap:6px"><span style="width:9px;height:9px;border-radius:50%;background:{{ a.color }}"></span><span style="font-size:12px;font-weight:800;color:{{ a.color }};letter-spacing:.03em">{{ a.nombre }}</span></div>
+                    <div style="font-family:Outfit;font-weight:800;font-size:16px;margin-top:1px">{{ a.valor }} <span style="font-family:Inter;font-weight:600;font-size:12px;color:#6B7280">{{ a.meta }}</span></div></div>
                 </sc-for>
               </div>
             </div>
           </div>
+
+          <!-- 3. SUEÑO DE ANOCHE (fases) -->
+          <div style="margin:12px 16px 0;background:#fff;border:1px solid #E4E7EE;border-radius:22px;padding:16px">
+            <div style="display:flex;align-items:baseline;justify-content:space-between">
+              <div style="font-family:Outfit;font-weight:800;font-size:16px">🌙 Tu sueño de anoche</div>
+              <div style="font-size:12px;font-weight:700;color:#6f49d8">{{ ar.suenoCalidad }}</div>
+            </div>
+            <div style="font-family:Outfit;font-weight:800;font-size:30px;margin-top:4px">{{ ar.suenoTotal }}</div>
+            <div style="font-size:12.5px;color:#6B7280">{{ ar.dormir }} → {{ ar.despertar }} · para tu edad lo ideal es {{ ar.suenoIdeal }}</div>
+            <div style="position:relative;height:86px;margin-top:14px;display:flex;align-items:flex-end;gap:1px">
+              <sc-for list="{{ ar.hipno }}" as="h" hint-placeholder-count="12">
+                <div style="flex:{{ h.flex }};height:{{ h.alto }};background:{{ h.color }};border-radius:3px"></div>
+              </sc-for>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:10.5px;color:#9CA3AF;margin-top:4px"><span>{{ ar.dormir }}</span><span>{{ ar.despertar }}</span></div>
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:12px">
+              <sc-for list="{{ ar.fasesLeyenda }}" as="f" hint-placeholder-count="4">
+                <div style="background:#F7F6FD;border-radius:10px;padding:6px 7px"><div style="display:flex;align-items:center;gap:4px"><span style="width:7px;height:7px;border-radius:2px;background:{{ f.color }}"></span><span style="font-size:10px;font-weight:700;color:#4B5563">{{ f.nombre }}</span></div><div style="font-size:12.5px;font-weight:800;margin-top:1px">{{ f.tiempo }}</div></div>
+              </sc-for>
+            </div>
+          </div>
+
+          <!-- 4. TU SEMANA -->
+          <div style="margin:12px 16px 0;background:#fff;border:1px solid #E4E7EE;border-radius:22px;padding:16px">
+            <div style="display:flex;align-items:baseline;justify-content:space-between"><div style="font-family:Outfit;font-weight:800;font-size:16px">Tu semana</div><div style="font-size:12px;color:#6B7280">Energía cada mañana</div></div>
+            <div style="display:flex;align-items:flex-end;gap:8px;height:110px;margin-top:12px">
+              <sc-for list="{{ ar.semana }}" as="d" hint-placeholder-count="7">
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:5px">
+                  <div style="font-size:10.5px;font-weight:700;color:{{ d.txColor }}">{{ d.v }}</div>
+                  <div style="width:100%;height:{{ d.alto }};border-radius:8px;background:{{ d.color }}"></div>
+                  <div style="font-size:11px;font-weight:{{ d.peso }};color:{{ d.txColor }}">{{ d.d }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <!-- 5. RACHA Y CONSEJOS (sin presión, sin comparar) -->
+          <div style="margin:12px 16px 0;display:flex;align-items:center;gap:14px;background:#FFF7E8;border:1px solid #F6E2B8;border-radius:22px;padding:14px 16px">
+            <div style="font-size:30px;flex:none">🔥</div>
+            <div style="flex:1;min-width:0"><div style="font-family:Outfit;font-weight:800;font-size:16px">{{ ar.racha }}</div><div style="font-size:12.5px;color:#7A5212;margin-top:2px">{{ ar.rachaSub }}</div></div>
+          </div>
+          <div style="margin:12px 16px 0;display:flex;flex-direction:column;gap:8px">
+            <sc-for list="{{ ar.consejos }}" as="c" hint-placeholder-count="2">
+              <div style="display:flex;gap:12px;align-items:flex-start;background:#fff;border:1px solid #E4E7EE;border-radius:18px;padding:13px 14px">
+                <div style="font-size:22px;flex:none">{{ c.ic }}</div>
+                <div style="flex:1;min-width:0"><div style="font-weight:800;font-size:14px">{{ c.t }}</div><div style="font-size:12.5px;line-height:1.45;color:#4B5563;margin-top:2px">{{ c.d }}</div></div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="margin:14px 16px 0;font-size:11.5px;line-height:1.5;color:#9CA3AF;text-align:center">Aura no cuenta calorías ni te compara con nadie. Tu familia ve solo tendencias de la semana.</div>
         </sc-if>
 
         <!-- LOGROS -->
@@ -3393,6 +3437,47 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
               exitoTxt: !X ? '' : X.estado === 'activa' ? 'Ya podéis escribiros en Mis conversaciones.' : 'Os lleváis más de 3 años, así que se lo hemos pedido a vuestras familias. En cuanto digan que sí, seréis amigos.',
               escribirle: () => { const id = X && X.id; this.setState({ qrExito: null }); if (id) this.ejecutar({ pantalla: 'chat', id }); },
               listo: () => { this.setState({ qrExito: null, qrTab: 'mio' }); this.ejecutar({ pantalla: 'comunidades' }); } }; })()
+        };
+      })(),
+      ar: (() => {
+        // AURA: datos reales de la pulsera si los hay; si no, DATOS DE EJEMPLO (hasta que llegue la pulsera)
+        const A = this.auraReal(db.aura), real = !!A.real, edad = (db.nino && db.nino.edad) || 12;
+        const fmt = m => { const h = Math.floor(m / 60), x = Math.round(m % 60); return h ? h + ' h' + (x ? ' ' + x + ' min' : '') : x + ' min'; };
+        const ideal = edad <= 12 ? [540, 720] : [480, 600];
+        const D = real ? { pasos: A.pasos, activos: A.activos, suenoMin: A.suenoMin || 0, dormir: A.sueno.dormir, despertar: A.sueno.despertar, pantalla: A.pantalla, semana: (A.suenoSemana || []).map(h => Math.round(Math.min(100, h / 9 * 85))) }
+          : { pasos: 7842, activos: 48, suenoMin: 548, dormir: '22:31', despertar: '07:39', pantalla: 128, semana: [72, 64, 81, 58, 77, 85, 78] };
+        const metaAct = 60, metaPant = (db.limites && db.limites.pantallaDia) || 180;
+        const pDesc = Math.min(1, D.suenoMin / ideal[0]), pMov = Math.min(1, D.activos / metaAct), pPan = Math.max(0, 1 - Math.max(0, D.pantalla - metaPant * 0.7) / (metaPant * 0.6));
+        const energia = real ? Math.round(30 + 40 * pDesc + 20 * pMov + 10 * pPan) : 78;
+        const est = energia >= 75 ? ['Con mucha energía', '#7CF2C0', 'Has dormido bien. Es un gran día para algo que te reta.'] : energia >= 50 ? ['Con energía', '#FFD86B', 'Vas bien. Un rato al aire libre te dará un empujón.'] : ['Con poca batería', '#FF9E80', 'Hoy toca ir con calma y acostarte un poco antes.'];
+        const eC = 2 * Math.PI * 56, anillo = (r, p) => { const c = 2 * Math.PI * r; return { c, off: c * (1 - Math.max(0.02, Math.min(1, p))) }; };
+        // Hipnograma de ejemplo (minutos por fase, en orden)
+        const F = { profundo: ['Profundo', '#3B1FA3', '86px'], ligero: ['Ligero', '#8A74E8', '58px'], rem: ['REM', '#2EC4B6', '40px'], despierto: ['Despierto', '#F4A259', '20px'] };
+        const hip = real && A.sueno.fasesMin ? A.sueno.fasesMin : [['ligero', 25], ['profundo', 55], ['ligero', 40], ['rem', 20], ['profundo', 40], ['ligero', 50], ['despierto', 6], ['rem', 30], ['ligero', 60], ['profundo', 25], ['ligero', 45], ['rem', 45], ['ligero', 35], ['despierto', 4], ['rem', 25], ['ligero', 43]];
+        const tot = {}; hip.forEach(([f, m]) => tot[f] = (tot[f] || 0) + m);
+        const dias = ['L', 'M', 'X', 'J', 'V', 'S', 'D'], hoy = (new Date().getDay() + 6) % 7;
+        const sem = dias.map((d, i) => { const h = i === hoy, v = h ? energia : (i > hoy && !real ? 0 : (D.semana[i] ?? 0)); return { d, v: v || '', alto: Math.max(6, Math.round(v * 0.82)) + 'px', color: h ? 'linear-gradient(180deg,#6f49d8,#4C2FA8)' : v >= 75 ? '#C9BDF6' : v >= 50 ? '#DDD6FA' : '#ECE9FB', txColor: h ? '#4C2FA8' : '#9CA3AF', peso: h ? 800 : 600 }; });
+        const buenas = sem.filter(x => x.v >= 70).length;
+        return {
+          estadoTxt: real ? 'Datos reales de tu pulsera' : 'Datos de ejemplo · conecta tu pulsera para ver los tuyos', estadoBg: real ? '#EEF6E6' : '#F1EEFC', estadoDot: real ? '#82B94F' : '#6f49d8',
+          verPermiso: s.saludEstado === 'sin-permiso', pedirPermiso: () => { try { BroNativo.pedirPermisoSalud(); } catch (e) { this.avisar('Solo funciona en el móvil BroS Life'); } },
+          energia, estadoEnergia: est[0], energiaColor: est[1], fraseEnergia: est[2], eC, eOff: eC * (1 - energia / 100),
+          factores: [{ k: 'DESCANSO', v: fmt(D.suenoMin) }, { k: 'MOVIMIENTO', v: D.activos + ' min' }, { k: 'PASOS', v: D.pasos.toLocaleString('es-ES') }],
+          anillos: [
+            { nombre: 'MOVERSE', valor: D.activos + ' min', meta: 'de ' + metaAct + ' min', color: '#FF5C7A', fondo: '#FFE3E9', r: 52, ...anillo(52, pMov) },
+            { nombre: 'DESCANSO', valor: fmt(D.suenoMin), meta: 'de ' + fmt(ideal[0]), color: '#7B5CF0', fondo: '#ECE7FD', r: 38, ...anillo(38, pDesc) },
+            { nombre: 'EQUILIBRIO', valor: fmt(D.pantalla) + ' pantalla', meta: 'límite ' + fmt(metaPant), color: '#2EC4B6', fondo: '#DDF6F3', r: 24, ...anillo(24, pPan) } ],
+          suenoTotal: fmt(D.suenoMin), suenoCalidad: D.suenoMin >= ideal[0] ? 'Muy buen descanso' : D.suenoMin >= ideal[0] - 60 ? 'Buen descanso' : 'Te faltó sueño',
+          dormir: D.dormir, despertar: D.despertar, suenoIdeal: fmt(ideal[0]) + '–' + fmt(ideal[1]),
+          hipno: hip.map(([f, m]) => ({ flex: m, alto: F[f][2], color: F[f][1] })),
+          fasesLeyenda: ['profundo', 'ligero', 'rem', 'despierto'].map(f => ({ nombre: F[f][0], color: F[f][1], tiempo: fmt(tot[f] || 0) })),
+          semana: sem,
+          racha: buenas >= 5 ? buenas + ' mañanas con energía esta semana' : 'Tu semana va ' + (buenas >= 3 ? 'bien' : 'poco a poco'),
+          rachaSub: buenas >= 5 ? 'Dormir bien se nota. ¡Sigue así!' : 'Cada noche cuenta. No hace falta ser perfecto.',
+          consejos: [
+            D.suenoMin < ideal[0] ? { ic: '🌙', t: 'Acuéstate 20 min antes', d: 'Para tu edad, el cuerpo necesita ' + fmt(ideal[0]) + ' o más para crecer y recargar.' } : { ic: '🌙', t: 'Tu descanso está genial', d: 'Mantener la misma hora de dormir ayuda a que el sueño sea más profundo.' },
+            pMov < 1 ? { ic: '⚽', t: 'Te faltan ' + Math.max(0, metaAct - D.activos) + ' min para cerrar Moverse', d: 'Un partido, bici o un paseo con alguien cuenta. Mejor si es al aire libre.' } : { ic: '⚽', t: '¡Anillo de Moverse cerrado!', d: 'Moverte cada día te da energía para mañana.' },
+            { ic: '📵', t: 'La última hora, sin pantallas', d: 'La luz de la pantalla engaña al cerebro y cuesta más dormirse.' } ]
         };
       })(),
       au: (() => {
