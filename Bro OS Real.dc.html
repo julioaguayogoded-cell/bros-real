@@ -779,14 +779,14 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
         <!-- AURA -->
         <sc-if value="{{ p.aura }}" hint-placeholder-val="{{ false }}">
           <!-- AURA · inspirado en Body Battery (Garmin), Readiness (Oura), anillos (Apple) y fases de sueño (Fitbit). Para niños: sin calorías, sin peso, sin rankings. -->
-          <div style="margin:12px 16px 0;display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:12px;background:{{ ar.estadoBg }}">
+          <div style="flex-shrink:0;margin:12px 16px 0;display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:12px;background:{{ ar.estadoBg }}">
             <span style="width:8px;height:8px;border-radius:50%;flex:none;background:{{ ar.estadoDot }}"></span>
             <span style="flex:1;min-width:0;font-size:12.5px;font-weight:600;color:#374151">{{ ar.estadoTxt }}</span>
             <sc-if value="{{ ar.verPermiso }}" hint-placeholder-val="{{ false }}"><button onClick="{{ ar.pedirPermiso }}" style="flex:none;height:30px;padding:0 12px;border-radius:9px;background:#111;color:#fff;font-weight:700;font-size:12px">Dar permiso</button></sc-if>
           </div>
 
           <!-- 1. TU ENERGÍA (batería) -->
-          <div style="margin:12px 16px 0;border-radius:26px;padding:20px 18px;background:linear-gradient(160deg,#2B1B5E 0%,#4C2FA8 55%,#6f49d8 100%);color:#fff;position:relative;overflow:hidden">
+          <div style="flex-shrink:0;margin:12px 16px 0;border-radius:26px;padding:20px 18px;background:linear-gradient(160deg,#2B1B5E 0%,#4C2FA8 55%,#6f49d8 100%);color:#fff;position:relative;overflow:hidden">
             <div style="position:absolute;right:-40px;top:-40px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.18),transparent 70%)"></div>
             <div style="display:flex;align-items:center;gap:18px;position:relative">
               <div style="position:relative;width:132px;height:132px;flex:none">
@@ -810,7 +810,7 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
           </div>
 
           <!-- 2. LOS 3 ANILLOS DEL DÍA -->
-          <div style="margin:12px 16px 0;background:#fff;border:1px solid #E4E7EE;border-radius:22px;padding:16px">
+          <div style="flex-shrink:0;margin:12px 16px 0;background:#fff;border:1px solid #E4E7EE;border-radius:22px;padding:16px">
             <div style="font-family:Outfit;font-weight:800;font-size:16px;margin-bottom:12px">Tus 3 anillos de hoy</div>
             <div style="display:flex;align-items:center;gap:16px">
               <svg width="120" height="120" viewBox="0 0 120 120" style="flex:none">
@@ -829,7 +829,7 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
           </div>
 
           <!-- 3. SUEÑO DE ANOCHE (fases) -->
-          <div style="margin:12px 16px 0;background:#fff;border:1px solid #E4E7EE;border-radius:22px;padding:16px">
+          <div style="flex-shrink:0;margin:12px 16px 0;background:#fff;border:1px solid #E4E7EE;border-radius:22px;padding:16px">
             <div style="display:flex;align-items:baseline;justify-content:space-between">
               <div style="font-family:Outfit;font-weight:800;font-size:16px">🌙 Tu sueño de anoche</div>
               <div style="font-size:12px;font-weight:700;color:#6f49d8">{{ ar.suenoCalidad }}</div>
@@ -850,7 +850,7 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
           </div>
 
           <!-- 4. TU SEMANA -->
-          <div style="margin:12px 16px 0;background:#fff;border:1px solid #E4E7EE;border-radius:22px;padding:16px">
+          <div style="flex-shrink:0;margin:12px 16px 0;background:#fff;border:1px solid #E4E7EE;border-radius:22px;padding:16px">
             <div style="display:flex;align-items:baseline;justify-content:space-between"><div style="font-family:Outfit;font-weight:800;font-size:16px">Tu semana</div><div style="font-size:12px;color:#6B7280">Energía cada mañana</div></div>
             <div style="display:flex;align-items:flex-end;gap:8px;height:110px;margin-top:12px">
               <sc-for list="{{ ar.semana }}" as="d" hint-placeholder-count="7">
@@ -864,11 +864,11 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
           </div>
 
           <!-- 5. RACHA Y CONSEJOS (sin presión, sin comparar) -->
-          <div style="margin:12px 16px 0;display:flex;align-items:center;gap:14px;background:#FFF7E8;border:1px solid #F6E2B8;border-radius:22px;padding:14px 16px">
+          <div style="flex-shrink:0;margin:12px 16px 0;display:flex;align-items:center;gap:14px;background:#FFF7E8;border:1px solid #F6E2B8;border-radius:22px;padding:14px 16px">
             <div style="font-size:30px;flex:none">🔥</div>
             <div style="flex:1;min-width:0"><div style="font-family:Outfit;font-weight:800;font-size:16px">{{ ar.racha }}</div><div style="font-size:12.5px;color:#7A5212;margin-top:2px">{{ ar.rachaSub }}</div></div>
           </div>
-          <div style="margin:12px 16px 0;display:flex;flex-direction:column;gap:8px">
+          <div style="flex-shrink:0;margin:12px 16px 0;display:flex;flex-direction:column;gap:8px">
             <sc-for list="{{ ar.consejos }}" as="c" hint-placeholder-count="2">
               <div style="display:flex;gap:12px;align-items:flex-start;background:#fff;border:1px solid #E4E7EE;border-radius:18px;padding:13px 14px">
                 <div style="font-size:22px;flex:none">{{ c.ic }}</div>
@@ -876,7 +876,7 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
               </div>
             </sc-for>
           </div>
-          <div style="margin:14px 16px 0;font-size:11.5px;line-height:1.5;color:#9CA3AF;text-align:center">Aura no cuenta calorías ni te compara con nadie. Tu familia ve solo tendencias de la semana.</div>
+          <div style="flex-shrink:0;margin:14px 16px 0;font-size:11.5px;line-height:1.5;color:#9CA3AF;text-align:center">Aura no cuenta calorías ni te compara con nadie. Tu familia ve solo tendencias de la semana.</div>
         </sc-if>
 
         <!-- LOGROS -->
@@ -3466,7 +3466,7 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
           anillos: [
             { nombre: 'MOVERSE', valor: D.activos + ' min', meta: 'de ' + metaAct + ' min', color: '#FF5C7A', fondo: '#FFE3E9', r: 52, ...anillo(52, pMov) },
             { nombre: 'DESCANSO', valor: fmt(D.suenoMin), meta: 'de ' + fmt(ideal[0]), color: '#7B5CF0', fondo: '#ECE7FD', r: 38, ...anillo(38, pDesc) },
-            { nombre: 'EQUILIBRIO', valor: fmt(D.pantalla) + ' pantalla', meta: 'límite ' + fmt(metaPant), color: '#2EC4B6', fondo: '#DDF6F3', r: 24, ...anillo(24, pPan) } ],
+            { nombre: 'EQUILIBRIO', valor: fmt(D.pantalla), meta: 'de pantalla · máx ' + fmt(metaPant), color: '#2EC4B6', fondo: '#DDF6F3', r: 24, ...anillo(24, pPan) } ],
           suenoTotal: fmt(D.suenoMin), suenoCalidad: D.suenoMin >= ideal[0] ? 'Muy buen descanso' : D.suenoMin >= ideal[0] - 60 ? 'Buen descanso' : 'Te faltó sueño',
           dormir: D.dormir, despertar: D.despertar, suenoIdeal: fmt(ideal[0]) + '–' + fmt(ideal[1]),
           hipno: hip.map(([f, m]) => ({ flex: m, alto: F[f][2], color: F[f][1] })),
