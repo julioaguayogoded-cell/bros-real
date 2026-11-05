@@ -78,6 +78,55 @@
       </div>
     </sc-if>
 
+    <!-- MI PLAN: lo hace el Bro; Bro acompaña (chat y voz siempre) -->
+    <sc-if value="{{ p.coplan }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:14px 16px 20px;display:flex;flex-direction:column;gap:12px">
+        <div style="background:#F3F8EE;border:1px solid #D6E8C5;border-radius:16px;padding:12px 14px;font-size:13px;line-height:1.5;color:#3D6B1F"><b>{{ cp.nombre }}</b><br>🎯 {{ cp.objetivo }}<sc-if value="{{ cp.hayFechas }}" hint-placeholder-val="{{ false }}"><br>📅 {{ cp.fechas }}</sc-if></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:2px">
+          <span style="font-size:11px;font-weight:700;letter-spacing:.06em;color:#9CA3AF">MI PLAN · {{ cp.nPasos }}</span>
+          <span style="font-size:11px;font-weight:700;letter-spacing:.06em;color:#82B94F">{{ cp.etapaTxt }}</span>
+        </div>
+        <sc-if value="{{ cp.sinPasos }}" hint-placeholder-val="{{ true }}"><div style="padding:16px;border:1px dashed #C9D9B8;border-radius:16px;background:#fff;font-size:13.5px;color:#6B7280;text-align:center">Aquí aparecerán tus pasos. Díselos a Bro o escríbelos abajo.</div></sc-if>
+        <sc-for list="{{ cp.pasos }}" as="x" hint-placeholder-count="0">
+          <div style="background:#fff;border:1px solid #E4E7EE;border-left:4px solid #82B94F;border-radius:14px;padding:8px 8px 8px 12px;display:flex;align-items:center;gap:8px">
+            <span style="font-family:Outfit;font-weight:800;font-size:15px;color:#82B94F;flex:none;width:18px">{{ x.n }}</span>
+            <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:3px">
+              <input value="{{ x.t }}" onChange="{{ x.onT }}" style="border:0;outline:none;font-weight:700;font-size:14.5px;padding:2px 0;background:transparent;width:100%">
+              <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center">
+                <input value="{{ x.fecha }}" onChange="{{ x.onFecha }}" placeholder="📅 ¿cuándo?" style="border:0;outline:none;font-size:12px;color:#4B5563;background:#F5F6F9;border-radius:8px;padding:4px 8px;width:110px">
+                <sc-if value="{{ x.adulto }}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;font-weight:700;color:#9A5B00;background:#FDF0D5;border-radius:8px;padding:4px 8px">👤 Con un adulto</span></sc-if>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:2px;flex:none">
+              <button onClick="{{ x.subir }}" aria-label="Subir" style="width:28px;height:22px;border-radius:6px;background:#F0F2F6;font-size:12px;opacity:{{ x.opSubir }}">▲</button>
+              <button onClick="{{ x.bajar }}" aria-label="Bajar" style="width:28px;height:22px;border-radius:6px;background:#F0F2F6;font-size:12px;opacity:{{ x.opBajar }}">▼</button>
+            </div>
+            <button onClick="{{ x.quitar }}" aria-label="Quitar" style="flex:none;width:28px;height:28px;border-radius:50%;color:#9CA3AF;font-size:16px">✕</button>
+          </div>
+        </sc-for>
+        <div style="height:6px"></div>
+        <sc-for list="{{ cp.msgs }}" as="m" hint-placeholder-count="0">
+          <sc-if value="{{ m.ai }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;gap:10px;align-items:flex-start;animation:sube .25s ease-out"><div style="position:relative;width:40px;height:48px;flex:none"><div style="position:absolute;left:0;top:9px;width:40px;height:40px;border-radius:50%;padding:3px;box-sizing:border-box;background:#111"><div style="width:100%;height:100%;border-radius:50%;background:#fff;display:grid;place-items:center"><img src="bro-cara.svg" alt="" style="width:56%;height:56%;margin-top:28%"></div></div><img src="bro-casco.svg?v=4" alt="" style="position:absolute;left:-6px;top:0;width:52px"></div><div style="background:#fff;border:1px solid #E4E7EE;border-radius:4px 16px 16px 16px;padding:12px 14px;font-size:15px;line-height:1.45">{{ m.texto }}</div></div>
+          </sc-if>
+          <sc-if value="{{ m.bro }}" hint-placeholder-val="{{ false }}">
+            <div style="align-self:flex-end;max-width:84%;padding:11px 14px;border-radius:16px 16px 4px 16px;background:#82B94F;color:#fff;font-size:15px;line-height:1.4">{{ m.texto }}</div>
+          </sc-if>
+        </sc-for>
+        <sc-if value="{{ cp.pensando }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:10px;align-items:center"><div style="position:relative;width:40px;height:48px;flex:none"><div style="position:absolute;left:0;top:9px;width:40px;height:40px;border-radius:50%;padding:3px;box-sizing:border-box;background:#111"><div style="width:100%;height:100%;border-radius:50%;background:#fff;display:grid;place-items:center"><img src="bro-cara.svg" alt="" style="width:56%;height:56%;margin-top:28%"></div></div><img src="bro-casco.svg?v=4" alt="" style="position:absolute;left:-6px;top:0;width:52px"></div><span style="font-size:13px;color:#6B7280">Bro está pensando…</span></div></sc-if>
+        <sc-if value="{{ cp.hayOpciones }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-wrap:wrap;gap:8px;padding-left:50px">
+            <sc-for list="{{ cp.opciones }}" as="o" hint-placeholder-count="0">
+              <button onClick="{{ o.onClick }}" style="padding:9px 14px;border-radius:999px;background:#fff;border:1.5px solid #82B94F;color:#3D6B1F;font-size:13.5px;font-weight:700">+ {{ o.t }}</button>
+            </sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{ cp.hayFrase }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#111;color:#fff;border-radius:16px;padding:14px 16px;font-family:Outfit;font-size:16px;font-weight:700;line-height:1.35">«{{ cp.frase }}»<div style="font-family:Inter,system-ui;font-size:12px;font-weight:600;opacity:.7;margin-top:6px">Plan de {{ cp.autor }}</div></div>
+        </sc-if>
+      </div>
+    </sc-if>
+
     <!-- NUEVO PROYECTO · 1. nombre -->
     <sc-if value="{{ p.nombre }}" hint-placeholder-val="{{ false }}">
       <div style="padding:18px 16px 28px;display:flex;flex-direction:column;gap:14px;animation:sube .25s ease-out">
@@ -357,6 +406,18 @@
       <button onClick="{{ np.crear }}" style="width:100%;height:54px;border-radius:16px;text-align:center;background:{{ np.btnCrearBg }};color:#fff;font-family:Outfit;font-weight:800;font-size:16px">{{ np.btnCrearTxt }}</button>
     </div>
   </sc-if>
+  <sc-if value="{{ cp.barra }}" hint-placeholder-val="{{ false }}">
+    <div style="flex:none;background:#fff;border-top:1px solid #E4E7EE;padding:10px 14px calc(12px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:10px">
+      <sc-if value="{{ cp.puedeGuardar }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ cp.guardar }}" style="width:100%;height:50px;border-radius:16px;text-align:center;background:{{ cp.guardarBg }};color:#fff;font-family:Outfit;font-weight:800;font-size:16px">{{ cp.guardarTxt }}</button>
+      </sc-if>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input value="{{ cp.txt }}" onChange="{{ cp.onTxt }}" onKeyDown="{{ cp.onKeyTxt }}" placeholder="Escribe o toca el micro" style="flex:1;min-width:0;border:1px solid #E4E7EE;background:#F5F6F9;border-radius:999px;padding:12px 16px;font-size:15px;outline:none">
+        <button onClick="{{ cp.mic }}" aria-label="Hablar" style="flex:none;width:48px;height:48px;border-radius:50%;background:{{ micBg }};color:#fff;display:grid;place-items:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"></rect><path d="M5 11a7 7 0 0 0 14 0M12 18v3"></path></svg></button>
+        <button onClick="{{ cp.enviar }}" aria-label="Enviar" style="flex:none;width:48px;height:48px;border-radius:50%;background:#82B94F;color:#fff;font-size:18px;display:grid;place-items:center">↑</button>
+      </div>
+    </div>
+  </sc-if>
   <sc-if value="{{ barraIdea }}" hint-placeholder-val="{{ false }}">
     <div style="flex:none;padding:12px 16px calc(14px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid #E4E7EE">
       <button onClick="{{ empezar }}" style="width:100%;height:54px;border-radius:16px;background:{{ btnIdea.bg }};color:#fff;font-family:Outfit;font-weight:800;font-size:16px">{{ btnIdea.t }}</button>
@@ -504,6 +565,38 @@ class Component extends DCLogic {
     this.setState({ npTxt: '', npMsgs: hist, npOpciones: [] }, () => this.scroll(true));
     this.arranqueTurno(hist);
   }
+  // MI PLAN: el Bro pone los pasos; Bro acompaña. Nada se añade sin que lo diga o lo elija él.
+  coplanEmpezar() { this.ir('coplan', { cpPasos: [], cpMsgs: [], cpOpciones: [], cpEtapa: 'ideas', cpFrase: null, cpListo: false, cpTxt: '' }); this.coplanTurno([]); }
+  async coplanTurno(hist) {
+    this.setState({ cpPensando: true }, () => this.scroll(true));
+    const s = this.state;
+    try {
+      const j = await this.llamar('coplan', { nombre: s.npNombre, objetivo: s.npObjetivo, desde: s.npDesde, hasta: s.npHasta, pasos: s.cpPasos || [], historial: hist });
+      if (j.bloqueado) return this.ir('bloqueado', { bloqueoTxt: j.texto, cpPensando: false });
+      this.setState(st => {
+        let P = [...(st.cpPasos || []), ...(j.nuevos || []).map(t => ({ t, fecha: '' }))];
+        (j.fechas || []).forEach(f => { if (P[f.i] && !P[f.i].fecha) P[f.i] = { ...P[f.i], fecha: f.fecha }; });
+        (j.adulto || []).forEach(a => { if (P[a.i]) P[a.i] = { ...P[a.i], adulto: true, motivo: a.motivo }; });
+        return { cpPensando: false, cpPasos: P, cpMsgs: [...hist, { de: 'ai', texto: j.texto }], cpOpciones: j.opciones || [], cpEtapa: j.etapa, cpFrase: j.frase || st.cpFrase, cpListo: !!j.listo || st.cpListo };
+      }, () => this.scroll(true));
+    } catch (e) { this.setState({ cpPensando: false }); this.avisar(e.message); }
+  }
+  coplanEnviar(t) {
+    const txt = String(t ?? this.state.cpTxt ?? '').trim(); if (!txt || this.state.cpPensando) return;
+    const hist = [...(this.state.cpMsgs || []), { de: 'bro', texto: txt }];
+    this.setState({ cpTxt: '', cpMsgs: hist, cpOpciones: [] }, () => this.scroll(true));
+    this.coplanTurno(hist);
+  }
+  async coplanGuardar() {
+    if (this.state.cargando) return; const s = this.state;
+    this.setState({ cargando: true });
+    try {
+      const j = await this.llamar('crear_mio', { nombre: s.npNombre, descripcion: s.npDesc, objetivo: s.npObjetivo, desde: s.npDesde, hasta: s.npHasta, frase: s.cpFrase, pasos: s.cpPasos });
+      if (j.bloqueado) return this.ir('bloqueado', { bloqueoTxt: j.texto, cargando: false });
+      this.setState(st => ({ proyectos: [j.proyecto, ...(st.proyectos || [])], actualId: j.proyecto.id, cargando: false, busqueda: null, videoAbierto: null }));
+      this.ir('plan');
+    } catch (e) { this.setState({ cargando: false }); this.avisar(e.message); }
+  }
   async crearDesdeArranque() {
     if (this.state.cargando) return; const s = this.state;
     this.setState({ cargando: true });
@@ -577,13 +670,13 @@ class Component extends DCLogic {
 
   renderVals() {
     const s = this.state, p = {};
-    ['lista', 'nombre', 'descripcion', 'arranque', 'idea', 'preguntas', 'bloqueado', 'plan', 'paso', 'borrador', 'fin'].forEach(k => p[k] = s.pantalla === k);
+    ['lista', 'nombre', 'descripcion', 'arranque', 'coplan', 'idea', 'preguntas', 'bloqueado', 'plan', 'paso', 'borrador', 'fin'].forEach(k => p[k] = s.pantalla === k);
     const pr = this.actual(), d = pr ? pr.datos : null;
     const color = t => COLOR[t] || COLOR.otro;
     const hechos = d ? d.pasos.filter(x => x.hecho).length : 0, total = d ? d.pasos.length : 0;
     const CAB_COLOR = { lista: '#82B94F', bloqueado: '#82B94F' };
-    const CAB = { lista: ['Build', 'Tus ideas, hechas realidad'], nombre: ['Nuevo proyecto', 'Paso 1 de 3'], descripcion: ['Nuevo proyecto', 'Paso 2 de 3'], arranque: [s.npNombre || 'Nuevo proyecto', 'Con Bro AI'], idea: ['Nueva idea', 'Paso 1 de 3'], preguntas: [s.prop ? s.prop.titulo : 'Tu idea', 'Paso 2 de 3 · concretar'], bloqueado: ['Build', ''], plan: [d ? d.titulo : '', 'Tu plan · ' + hechos + ' de ' + total + ' pasos'], paso: [d ? d.titulo : '', 'Con Bro AI'], borrador: [s.borradorTipo === 'cartel' ? 'Cartel' : 'Borrador', d ? d.titulo : ''], fin: ['¡Conseguido!', ''] };
-    const atras = { nombre: 'lista', descripcion: 'nombre', arranque: 'descripcion', idea: 'lista', preguntas: 'idea', bloqueado: 'lista', plan: 'lista', paso: 'plan', borrador: 'plan', fin: 'lista' };
+    const CAB = { lista: ['Build', 'Tus ideas, hechas realidad'], nombre: ['Nuevo proyecto', 'Paso 1 de 3'], descripcion: ['Nuevo proyecto', 'Paso 2 de 3'], arranque: [s.npNombre || 'Nuevo proyecto', 'Con Bro AI'], coplan: ['Mi plan', s.npNombre || ''], idea: ['Nueva idea', 'Paso 1 de 3'], preguntas: [s.prop ? s.prop.titulo : 'Tu idea', 'Paso 2 de 3 · concretar'], bloqueado: ['Build', ''], plan: [d ? d.titulo : '', 'Tu plan · ' + hechos + ' de ' + total + ' pasos'], paso: [d ? d.titulo : '', 'Con Bro AI'], borrador: [s.borradorTipo === 'cartel' ? 'Cartel' : 'Borrador', d ? d.titulo : ''], fin: ['¡Conseguido!', ''] };
+    const atras = { nombre: 'lista', descripcion: 'nombre', arranque: 'descripcion', coplan: 'arranque', idea: 'lista', preguntas: 'idea', bloqueado: 'lista', plan: 'lista', paso: 'plan', borrador: 'plan', fin: 'lista' };
     const ps = d ? d.pasos[s.pasoIdx] : null, chat = (d && d.chats && d.chats[s.pasoIdx]) || [];
     const tipoB = s.borradorTipo, B = d && d.borradores && d.borradores[tipoB];
     const vids = s.busqueda ? s.videos[s.busqueda] : null;
@@ -614,7 +707,21 @@ class Component extends DCLogic {
           hayResumen: !!(s.npObjetivo || fechas), hayObjetivo: !!s.npObjetivo, objetivo: s.npObjetivo || '', hayFechas: !!fechas, fechas,
           barraChat: p.arranque && !s.npListo, txt: s.npTxt || '', onTxt: e => this.setState({ npTxt: e.target.value }), onKeyTxt: e => { if (e.key === 'Enter') this.arranqueEnviar(); },
           micChat: () => this.dictar(t => this.arranqueEnviar(t)), enviar: () => this.arranqueEnviar(),
-          barraCrear: p.arranque && !!s.npListo, btnCrearTxt: s.cargando ? 'Bro está preparando el plan…' : 'Crear el plan', btnCrearBg: s.cargando ? '#B9CFA3' : '#82B94F', crear: () => this.crearDesdeArranque() };
+          barraCrear: p.arranque && !!s.npListo, btnCrearTxt: 'Hacer mi plan', btnCrearBg: '#82B94F', crear: () => this.coplanEmpezar() };
+      })(),
+      cp: (() => { const P = s.cpPasos || [], fechas = [s.npDesde, s.npHasta].filter(Boolean).join(' → ');
+        const mover = (i, d) => () => { const j = i + d; if (j < 0 || j >= P.length) return; const n = [...P]; [n[i], n[j]] = [n[j], n[i]]; this.setState({ cpPasos: n }); };
+        const cambiar = (i, k) => e => { const n = [...P]; n[i] = { ...n[i], [k]: e.target.value }; this.setState({ cpPasos: n }); };
+        const ET = {"ideas": "1 · TUS IDEAS", "ordenar": "2 · ORDENA", "fechas": "3 · FECHAS", "revisar": "4 · REVISA", "firma": "5 · TU FRASE"};
+        return { nombre: s.npNombre || '', objetivo: s.npObjetivo || '', hayFechas: !!fechas, fechas, nPasos: P.length + (P.length === 1 ? ' paso' : ' pasos'), etapaTxt: ET[s.cpEtapa || 'ideas'] || '',
+          sinPasos: !P.length, pasos: P.map((x, i) => ({ n: i + 1, t: x.t, fecha: x.fecha || '', adulto: !!x.adulto, onT: cambiar(i, 't'), onFecha: cambiar(i, 'fecha'),
+            subir: mover(i, -1), bajar: mover(i, 1), opSubir: i ? 1 : .3, opBajar: i < P.length - 1 ? 1 : .3, quitar: () => this.setState({ cpPasos: P.filter((_, k) => k !== i) }) })),
+          msgs: (s.cpMsgs || []).map(m => ({ texto: m.texto, ai: m.de === 'ai', bro: m.de === 'bro' })), pensando: !!s.cpPensando,
+          hayOpciones: !s.cpPensando && (s.cpOpciones || []).length > 0, opciones: (s.cpOpciones || []).map(t => ({ t, onClick: () => this.coplanEnviar(t) })),
+          hayFrase: !!s.cpFrase, frase: s.cpFrase || '', autor: (this.disp() && this.disp().nombre) || 'ti',
+          barra: p.coplan, txt: s.cpTxt || '', onTxt: e => this.setState({ cpTxt: e.target.value }), onKeyTxt: e => { if (e.key === 'Enter') this.coplanEnviar(); },
+          mic: () => this.dictar(t => this.coplanEnviar(t)), enviar: () => this.coplanEnviar(),
+          puedeGuardar: P.length > 0 && (!!s.cpListo || P.length >= 3), guardarTxt: s.cargando ? 'Guardando…' : s.cpListo ? 'Guardar mi plan' : 'Guardar mi plan ya', guardarBg: s.cargando ? '#B9CFA3' : '#82B94F', guardar: () => this.coplanGuardar() };
       })(),
       ideaTxt: s.ideaTxt, onIdea: e => this.setState({ ideaTxt: e.target.value }),
       ejemplos: EJEMPLOS.map(t => ({ t, onClick: () => this.setState({ ideaTxt: 'Quiero hacer ' + t.charAt(0).toLowerCase() + t.slice(1) }) })),
