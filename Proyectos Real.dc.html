@@ -561,6 +561,7 @@ class Component extends DCLogic {
   }
   arranqueEnviar(t) {
     const txt = String(t ?? this.state.npTxt ?? '').trim(); if (!txt || this.state.npPensando) return;
+    if (this.state.npObjetivo && (this.state.npDesde || this.state.npHasta) && /^(s[ií]|vale|venga|claro|ok|empecemos|vamos)/i.test(txt)) { this.setState({ npTxt: '' }); return this.coplanEmpezar(); }
     const hist = [...(this.state.npMsgs || []), { de: 'bro', texto: txt }];
     this.setState({ npTxt: '', npMsgs: hist, npOpciones: [] }, () => this.scroll(true));
     this.arranqueTurno(hist);
@@ -705,9 +706,9 @@ class Component extends DCLogic {
           msgs: msgs.map(m => ({ texto: m.texto, ai: m.de === 'ai', bro: m.de === 'bro' })), pensando: !!s.npPensando,
           hayOpciones: !s.npPensando && !s.npListo && (s.npOpciones || []).length > 0, opciones: (s.npOpciones || []).map(t => ({ t, onClick: () => this.arranqueEnviar(t) })),
           hayResumen: !!(s.npObjetivo || fechas), hayObjetivo: !!s.npObjetivo, objetivo: s.npObjetivo || '', hayFechas: !!fechas, fechas,
-          barraChat: p.arranque && !s.npListo, txt: s.npTxt || '', onTxt: e => this.setState({ npTxt: e.target.value }), onKeyTxt: e => { if (e.key === 'Enter') this.arranqueEnviar(); },
+          barraChat: p.arranque, txt: s.npTxt || '', onTxt: e => this.setState({ npTxt: e.target.value }), onKeyTxt: e => { if (e.key === 'Enter') this.arranqueEnviar(); },
           micChat: () => this.dictar(t => this.arranqueEnviar(t)), enviar: () => this.arranqueEnviar(),
-          barraCrear: p.arranque && !!s.npListo, btnCrearTxt: 'Hacer mi plan', btnCrearBg: '#82B94F', crear: () => this.coplanEmpezar() };
+          barraCrear: p.arranque && (!!s.npListo || (!!s.npObjetivo && !!(s.npDesde || s.npHasta))), btnCrearTxt: 'Hacer mi plan', btnCrearBg: '#82B94F', crear: () => this.coplanEmpezar() };
       })(),
       cp: (() => { const P = s.cpPasos || [], fechas = [s.npDesde, s.npHasta].filter(Boolean).join(' → ');
         const mover = (i, d) => () => { const j = i + d; if (j < 0 || j >= P.length) return; const n = [...P]; [n[i], n[j]] = [n[j], n[i]]; this.setState({ cpPasos: n }); };
