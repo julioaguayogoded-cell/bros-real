@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="./support.js"></script>
 <script src="./estado.js"></script>
+<script src="./flotante.js"></script>
 </head>
 <body>
 <x-dc>
@@ -28,6 +29,7 @@
     <bros-estado></bros-estado>
   </div>
 
+  <bro-flotante></bro-flotante>
   <div ref="{{ scrollRef }}" style="flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch">
 
     <sc-if value="{{ p.lista }}" hint-placeholder-val="{{ true }}">

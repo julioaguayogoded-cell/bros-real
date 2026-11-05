@@ -36,6 +36,7 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
 </style>
 <script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <script src="gestos.js"></script>
+<script src="flotante.js"></script>
 </helmet>
 
 <div style="min-height:{{ marco.minPag }};height:{{ marco.altoPag }};overflow:{{ marco.ovPag }};display:flex;flex-direction:column;align-items:center;gap:{{ marco.gap }};padding:{{ marco.pad }};font-family:Inter,system-ui,sans-serif;font-size:15px;line-height:1.45;color:#111">
@@ -1657,7 +1658,10 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
         </div>
       </sc-if>
 
-      <!-- Dock: voz o chat (no en la pantalla de inicio: allí se habla tocando el logo de Bro) -->
+      <!-- Bro AI flotante en los módulos: se arrastra a donde quieras y al tocarlo te escucha -->
+      <sc-if value="{{ verFlotante }}" hint-placeholder-val="{{ false }}"><bro-flotante></bro-flotante></sc-if>
+
+      <!-- Dock: voz o chat (solo mientras hablas con Bro) -->
       <sc-if value="{{ verDock }}" hint-placeholder-val="{{ true }}">
       <div style="position:absolute;left:0;right:0;bottom:0;z-index:15;display:flex;gap:8px;align-items:center;padding:{{ marco.padDock }};background:{{ t.head }};border-top:1px solid {{ t.line }}">
         <input ref="{{ inputRef }}" value="{{ texto }}" onChange="{{ onTexto }}" onKeyDown="{{ onTextoKey }}" placeholder="{{ placeholder }}" style="flex:1;min-width:0;border:1px solid {{ t.line }};background:{{ t.soft }};color:{{ t.txt }};border-radius:999px;padding:13px 16px;font-size:14.5px;outline:none">
@@ -1909,6 +1913,7 @@ class Component extends DCLogic {
     this.api = await import('./api-real.js?v=' + (window.BROS_V || Date.now()));
     clearInterval(this.tSync); this.tSync = setInterval(async () => { try { const r = await this.api.traer(); if (r.cambio && r.estado) this.setState({ db: r.estado }); } catch (e) {} }, 4000);
     this.llamar('estado');
+    if (location.hash === '#hablar') { history.replaceState(null, '', location.pathname + location.search); setTimeout(() => this.escuchar(), 600); }
     if (location.hash === '#qr') { history.replaceState(null, '', location.pathname + location.search); setTimeout(() => this.ejecutar({ pantalla: 'qr' }), 300); }
     if (window.speechSynthesis) speechSynthesis.getVoices();
   }
@@ -2964,8 +2969,9 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
       })(),
       hayHoy: !padre,
       cabeceraHora: !padre && pantalla === 'bro',
-      padAbajo: (padre || pantalla !== 'bro') ? '100px' : '12px',
-      verDock: padre || pantalla !== 'bro' || !!(s.sesion && s.sesion[this.modo()] && s.sesion[this.modo()].conv && s.sesion[this.modo()].conv.length) || !!s.escuchando || !!s.texto,
+      padAbajo: padre ? '100px' : '24px',
+      verFlotante: !padre && pantalla !== 'bro' && !(s.sesion && s.sesion[this.modo()] && s.sesion[this.modo()].conv && s.sesion[this.modo()].conv.length) && !s.escuchando,
+      verDock: padre || !!(s.sesion && s.sesion[this.modo()] && s.sesion[this.modo()].conv && s.sesion[this.modo()].conv.length) || !!s.escuchando || !!s.texto,
       est: (e => {
         const red = e.red, nm = Math.max(0, Math.min(4, e.nivelMovil || 0)), nw = Math.max(0, Math.min(4, e.nivelWifi == null ? 4 : e.nivelWifi));
         const bat = typeof e.bateria === 'number' ? Math.max(0, Math.min(100, e.bateria)) : null;
