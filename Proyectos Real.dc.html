@@ -35,11 +35,11 @@
       <div style="padding:18px 16px 28px;display:flex;flex-direction:column;gap:14px">
         <!-- Bro AI en modo construir (mono de trabajo): arriba, protagonista -->
         <div style="display:flex;justify-content:center;padding:6px 0 2px">
-          <button onClick="{{ irIdea }}" aria-label="Bro AI en modo construir" style="position:relative;width:156px;height:188px;flex:none;background:none;border:0;padding:0">
-            <div style="position:absolute;left:0;top:32px;width:156px;height:156px;border-radius:50%;padding:9px;box-sizing:border-box;background:#111;box-shadow:0 12px 30px rgba(130,185,79,.35)">
+          <button onClick="{{ irIdea }}" aria-label="Bro AI en modo construir" style="position:relative;width:156px;height:198px;flex:none;background:none;border:0;padding:0">
+            <div style="position:absolute;left:0;top:42px;width:156px;height:156px;border-radius:50%;padding:9px;box-sizing:border-box;background:#111;box-shadow:0 12px 30px rgba(130,185,79,.35)">
               <div style="width:100%;height:100%;border-radius:50%;background:#fff;display:grid;place-items:center"><img src="bro-cara.svg" alt="" style="width:54%;height:54%;margin-top:26%"></div>
             </div>
-            <img src="bro-casco.svg?v=4" alt="" style="position:absolute;left:-7px;top:0;width:170px">
+            <img src="bro-casco.svg?v=4" alt="" style="position:absolute;left:-22px;top:0;width:200px">
           </button>
         </div>
         <!-- Nuevo proyecto (tarjeta como en el resto de BroS Life) -->
@@ -74,6 +74,53 @@
             </sc-for>
           </div>
         </div>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <!-- NUEVO PROYECTO · 1. nombre -->
+    <sc-if value="{{ p.nombre }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:18px 16px 28px;display:flex;flex-direction:column;gap:14px;animation:sube .25s ease-out">
+        <div style="display:flex;gap:10px;align-items:flex-start"><div style="position:relative;width:40px;height:48px;flex:none"><div style="position:absolute;left:0;top:9px;width:40px;height:40px;border-radius:50%;padding:3px;box-sizing:border-box;background:#111"><div style="width:100%;height:100%;border-radius:50%;background:#fff;display:grid;place-items:center"><img src="bro-cara.svg" alt="" style="width:56%;height:56%;margin-top:28%"></div></div><img src="bro-casco.svg?v=4" alt="" style="position:absolute;left:-6px;top:0;width:52px"></div><div style="background:#fff;border:1px solid #E4E7EE;border-radius:4px 16px 16px 16px;padding:12px 14px;font-size:15px;line-height:1.45">¿Cómo se llama tu proyecto?</div></div>
+        <input value="{{ np.nombre }}" onChange="{{ np.onNombre }}" onKeyDown="{{ np.onKeyNombre }}" maxlength="60" placeholder="Por ejemplo: Mercadillo solidario" style="width:100%;box-sizing:border-box;border:1px solid #E4E7EE;background:#fff;border-radius:16px;padding:16px;font-family:Outfit;font-weight:700;font-size:19px;outline:none">
+      </div>
+    </sc-if>
+    <!-- NUEVO PROYECTO · 2. descripción (escrita o por voz) -->
+    <sc-if value="{{ p.descripcion }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:18px 16px 28px;display:flex;flex-direction:column;gap:14px;animation:sube .25s ease-out">
+        <div style="display:flex;gap:10px;align-items:flex-start"><div style="position:relative;width:40px;height:48px;flex:none"><div style="position:absolute;left:0;top:9px;width:40px;height:40px;border-radius:50%;padding:3px;box-sizing:border-box;background:#111"><div style="width:100%;height:100%;border-radius:50%;background:#fff;display:grid;place-items:center"><img src="bro-cara.svg" alt="" style="width:56%;height:56%;margin-top:28%"></div></div><img src="bro-casco.svg?v=4" alt="" style="position:absolute;left:-6px;top:0;width:52px"></div><div style="background:#fff;border:1px solid #E4E7EE;border-radius:4px 16px 16px 16px;padding:12px 14px;font-size:15px;line-height:1.45">Cuéntame de qué va «{{ np.nombre }}». Escríbelo o toca el micro y dímelo.</div></div>
+        <div style="display:flex;gap:10px;align-items:flex-end">
+          <textarea value="{{ np.desc }}" onChange="{{ np.onDesc }}" rows="5" placeholder="Quiero…" style="flex:1;min-width:0;box-sizing:border-box;border:1px solid #E4E7EE;background:#fff;border-radius:16px;padding:14px;font-size:15.5px;line-height:1.45;outline:none;resize:none;font-family:inherit"></textarea>
+          <button onClick="{{ np.micDesc }}" aria-label="Hablar" style="flex:none;width:48px;height:48px;border-radius:50%;background:{{ micBg }};color:#fff;display:grid;place-items:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"></rect><path d="M5 11a7 7 0 0 0 14 0M12 18v3"></path></svg></button>
+        </div>
+        <sc-if value="{{ escuchandoVoz }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;font-weight:700;color:#E56648">● Te escucho…</div></sc-if>
+      </div>
+    </sc-if>
+    <!-- NUEVO PROYECTO · 3. arranque con Bro (project manager): confirma, objetivo, fechas -->
+    <sc-if value="{{ p.arranque }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:16px 16px 20px;display:flex;flex-direction:column;gap:12px">
+        <sc-for list="{{ np.msgs }}" as="m" hint-placeholder-count="0">
+          <sc-if value="{{ m.ai }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;gap:10px;align-items:flex-start;animation:sube .25s ease-out"><div style="position:relative;width:40px;height:48px;flex:none"><div style="position:absolute;left:0;top:9px;width:40px;height:40px;border-radius:50%;padding:3px;box-sizing:border-box;background:#111"><div style="width:100%;height:100%;border-radius:50%;background:#fff;display:grid;place-items:center"><img src="bro-cara.svg" alt="" style="width:56%;height:56%;margin-top:28%"></div></div><img src="bro-casco.svg?v=4" alt="" style="position:absolute;left:-6px;top:0;width:52px"></div><div style="background:#fff;border:1px solid #E4E7EE;border-radius:4px 16px 16px 16px;padding:12px 14px;font-size:15px;line-height:1.45">{{ m.texto }}</div></div>
+          </sc-if>
+          <sc-if value="{{ m.bro }}" hint-placeholder-val="{{ false }}">
+            <div style="align-self:flex-end;max-width:84%;padding:11px 14px;border-radius:16px 16px 4px 16px;background:#82B94F;color:#fff;font-size:15px;line-height:1.4">{{ m.texto }}</div>
+          </sc-if>
+        </sc-for>
+        <sc-if value="{{ np.pensando }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;gap:10px;align-items:center"><div style="position:relative;width:40px;height:48px;flex:none"><div style="position:absolute;left:0;top:9px;width:40px;height:40px;border-radius:50%;padding:3px;box-sizing:border-box;background:#111"><div style="width:100%;height:100%;border-radius:50%;background:#fff;display:grid;place-items:center"><img src="bro-cara.svg" alt="" style="width:56%;height:56%;margin-top:28%"></div></div><img src="bro-casco.svg?v=4" alt="" style="position:absolute;left:-6px;top:0;width:52px"></div><span style="font-size:13px;color:#6B7280">Bro está pensando…</span></div>
+        </sc-if>
+        <sc-if value="{{ np.hayOpciones }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-wrap:wrap;gap:8px;padding-left:50px">
+            <sc-for list="{{ np.opciones }}" as="o" hint-placeholder-count="0">
+              <button onClick="{{ o.onClick }}" style="padding:9px 14px;border-radius:999px;background:#fff;border:1.5px solid #82B94F;color:#3D6B1F;font-size:13.5px;font-weight:700">{{ o.t }}</button>
+            </sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{ np.hayResumen }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top:4px;background:#F3F8EE;border:1px solid #D6E8C5;border-radius:16px;padding:12px 14px;font-size:13px;line-height:1.5;color:#3D6B1F">
+            <b>{{ np.nombre }}</b><sc-if value="{{ np.hayObjetivo }}" hint-placeholder-val="{{ false }}"><br>🎯 {{ np.objetivo }}</sc-if><sc-if value="{{ np.hayFechas }}" hint-placeholder-val="{{ false }}"><br>📅 {{ np.fechas }}</sc-if>
+          </div>
         </sc-if>
       </div>
     </sc-if>
@@ -288,6 +335,28 @@
     </sc-if>
   </div>
 
+  <sc-if value="{{ np.barraNombre }}" hint-placeholder-val="{{ false }}">
+    <div style="flex:none;padding:12px 16px calc(14px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid #E4E7EE">
+      <button onClick="{{ np.siguienteNombre }}" style="width:100%;height:54px;border-radius:16px;text-align:center;background:{{ np.btnNombreBg }};color:#fff;font-family:Outfit;font-weight:800;font-size:16px">{{ np.btnNombreTxt }}</button>
+    </div>
+  </sc-if>
+  <sc-if value="{{ np.barraDesc }}" hint-placeholder-val="{{ false }}">
+    <div style="flex:none;padding:12px 16px calc(14px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid #E4E7EE">
+      <button onClick="{{ np.siguienteDesc }}" style="width:100%;height:54px;border-radius:16px;text-align:center;background:{{ np.btnDescBg }};color:#fff;font-family:Outfit;font-weight:800;font-size:16px">{{ np.btnDescTxt }}</button>
+    </div>
+  </sc-if>
+  <sc-if value="{{ np.barraChat }}" hint-placeholder-val="{{ false }}">
+    <div style="flex:none;display:flex;gap:8px;align-items:center;padding:10px 14px calc(12px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid #E4E7EE">
+      <input value="{{ np.txt }}" onChange="{{ np.onTxt }}" onKeyDown="{{ np.onKeyTxt }}" placeholder="Escribe o toca el micro" style="flex:1;min-width:0;border:1px solid #E4E7EE;background:#F5F6F9;border-radius:999px;padding:12px 16px;font-size:15px;outline:none">
+      <button onClick="{{ np.micChat }}" aria-label="Hablar" style="flex:none;width:48px;height:48px;border-radius:50%;background:{{ micBg }};color:#fff;display:grid;place-items:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"></rect><path d="M5 11a7 7 0 0 0 14 0M12 18v3"></path></svg></button>
+      <button onClick="{{ np.enviar }}" aria-label="Enviar" style="flex:none;width:48px;height:48px;border-radius:50%;background:#82B94F;color:#fff;font-size:18px;display:grid;place-items:center">↑</button>
+    </div>
+  </sc-if>
+  <sc-if value="{{ np.barraCrear }}" hint-placeholder-val="{{ false }}">
+    <div style="flex:none;padding:12px 16px calc(14px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid #E4E7EE">
+      <button onClick="{{ np.crear }}" style="width:100%;height:54px;border-radius:16px;text-align:center;background:{{ np.btnCrearBg }};color:#fff;font-family:Outfit;font-weight:800;font-size:16px">{{ np.btnCrearTxt }}</button>
+    </div>
+  </sc-if>
   <sc-if value="{{ barraIdea }}" hint-placeholder-val="{{ false }}">
     <div style="flex:none;padding:12px 16px calc(14px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid #E4E7EE">
       <button onClick="{{ empezar }}" style="width:100%;height:54px;border-radius:16px;background:{{ btnIdea.bg }};color:#fff;font-family:Outfit;font-weight:800;font-size:16px">{{ btnIdea.t }}</button>
@@ -408,6 +477,44 @@ class Component extends DCLogic {
   }
   ponerDatos(id, d) { this.setState(s => ({ proyectos: s.proyectos.map(x => x.id === id ? { ...x, datos: d } : x) })); }
 
+  // Voz → texto (en el móvil Bro usa el reconocimiento nativo)
+  dictar(alTexto) {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) return this.avisar('La voz funciona en el móvil Bro.');
+    if (this.state.escuchandoVoz) { try { this.rec && this.rec.stop(); } catch (e) {} return; }
+    const r = new SR(); this.rec = r; r.lang = 'es-ES';
+    r.onresult = ev => { const t = ev.results[0][0].transcript; if (t) alTexto(t); };
+    r.onerror = () => this.setState({ escuchandoVoz: false }); r.onend = () => this.setState({ escuchandoVoz: false });
+    this.setState({ escuchandoVoz: true }); try { r.start(); } catch (e) { this.setState({ escuchandoVoz: false }); }
+  }
+  // Arranque con Bro (project manager): confirma lo entendido, objetivo y fechas. Nunca decide por el Bro.
+  async arrancar() { this.ir('arranque', { npMsgs: [], npOpciones: [], npObjetivo: null, npDesde: null, npHasta: null, npListo: false }); await this.arranqueTurno([]); }
+  async arranqueTurno(hist) {
+    this.setState({ npPensando: true }, () => this.scroll(true));
+    try {
+      const j = await this.llamar('arranque', { nombre: this.state.npNombre, descripcion: this.state.npDesc, historial: hist });
+      if (j.bloqueado) return this.ir('bloqueado', { bloqueoTxt: j.texto, npPensando: false });
+      this.setState(st => ({ npPensando: false, npMsgs: [...hist, { de: 'ai', texto: j.texto }], npOpciones: j.opciones || [],
+        npObjetivo: j.objetivo || st.npObjetivo, npDesde: j.desde || st.npDesde, npHasta: j.hasta || st.npHasta, npListo: !!j.listo }), () => this.scroll(true));
+    } catch (e) { this.setState({ npPensando: false }); this.avisar(e.message); }
+  }
+  arranqueEnviar(t) {
+    const txt = String(t ?? this.state.npTxt ?? '').trim(); if (!txt || this.state.npPensando) return;
+    const hist = [...(this.state.npMsgs || []), { de: 'bro', texto: txt }];
+    this.setState({ npTxt: '', npMsgs: hist, npOpciones: [] }, () => this.scroll(true));
+    this.arranqueTurno(hist);
+  }
+  async crearDesdeArranque() {
+    if (this.state.cargando) return; const s = this.state;
+    this.setState({ cargando: true });
+    try {
+      const respuestas = [{ p: 'Objetivo', r: s.npObjetivo || '' }, { p: 'Fechas', r: [s.npDesde, s.npHasta].filter(Boolean).join(' hasta ') }];
+      const j = await this.llamar('plan', { idea: s.npNombre + ': ' + s.npDesc, respuestas, nombre: s.npNombre, descripcion: s.npDesc, objetivo: s.npObjetivo, desde: s.npDesde, hasta: s.npHasta });
+      if (j.bloqueado) return this.ir('bloqueado', { bloqueoTxt: j.texto, cargando: false });
+      this.setState(st => ({ proyectos: [j.proyecto, ...(st.proyectos || [])], actualId: j.proyecto.id, cargando: false, busqueda: null, videoAbierto: null }));
+      this.ir('plan');
+    } catch (e) { this.setState({ cargando: false }); this.avisar(e.message); }
+  }
   async empezar() {
     const idea = this.state.ideaTxt.trim();
     if (!idea || this.state.cargando) return;
@@ -470,13 +577,13 @@ class Component extends DCLogic {
 
   renderVals() {
     const s = this.state, p = {};
-    ['lista', 'idea', 'preguntas', 'bloqueado', 'plan', 'paso', 'borrador', 'fin'].forEach(k => p[k] = s.pantalla === k);
+    ['lista', 'nombre', 'descripcion', 'arranque', 'idea', 'preguntas', 'bloqueado', 'plan', 'paso', 'borrador', 'fin'].forEach(k => p[k] = s.pantalla === k);
     const pr = this.actual(), d = pr ? pr.datos : null;
     const color = t => COLOR[t] || COLOR.otro;
     const hechos = d ? d.pasos.filter(x => x.hecho).length : 0, total = d ? d.pasos.length : 0;
     const CAB_COLOR = { lista: '#82B94F', bloqueado: '#82B94F' };
-    const CAB = { lista: ['Build', 'Tus ideas, hechas realidad'], idea: ['Nueva idea', 'Paso 1 de 3'], preguntas: [s.prop ? s.prop.titulo : 'Tu idea', 'Paso 2 de 3 · concretar'], bloqueado: ['Build', ''], plan: [d ? d.titulo : '', 'Tu plan · ' + hechos + ' de ' + total + ' pasos'], paso: [d ? d.titulo : '', 'Con Bro AI'], borrador: [s.borradorTipo === 'cartel' ? 'Cartel' : 'Borrador', d ? d.titulo : ''], fin: ['¡Conseguido!', ''] };
-    const atras = { idea: 'lista', preguntas: 'idea', bloqueado: 'lista', plan: 'lista', paso: 'plan', borrador: 'plan', fin: 'lista' };
+    const CAB = { lista: ['Build', 'Tus ideas, hechas realidad'], nombre: ['Nuevo proyecto', 'Paso 1 de 3'], descripcion: ['Nuevo proyecto', 'Paso 2 de 3'], arranque: [s.npNombre || 'Nuevo proyecto', 'Con Bro AI'], idea: ['Nueva idea', 'Paso 1 de 3'], preguntas: [s.prop ? s.prop.titulo : 'Tu idea', 'Paso 2 de 3 · concretar'], bloqueado: ['Build', ''], plan: [d ? d.titulo : '', 'Tu plan · ' + hechos + ' de ' + total + ' pasos'], paso: [d ? d.titulo : '', 'Con Bro AI'], borrador: [s.borradorTipo === 'cartel' ? 'Cartel' : 'Borrador', d ? d.titulo : ''], fin: ['¡Conseguido!', ''] };
+    const atras = { nombre: 'lista', descripcion: 'nombre', arranque: 'descripcion', idea: 'lista', preguntas: 'idea', bloqueado: 'lista', plan: 'lista', paso: 'plan', borrador: 'plan', fin: 'lista' };
     const ps = d ? d.pasos[s.pasoIdx] : null, chat = (d && d.chats && d.chats[s.pasoIdx]) || [];
     const tipoB = s.borradorTipo, B = d && d.borradores && d.borradores[tipoB];
     const vids = s.busqueda ? s.videos[s.busqueda] : null;
@@ -485,7 +592,7 @@ class Component extends DCLogic {
       p, cab: { titulo: CAB[s.pantalla][0], sub: CAB[s.pantalla][1], color: CAB_COLOR[s.pantalla] || 'inherit', tam: s.pantalla === 'lista' ? '26px' : '20px' }, scrollRef: this.scrollRef,
       hayAtras: true,
       atras: () => { if (s.pantalla === 'lista') { window.location.href = 'Bro%20OS%20Real.dc.html'; return; } if (s.pantalla === 'plan' || s.pantalla === 'fin') this.listar(); this.ir(atras[s.pantalla] || 'lista'); },
-      irIdea: () => this.ir('idea', { ideaTxt: '', bloqueoTxt: '' }),
+      irIdea: () => this.ir('nombre', { npNombre: '', npDesc: '', npMsgs: [], npOpciones: [], npObjetivo: null, npDesde: null, npHasta: null, npListo: false, npTxt: '', bloqueoTxt: '' }),
       cargandoLista: s.proyectos === null,
       listaVacia: Array.isArray(s.proyectos) && s.proyectos.length === 0,
       proyectos: (s.proyectos || []).map(x => {
@@ -494,6 +601,21 @@ class Component extends DCLogic {
       }),
       verPruebas: !this.disp(),
       edades: [[9, '8–10'], [13, '11–13'], [15, '14–16']].map(([e, t]) => { const on = (s.edad <= 10 ? 9 : s.edad <= 13 ? 13 : 15) === e; return { t, bg: on ? '#111' : '#fff', tx: on ? '#fff' : '#111', borde: on ? '#111' : '#E4E7EE', onClick: () => { localStorage.setItem('bros-real-edad', e); this.setState({ edad: e }); } }; }),
+      micBg: s.escuchandoVoz ? '#E56648' : '#111',
+      escuchandoVoz: !!s.escuchandoVoz,
+      np: (() => { const nom = (s.npNombre || '').trim(), desc = (s.npDesc || '').trim(), msgs = s.npMsgs || [];
+        const fechas = [s.npDesde, s.npHasta].filter(Boolean).join(' → ');
+        return { nombre: s.npNombre || '', onNombre: e => this.setState({ npNombre: e.target.value }), onKeyNombre: e => { if (e.key === 'Enter' && nom) this.ir('descripcion'); },
+          barraNombre: p.nombre, btnNombreTxt: 'Siguiente', btnNombreBg: nom ? '#82B94F' : '#B9CFA3', siguienteNombre: () => nom && this.ir('descripcion'),
+          desc: s.npDesc || '', onDesc: e => this.setState({ npDesc: e.target.value }), micDesc: () => this.dictar(t => this.setState(st => ({ npDesc: ((st.npDesc || '') + ' ' + t).trim() }))),
+          barraDesc: p.descripcion, btnDescTxt: 'Siguiente', btnDescBg: desc.length >= 8 ? '#82B94F' : '#B9CFA3', siguienteDesc: () => desc.length >= 8 && this.arrancar(),
+          msgs: msgs.map(m => ({ texto: m.texto, ai: m.de === 'ai', bro: m.de === 'bro' })), pensando: !!s.npPensando,
+          hayOpciones: !s.npPensando && !s.npListo && (s.npOpciones || []).length > 0, opciones: (s.npOpciones || []).map(t => ({ t, onClick: () => this.arranqueEnviar(t) })),
+          hayResumen: !!(s.npObjetivo || fechas), hayObjetivo: !!s.npObjetivo, objetivo: s.npObjetivo || '', hayFechas: !!fechas, fechas,
+          barraChat: p.arranque && !s.npListo, txt: s.npTxt || '', onTxt: e => this.setState({ npTxt: e.target.value }), onKeyTxt: e => { if (e.key === 'Enter') this.arranqueEnviar(); },
+          micChat: () => this.dictar(t => this.arranqueEnviar(t)), enviar: () => this.arranqueEnviar(),
+          barraCrear: p.arranque && !!s.npListo, btnCrearTxt: s.cargando ? 'Bro está preparando el plan…' : 'Crear el plan', btnCrearBg: s.cargando ? '#B9CFA3' : '#82B94F', crear: () => this.crearDesdeArranque() };
+      })(),
       ideaTxt: s.ideaTxt, onIdea: e => this.setState({ ideaTxt: e.target.value }),
       ejemplos: EJEMPLOS.map(t => ({ t, onClick: () => this.setState({ ideaTxt: 'Quiero hacer ' + t.charAt(0).toLowerCase() + t.slice(1) }) })),
       barraIdea: p.idea, empezar: () => this.empezar(),
