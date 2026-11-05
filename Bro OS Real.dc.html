@@ -2177,6 +2177,7 @@ function sonarReward() {
     });
   } catch (e) {}
 }
+if (typeof window !== 'undefined') window.__sonarReward = sonarReward; // para el futuro «probar sonido» en ajustes
 // MY TODAY STUFF · tarjetas de PRUEBA para comprobar el deslizamiento. Poner a false para quitarlas.
 // ENTRETENIMIENTO aprobado por defecto por BroS Life (música, pelis, series, podcast, audiolibros)
 const ENTRETENIMIENTO = [
