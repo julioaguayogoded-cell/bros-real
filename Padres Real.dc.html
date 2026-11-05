@@ -2505,7 +2505,7 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
         nota: p.tipo === 'canal' ? (p.nivel === 'con_permiso' ? `BroS Life lo recomienda a partir de ${p.edad_min} años.` : 'No está en el catálogo de BroS Life: revísalo antes.') + ' Solo verá vídeos de este canal, sin Shorts.' : '',
         si: () => this.decidirPeticion(p.id, true), no: () => this.decidirPeticion(p.id, false) })),
       hayAmistades: padre && (this.state.amistadesR || []).length > 0,
-      amistades: (this.state.amistadesR || []).map(a => ({ ...a, dif: Math.abs((a.hijoEdad || 0) - (a.amigoEdad || 0)), si: () => this.decidirAmistad(a.id, true), no: () => this.decidirAmistad(a.id, false) })),
+      amistades: (this.state.amistadesR || []).map(a => ({ ...a, dif: a.difAnios ?? Math.abs((a.hijoEdad || 0) - (a.amigoEdad || 0)), si: () => this.decidirAmistad(a.id, true), no: () => this.decidirAmistad(a.id, false) })),
       abrirQR: () => { if (!padre) this.ejecutar({ pantalla: 'qr' }); },
       qr: (() => {
         const resta = Math.max(0, 300 - Math.floor((Date.now() - (this.qrDesde || Date.now())) / 1000));

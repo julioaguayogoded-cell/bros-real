@@ -564,60 +564,73 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
 
         <!-- QR: código Bro para conectar en persona -->
         <sc-if value="{{ p.qr }}" hint-placeholder-val="{{ false }}">
-          <div style="padding:22px 20px 0;text-align:center">
-            <div style="font-family:Outfit;font-size:24px;font-weight:800;letter-spacing:-.02em">Tu código Bro</div>
-            <div style="font-size:13.5px;color:#6B7280;margin-top:4px;text-wrap:pretty">Solo se escanea en persona. Es la única forma de conectar con otro Bro.</div>
-          </div>
-          <div style="margin:18px 16px 0;background:#fff;border:1px solid #E4E7EE;border-radius:24px;padding:22px 20px;display:flex;flex-direction:column;align-items:center;gap:14px">
+          <!-- + AMIGO: uno enseña su código, el otro lo escanea. Listo. -->
+          <sc-if value="{{ qr.verPestanas }}" hint-placeholder-val="{{ true }}">
+            <div style="margin:16px 16px 0;display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:5px;border-radius:18px;background:#E9ECF2">
+              <button onClick="{{ qr.verMio }}" style="height:48px;border-radius:14px;font-family:Outfit;font-weight:800;font-size:15.5px;background:{{ qr.tabMioBg }};color:{{ qr.tabMioTx }};box-shadow:{{ qr.tabMioSombra }}">Mi código</button>
+              <button onClick="{{ qr.verEscanear }}" style="height:48px;border-radius:14px;font-family:Outfit;font-weight:800;font-size:15.5px;background:{{ qr.tabEscBg }};color:{{ qr.tabEscTx }};box-shadow:{{ qr.tabEscSombra }}">Escanear</button>
+            </div>
+          </sc-if>
+          <sc-if value="{{ qr.enMio }}" hint-placeholder-val="{{ true }}">
+            <div style="margin:14px 16px 0;background:#fff;border:1px solid #E4E7EE;border-radius:24px;padding:22px 18px 18px;display:flex;flex-direction:column;align-items:center;gap:12px">
+              <div style="font-size:14px;color:#4B5563;text-align:center">Enséñaselo a tu amigo para que lo escanee</div>
             <div style="position:relative;padding:12px;border-radius:18px;background:#fff">
               <div style="position:absolute;top:-2px;left:-2px;width:28px;height:28px;border:3px solid #3068ED;border-right:0;border-bottom:0;border-radius:10px 0 0 0"></div>
               <div style="position:absolute;top:-2px;right:-2px;width:28px;height:28px;border:3px solid #E56648;border-left:0;border-bottom:0;border-radius:0 10px 0 0"></div>
               <div style="position:absolute;bottom:-2px;left:-2px;width:28px;height:28px;border:3px solid #82B94F;border-right:0;border-top:0;border-radius:0 0 0 10px"></div>
               <div style="position:absolute;bottom:-2px;right:-2px;width:28px;height:28px;border:3px solid #111;border-left:0;border-top:0;border-radius:0 0 10px 0"></div>
               <sc-if value="{{ qr.real }}" hint-placeholder-val="{{ false }}">
-                <div role="img" aria-label="Tu código Bro" style="width:200px;height:200px;background-color:#fff;background-size:contain;background-repeat:no-repeat;background-position:center;background-image:url({{ qr.img }})"></div>
+                <div role="img" aria-label="Tu código Bro" style="width:230px;height:230px;background-color:#fff;background-size:contain;background-repeat:no-repeat;background-position:center;background-image:url({{ qr.img }})"></div>
               </sc-if>
-              <div style="width:200px;height:200px;display:{{ qr.demoDisplay }};grid-template-columns:repeat(25,1fr);position:relative">
+              <div style="width:230px;height:230px;display:{{ qr.demoDisplay }};grid-template-columns:repeat(25,1fr);position:relative">
                 <sc-for list="{{ qr.celdas }}" as="c" hint-placeholder-count="0">
                   <div style="background:{{ c }}"></div>
                 </sc-for>
                 <div style="position:absolute;left:50%;top:50%;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:12px;background:#fff;display:grid;place-items:center"><img src="logo.png" alt="" style="width:38px;height:38px"></div>
               </div>
             </div>
-            <div style="font-family:Outfit;font-size:16px;font-weight:700">{{ qr.nombre }} · Bro</div>
-            <sc-if value="{{ qr.noVinculado }}" hint-placeholder-val="{{ false }}">
-              <div style="font-size:12.5px;line-height:1.4;color:#B4442B;font-weight:600;text-align:center;text-wrap:pretty">Este navegador no está vinculado a ningún Bro. Enciéndelo desde Primer Encendido Real (no en pestaña privada).</div>
-            </sc-if>
-            <sc-if value="{{ qr.hayError }}" hint-placeholder-val="{{ false }}">
-              <div style="font-size:12.5px;line-height:1.4;color:#B4442B;font-weight:600;text-align:center">{{ qr.error }}</div>
-            </sc-if>
-            <sc-if value="{{ qr.real }}" hint-placeholder-val="{{ false }}">
-              <div style="font-family:ui-monospace,Menlo,monospace;font-weight:700;font-size:26px;letter-spacing:.25em;color:#111">{{ qr.codigo }}</div>
-            </sc-if>
-            <div style="font-size:12.5px;color:#6B7280">Se renueva en <b style="color:#3068ED;font-family:Outfit">{{ qr.tiempo }}</b> para que nadie lo reutilice</div>
-          </div>
-          <div style="padding:14px 16px 0;display:flex;flex-direction:column;gap:9px">
-            <button onClick="{{ qr.onEscanear }}" style="width:100%;padding:14px;display:flex;align-items:center;justify-content:center;border-radius:14px;background:#3068ED;color:#fff;font-family:Outfit;font-weight:700;font-size:15px;text-align:center">Escanear el código de otro Bro</button>
-            <sc-if value="{{ qr.escaneando }}" hint-placeholder-val="{{ false }}">
-              <div style="background:#fff;border:1px solid #E4E7EE;border-radius:20px;padding:14px;display:flex;flex-direction:column;align-items:center;gap:10px">
-                <sc-if value="{{ qr.camara }}" hint-placeholder-val="{{ false }}">
-                  <div style="width:100%;max-width:260px;aspect-ratio:1/1;border-radius:16px;overflow:hidden;background:#111;position:relative">
-                    <video ref="{{ videoAmigoRef }}" playsinline="true" muted="true" style="width:100%;height:100%;object-fit:cover"></video>
-                    <div style="position:absolute;inset:16%;border:3px solid #fff;border-radius:16px"></div>
-                  </div>
-                </sc-if>
-                <div style="font-size:13px;color:#4B5563;text-align:center">O escribe el código que ves bajo su QR:</div>
-                <input value="{{ qr.codigoAmigo }}" onChange="{{ qr.onCodigoAmigo }}" onKeyDown="{{ qr.onKeyAmigo }}" maxlength="6" autocapitalize="characters" autocomplete="off" placeholder="ABC123" aria-label="Código de tu amigo" style="width:100%;max-width:260px;box-sizing:border-box;height:56px;border:2px solid #D5DAE3;border-radius:16px;text-align:center;font-family:ui-monospace,Menlo,monospace;font-weight:700;font-size:24px;letter-spacing:.25em;text-transform:uppercase;outline:none;color:#111;background:#fff">
-                <button onClick="{{ qr.conectar }}" style="width:100%;max-width:260px;height:48px;display:flex;align-items:center;justify-content:center;text-align:center;border-radius:14px;background:{{ qr.btnBg }};color:#fff;font-family:Outfit;font-weight:800;font-size:15px">{{ qr.btnTxt }}</button>
-                <sc-if value="{{ qr.hayMsg }}" hint-placeholder-val="{{ false }}">
-                  <div style="font-size:13.5px;font-weight:600;text-align:center;color:{{ qr.msgColor }};text-wrap:pretty">{{ qr.msg }}</div>
+              <div style="font-family:Outfit;font-size:18px;font-weight:800">{{ qr.nombre }}</div>
+              <sc-if value="{{ qr.noVinculado }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:12.5px;line-height:1.4;color:#B4442B;font-weight:600;text-align:center">Este móvil no está vinculado a ningún Bro.</div>
+              </sc-if>
+              <sc-if value="{{ qr.hayError }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:12.5px;line-height:1.4;color:#B4442B;font-weight:600;text-align:center">{{ qr.error }}</div>
+              </sc-if>
+              <div style="font-size:12px;color:#9CA3AF">Código {{ qr.codigo }} · se renueva en {{ qr.tiempo }}</div>
+            </div>
+          </sc-if>
+          <sc-if value="{{ qr.enEscanear }}" hint-placeholder-val="{{ false }}">
+            <div style="margin:14px 16px 0;background:#fff;border:1px solid #E4E7EE;border-radius:24px;padding:18px;display:flex;flex-direction:column;align-items:center;gap:12px">
+              <div style="font-size:14px;color:#4B5563;text-align:center">Apunta al código Bro de tu amigo</div>
+              <div style="width:100%;max-width:300px;aspect-ratio:1/1;border-radius:20px;overflow:hidden;background:#111;position:relative">
+                <video ref="{{ videoAmigoRef }}" playsinline="true" muted="true" style="width:100%;height:100%;object-fit:cover"></video>
+                <div style="position:absolute;inset:14%;border:3px solid rgba(255,255,255,.9);border-radius:20px;box-shadow:0 0 0 999px rgba(0,0,0,.25)"></div>
+                <sc-if value="{{ qr.conectando }}" hint-placeholder-val="{{ false }}">
+                  <div style="position:absolute;inset:0;display:grid;place-items:center;background:rgba(17,17,17,.55);color:#fff;font-family:Outfit;font-weight:800;font-size:17px">Conectando…</div>
                 </sc-if>
               </div>
-            </sc-if>
-          </div>
-          <div style="font-size:12px;color:#6B7280;margin:12px 20px 0;text-align:center;text-wrap:pretty">Los dos tenéis que aceptar. Mamá verá que tienes un Bro nuevo, pero no vuestros mensajes.</div>
+              <sc-if value="{{ qr.hayMsg }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:13.5px;font-weight:600;text-align:center;color:{{ qr.msgColor }};text-wrap:pretty">{{ qr.msg }}</div>
+              </sc-if>
+              <div style="width:100%;max-width:300px;display:flex;gap:8px;margin-top:4px">
+                <input value="{{ qr.codigoAmigo }}" onChange="{{ qr.onCodigoAmigo }}" onKeyDown="{{ qr.onKeyAmigo }}" maxlength="6" autocapitalize="characters" autocomplete="off" placeholder="o escribe su código" style="flex:1;min-width:0;height:46px;border:1px solid #E4E7EE;border-radius:14px;padding:0 14px;font-family:ui-monospace,Menlo,monospace;font-size:16px;letter-spacing:.15em;text-transform:uppercase;outline:none">
+                <button onClick="{{ qr.conectar }}" style="flex:none;height:46px;padding:0 16px;border-radius:14px;background:{{ qr.btnBg }};color:#fff;font-weight:800;font-size:14px">OK</button>
+              </div>
+            </div>
+          </sc-if>
+          <!-- ¡Hecho! (sale en los dos móviles) -->
+          <sc-if value="{{ qr.hayExito }}" hint-placeholder-val="{{ false }}">
+            <div style="margin:16px;background:#fff;border:1px solid #E4E7EE;border-radius:24px;padding:28px 20px 20px;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;animation:sube .3s ease-out">
+              <div style="width:76px;height:76px;border-radius:50%;background:{{ qr.exitoColor }};display:grid;place-items:center"><svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="{{ qr.exitoIcono }}"></path></svg></div>
+              <div style="font-family:Outfit;font-size:24px;font-weight:800;line-height:1.15">{{ qr.exitoTitulo }}</div>
+              <div style="font-size:14.5px;line-height:1.45;color:#4B5563;text-wrap:pretty">{{ qr.exitoTxt }}</div>
+              <sc-if value="{{ qr.exitoActiva }}" hint-placeholder-val="{{ false }}">
+                <button onClick="{{ qr.escribirle }}" style="width:100%;height:52px;border-radius:16px;background:#3068ED;color:#fff;font-family:Outfit;font-weight:800;font-size:16px;margin-top:6px">Escribirle</button>
+              </sc-if>
+              <button onClick="{{ qr.listo }}" style="width:100%;height:46px;border-radius:14px;background:#F0F2F6;font-weight:700;font-size:14.5px">Listo</button>
+            </div>
+          </sc-if>
         </sc-if>
-
         <!-- AURA -->
         <sc-if value="{{ p.aura }}" hint-placeholder-val="{{ false }}">
           <div style="margin:14px 16px 0;display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;background:{{ au.estadoBg }}">
@@ -1946,6 +1959,15 @@ class Component extends DCLogic {
     if (!res.ok || (j && j.error)) throw new Error((j && (j.error || j.message)) || 'Sin conexión');
     return j;
   }
+  async vigilarAmigoNuevo() {
+    if (this.state.qrExito || !tokenBro()) return;
+    await this.cargarAmigos();
+    const L = this.state.amigosR || [], ids = new Set(L.map(x => x.id + ':' + x.estado));
+    if (!this.amigosAntes) { this.amigosAntes = ids; return; }
+    const nuevo = L.find(x => !this.amigosAntes.has(x.id + ':' + x.estado) && (x.estado === 'activa' || x.estado === 'pendiente'));
+    this.amigosAntes = ids;
+    if (nuevo) { this.cerrarCamaraAmigo(); this.setState({ qrExito: { nombre: nuevo.nombre, estado: nuevo.estado, id: nuevo.id } }); }
+  }
   async cargarAmigos() { const t = tokenBro(); if (!t) return; try { this.setState({ amigosR: await this.rpc('amigos_bro', { p_token: t }) }); } catch (e) {} }
   async cargarChat() { const t = tokenBro(); if (!t || !this.state.id) return; try { this.setState({ chatR: await this.rpc('leer_mensajes', { p_token: t, p_con: this.state.id }) }); } catch (e) {} }
   async cargarQR() { const t = tokenBro(); if (!t) return; this.pidiendoQR = true; try { const j = await this.rpc('qr_amistad', { p_token: t }); this.setState({ qrR: j, qrErr: null }); } catch (e) { this.setState({ qrErr: /no vinculado/i.test(e.message) ? 'Este Bro se desvinculó. Vuelve a encenderlo con el código nuevo.' : 'No se ha podido crear el código: ' + e.message }); } finally { setTimeout(() => { this.pidiendoQR = false; }, 3000); } }
@@ -1956,9 +1978,9 @@ class Component extends DCLogic {
     try {
       const j = await this.rpc('conectar_amigo', { p_token: t, p_codigo: c });
       this.cerrarCamaraAmigo();
-      this.setState({ conectando: false, codigoAmigo: '', escAmigo: false, msgAmigo: { ok: true, t: j.estado === 'activa' ? '¡Ya sois amigos! Ya podéis escribiros.' : 'Os lleváis más de 3 años: vuestros padres tienen que dar permiso. Os avisaremos.' } });
+      this.setState({ conectando: false, codigoAmigo: '', escAmigo: false, msgAmigo: null, qrExito: { nombre: j.nombre, estado: j.estado, id: j.amigo } });
+      this.amigosAntes = null;
       this.cargarAmigos();
-      if (j.estado === 'activa') this.avisar('Ahora eres amigo de ' + j.nombre + '.');
     } catch (e) { this.setState({ conectando: false, msgAmigo: { ok: false, t: /caducado|no v[aá]lido/i.test(e.message) ? 'Ese código no vale o ha caducado. Pídele que lo vuelva a abrir.' : /propio/.test(e.message) ? 'Ese es tu propio código.' : 'No hay conexión. Prueba otra vez.' } }); }
   }
   async abrirCamaraAmigo() {
@@ -2753,7 +2775,7 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
     if (tokenBro() && (a.pantalla === 'chat' || a.pantalla === 'comunidades' || a.pantalla === 'qr')) {
       this.setState({ chatR: a.pantalla === 'chat' ? (this.state.id === a.id ? this.state.chatR : []) : this.state.chatR });
       clearInterval(this.tAmigos);
-      const tick = () => { const p = this.state.pantalla; if (p === 'chat') this.cargarChat(); else if (p === 'comunidades') this.cargarAmigos(); else if (p !== 'qr') clearInterval(this.tAmigos); };
+      const tick = () => { const p = this.state.pantalla; if (p === 'chat') this.cargarChat(); else if (p === 'comunidades') this.cargarAmigos(); else if (p === 'qr') this.vigilarAmigoNuevo(); else clearInterval(this.tAmigos); };
       setTimeout(() => { this.cargarAmigos(); if (a.pantalla === 'chat') this.cargarChat(); }, 0);
       this.tAmigos = setInterval(tick, 3000);
     }
@@ -2764,7 +2786,7 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
     if (a.pantalla === 'comunidades') this.setState({ connectV: null });
     if (a.pantalla === 'contenido') { if (a.buscar) this.buscarC(a.buscar); else this.setState({ resC: null, qC: '', videoC: null, canalC: null, listaCanales: false, leerC: null }); this.cargarMisCanales(); }
     if (a.pantalla === 'qr') {
-      this.qrDesde = Date.now(); this.setState({ qrSemilla: Math.floor(Math.random() * 1e6) + 1, escAmigo: false, msgAmigo: null, codigoAmigo: '' });
+      this.qrDesde = Date.now(); this.amigosAntes = null; this.setState({ qrSemilla: Math.floor(Math.random() * 1e6) + 1, escAmigo: false, msgAmigo: null, codigoAmigo: '', qrTab: 'mio', qrExito: null });
       if (tokenBro()) this.cargarQR();
       clearInterval(this.tQR); this.tQR = setInterval(() => { if (this.state.pantalla !== 'qr') return clearInterval(this.tQR); this.forceUpdate(); }, 1000);
     }
@@ -2867,7 +2889,7 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
     const ses = s.sesion[modo], f = ses.flujo;
     const pantalla = padre ? (s.pantallaPadre || 'bro') : s.pantalla;
     const p = { limites: pantalla === 'limites', consentimientos: pantalla === 'consentimientos', aprender: pantalla === 'aprender', comunidades: pantalla === 'comunidades', chat: pantalla === 'chat', proyectos: pantalla === 'proyectos', proyecto: pantalla === 'proyecto', partido: pantalla === 'partido', comunidad: pantalla === 'comunidad', apps: pantalla === 'apps', logros: pantalla === 'logros', contenido: pantalla === 'contenido', aura: pantalla === 'aura', qr: pantalla === 'qr', monedero: pantalla === 'monedero', otra: pantalla === 'otra' };
-    const titulos = { monedero: ['Wallet', 'Tu tarjeta Bro · Lit Pay'], aprender: ['Learning mode', 'Tú piensas, Bro te ayuda'], qr: ['Mi código Bro', 'Para conectar en persona'], aura: ['Aura', 'Sueño y movimiento'], logros: ['Achieve', 'Tus logros y rewards'], partido: ['Mi partido', 'De la idea a la realidad'], comunidad: ['Fútbol La Colonia', '24 Bros · los del barrio'], contenido: ['Enjoy safe', 'Para ver y aprender'], comunidades: ['Connect', 'Tus comunidades y mensajes'], chat: [s.id, 'Conexión mutua'], proyectos: ['Build', 'Lo que estás construyendo'], proyecto: ['Proyecto', 'Paso a paso, decides tú'], apps: ['My apps', 'Lo que decide mamá'], otra: ['Bro', ''] };
+    const titulos = { monedero: ['Wallet', 'Tu tarjeta Bro · Lit Pay'], aprender: ['Learning mode', 'Tú piensas, Bro te ayuda'], qr: ['Nuevo amigo', 'En persona, con vuestro código Bro'], aura: ['Aura', 'Sueño y movimiento'], logros: ['Achieve', 'Tus logros y rewards'], partido: ['Mi partido', 'De la idea a la realidad'], comunidad: ['Fútbol La Colonia', '24 Bros · los del barrio'], contenido: ['Enjoy safe', 'Para ver y aprender'], comunidades: ['Connect', 'Tus comunidades y mensajes'], chat: [s.id, 'Conexión mutua'], proyectos: ['Build', 'Lo que estás construyendo'], proyecto: ['Proyecto', 'Paso a paso, decides tú'], apps: ['My apps', 'Lo que decide mamá'], otra: ['Bro', ''] };
     const [titulo, subtitulo] = padre ? (pantalla === 'consentimientos' ? ['Privacidad', 'Permisos de ' + db.nino.nombre] : pantalla === 'limites' ? ['Límites y horarios', 'Móvil de ' + db.nino.nombre] : ['Bro Parent', db.madre.nombre + ' · ' + (db.hijos || [{ nombre: db.nino.nombre }]).map(h => h.nombre).join(' y ')]) : pantalla === 'bro' ? ['Bro', db.nino.nombre + ' · perfil ' + db.nino.edad] : titulos[pantalla];
     const hayTexto = !!s.texto.trim();
     const maxSem = Math.max(...db.aura.semana.flat());
@@ -2948,7 +2970,20 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
           onKeyAmigo: e => { if (e.key === 'Enter') this.conectarAmigo(); },
           conectar: () => this.conectarAmigo(),
           btnTxt: s.conectando ? 'Conectando…' : 'Conectar', btnBg: (s.codigoAmigo || '').length === 6 && !s.conectando ? '#3068ED' : '#7F9BE0',
-          hayMsg: !!M, msg: M ? M.t : '', msgColor: M && M.ok ? '#3D6B1F' : '#B4442B'
+          hayMsg: !!M && !(M && M.ok), msg: M ? M.t : '', msgColor: M && M.ok ? '#3D6B1F' : '#B4442B',
+          ...(() => { const tab = s.qrTab || 'mio', X = s.qrExito, on = (t0) => tab === t0;
+            const bg = t0 => on(t0) ? '#fff' : 'transparent', tx = t0 => on(t0) ? '#3068ED' : '#4B5563', sm = t0 => on(t0) ? '0 2px 8px rgba(17,17,17,.08)' : 'none';
+            return { verPestanas: !X, enMio: !X && on('mio'), enEscanear: !X && on('escanear'), conectando: !!s.conectando,
+              tabMioBg: bg('mio'), tabMioTx: tx('mio'), tabMioSombra: sm('mio'), tabEscBg: bg('escanear'), tabEscTx: tx('escanear'), tabEscSombra: sm('escanear'),
+              verMio: () => { this.cerrarCamaraAmigo(); this.setState({ qrTab: 'mio', escAmigo: false, msgAmigo: null }); },
+              verEscanear: () => { this.setState({ qrTab: 'escanear', msgAmigo: null }, () => this.abrirCamaraAmigo()); },
+              hayExito: !!X, exitoActiva: !!X && X.estado === 'activa',
+              exitoColor: X && X.estado === 'activa' ? '#22A559' : '#E56648',
+              exitoIcono: X && X.estado === 'activa' ? 'M5 12.5l4.5 4.5L19 7.5' : 'M12 7v5l3 2M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z',
+              exitoTitulo: !X ? '' : X.estado === 'activa' ? '¡' + X.nombre + ' y tú ya sois amigos!' : 'Falta el permiso de vuestras familias',
+              exitoTxt: !X ? '' : X.estado === 'activa' ? 'Ya podéis escribiros en Mis conversaciones.' : 'Os lleváis más de 3 años, así que se lo hemos pedido a vuestras familias. En cuanto digan que sí, seréis amigos.',
+              escribirle: () => { const id = X && X.id; this.setState({ qrExito: null }); if (id) this.ejecutar({ pantalla: 'chat', id }); },
+              listo: () => { this.setState({ qrExito: null, qrTab: 'mio' }); this.ejecutar({ pantalla: 'comunidades' }); } }; })()
         };
       })(),
       au: (() => {
