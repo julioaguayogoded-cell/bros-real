@@ -328,12 +328,26 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
               </button>
             </div>
           </sc-if>
-          <!-- CONNECT · Mis conversaciones -->
+          <!-- CONNECT · Mis conversaciones: grupos (solo con amigos aprobados) y chats con amigos -->
           <sc-if value="{{ cx.enConversaciones }}" hint-placeholder-val="{{ false }}">
             <div style="margin:16px 16px 10px;display:flex;align-items:center;gap:12px">
               <button onClick="{{ cx.volver }}" aria-label="Volver" style="width:36px;height:36px;border-radius:50%;background:#F0F2F6;font-size:18px;flex:none">‹</button>
-              <div style="font-family:Outfit;font-weight:800;font-size:17px">Mis conversaciones</div>
+              <div style="flex:1;min-width:0;font-family:Outfit;font-weight:800;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ cx.tituloVista }}</div>
             </div>
+            <div style="padding:0 16px 12px"><button onClick="{{ cx.nuevoGrupo }}" style="width:100%;height:50px;border-radius:16px;background:#3068ED;color:#fff;font-family:Outfit;font-weight:800;font-size:15.5px;display:flex;align-items:center;justify-content:center;gap:8px"><span style="font-size:20px;line-height:1">+</span> Nuevo grupo</button></div>
+            <sc-if value="{{ cx.hayGrupos }}" hint-placeholder-val="{{ false }}">
+            <div style="margin:4px 16px 8px;font-size:11px;font-weight:700;letter-spacing:.06em;color:#9CA3AF">GRUPOS</div>
+            <div style="margin:0 16px;display:flex;flex-direction:column;gap:8px">
+              <sc-for list="{{ cx.grupos }}" as="g" hint-placeholder-count="0">
+                <button onClick="{{ g.onClick }}" style="display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:16px;background:#fff;border:1px solid #E4E7EE;width:100%;text-align:left">
+                  <div style="width:42px;height:42px;border-radius:14px;background:#3068ED;color:#fff;display:grid;place-items:center;flex:none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 20v-1a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v1M10 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8M21 20v-1a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"></path></svg></div>
+                  <div style="flex:1;min-width:0"><b style="display:block;font-size:14.5px;font-weight:700">{{ g.nombre }}</b><span style="font-size:12.5px;color:#6B7280;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ g.sub }}</span></div>
+                  <span style="font-size:20px;color:#9CA3AF">›</span>
+                </button>
+              </sc-for>
+            </div>
+            </sc-if>
+            <div style="margin:16px 16px 8px;font-size:11px;font-weight:700;letter-spacing:.06em;color:#9CA3AF">AMIGOS</div>
           <sc-if value="{{ sinAmigos }}" hint-placeholder-val="{{ false }}">
             <div style="margin:0 16px;padding:20px 18px;border:1px dashed #D5DAE3;border-radius:18px;background:#fff;text-align:center;font-size:13.5px;line-height:1.5;color:#4B5563;text-wrap:pretty">Todavía no tienes amigos en BroS Life.<br>Quedad en persona y escanead vuestros códigos.</div>
           </sc-if>
@@ -347,32 +361,126 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
             </sc-for>
           </div>
           </sc-if>
+          <!-- CONNECT · Nuevo grupo -->
+          <sc-if value="{{ cx.enNuevoGrupo }}" hint-placeholder-val="{{ false }}">
+            <div style="margin:16px 16px 10px;display:flex;align-items:center;gap:12px">
+              <button onClick="{{ cx.volver }}" aria-label="Volver" style="width:36px;height:36px;border-radius:50%;background:#F0F2F6;font-size:18px;flex:none">‹</button>
+              <div style="flex:1;min-width:0;font-family:Outfit;font-weight:800;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ cx.tituloVista }}</div>
+            </div>
+            <div style="padding:0 16px;display:flex;flex-direction:column;gap:12px">
+              <input value="{{ cx.fNombre }}" onChange="{{ cx.onNombre }}" placeholder="Nombre del grupo" maxlength="40" style="width:100%;box-sizing:border-box;border:1px solid #E4E7EE;background:#fff;border-radius:14px;padding:13px 14px;font-size:15px;outline:none">
+              <div style="font-size:11px;font-weight:700;letter-spacing:.06em;color:#9CA3AF;margin-top:4px">ELIGE AMIGOS</div>
+              <sc-if value="{{ cx.sinAmigosSel }}" hint-placeholder-val="{{ false }}"><div style="padding:14px;border:1px dashed #D5DAE3;border-radius:14px;background:#fff;font-size:13px;color:#4B5563">Aún no tienes amigos aprobados. Haceos amigos con el código Bro y podrás añadirlos.</div></sc-if>
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <sc-for list="{{ cx.amigosSel }}" as="a" hint-placeholder-count="0">
+                  <button onClick="{{ a.toggle }}" style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:14px;background:#fff;border:1px solid {{ a.borde }};width:100%;text-align:left">
+                    <div style="width:36px;height:36px;border-radius:50%;background:{{ a.color }};color:#fff;display:grid;place-items:center;font-family:Outfit;font-weight:700;flex:none">{{ a.ini }}</div>
+                    <div style="flex:1;font-weight:700;font-size:14.5px">{{ a.nombre }}</div>
+                    <div style="width:24px;height:24px;border-radius:50%;border:2px solid {{ a.borde }};background:{{ a.check }};display:grid;place-items:center;color:#fff;font-size:14px;font-weight:800">{{ a.tick }}</div>
+                  </button>
+                </sc-for>
+              </div>
+              <button onClick="{{ cx.crearGrupo }}" style="width:100%;height:50px;border-radius:16px;background:{{ cx.crearBg }};color:#fff;font-family:Outfit;font-weight:800;font-size:15.5px;margin-top:6px">{{ cx.crearTxt }}</button>
+            </div>
+          </sc-if>
+          <!-- CONNECT · Chat de grupo / muro de comunidad -->
+          <sc-if value="{{ cx.enHilo }}" hint-placeholder-val="{{ false }}">
+            <div style="margin:16px 16px 10px;display:flex;align-items:center;gap:12px">
+              <button onClick="{{ cx.volver }}" aria-label="Volver" style="width:36px;height:36px;border-radius:50%;background:#F0F2F6;font-size:18px;flex:none">‹</button>
+              <div style="flex:1;min-width:0;font-family:Outfit;font-weight:800;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ cx.tituloVista }}</div>
+            </div>
+            <div style="flex:1 0 auto;padding:4px 14px;display:flex;flex-direction:column;gap:9px;min-height:200px">
+              <sc-if value="{{ cx.chatVacio }}" hint-placeholder-val="{{ false }}"><div style="align-self:center;background:#EEF1F6;color:#4b5563;font-size:12.5px;padding:8px 12px;border-radius:12px;text-align:center">{{ cx.chatVacioTxt }}</div></sc-if>
+              <sc-for list="{{ cx.msgs }}" as="m" hint-placeholder-count="0">
+                <div style="align-self:{{ m.lado }};max-width:84%;display:flex;flex-direction:column;gap:2px;align-items:{{ m.lado }}">
+                  <sc-if value="{{ m.verDe }}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;font-weight:700;color:#6B7280;padding:0 6px">{{ m.de }}</span></sc-if>
+                  <div style="padding:10px 13px;border-radius:17px;background:{{ m.bg }};color:{{ m.color }};border:1px solid {{ m.borde }};font-size:14.5px;white-space:pre-wrap">{{ m.txt }}</div>
+                </div>
+              </sc-for>
+            </div>
+            <sc-if value="{{ cx.puedeEscribir }}" hint-placeholder-val="{{ true }}">
+              <div style="flex:none;position:sticky;bottom:0;display:flex;gap:8px;padding:10px 14px;background:#F4F5F9">
+                <input value="{{ cx.txt }}" onChange="{{ cx.onTxt }}" onKeyDown="{{ cx.onKey }}" placeholder="{{ cx.placeholder }}" style="flex:1;min-width:0;border:1px solid #E4E7EE;background:#fff;border-radius:999px;padding:12px 16px;font-size:14.5px;outline:none">
+                <button onClick="{{ cx.enviar }}" aria-label="Enviar" style="width:44px;height:44px;border-radius:50%;background:#3068ED;color:#fff;font-size:17px;flex:none;display:grid;place-items:center">↑</button>
+              </div>
+            </sc-if>
+            <sc-if value="{{ cx.hayEstadoCom }}" hint-placeholder-val="{{ false }}">
+              <div style="margin:0 16px;padding:16px;border-radius:16px;background:#FDF6E8;border:1px solid #F3DDB0;font-size:13.5px;line-height:1.45;color:#7A5212">{{ cx.estadoCom }}</div>
+            </sc-if>
+          </sc-if>
           <!-- CONNECT · Mis comunidades -->
           <sc-if value="{{ cx.enComunidades }}" hint-placeholder-val="{{ false }}">
             <div style="margin:16px 16px 10px;display:flex;align-items:center;gap:12px">
               <button onClick="{{ cx.volver }}" aria-label="Volver" style="width:36px;height:36px;border-radius:50%;background:#F0F2F6;font-size:18px;flex:none">‹</button>
-              <div style="font-family:Outfit;font-weight:800;font-size:17px">Mis comunidades</div>
+              <div style="flex:1;min-width:0;font-family:Outfit;font-weight:800;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ cx.tituloVista }}</div>
             </div>
+            <div style="padding:0 16px 12px"><button onClick="{{ cx.nuevaComunidad }}" style="width:100%;height:50px;border-radius:16px;background:#6f49d8;color:#fff;font-family:Outfit;font-weight:800;font-size:15.5px;display:flex;align-items:center;justify-content:center;gap:8px"><span style="font-size:20px;line-height:1">+</span> Crear comunidad</button></div>
             <sc-if value="{{ cx.sinComunidades }}" hint-placeholder-val="{{ false }}">
-              <div style="margin:0 16px;padding:20px 18px;border:1px dashed #D5DAE3;border-radius:18px;background:#fff;text-align:center;font-size:13.5px;line-height:1.5;color:#4B5563">Aún no estás en ninguna comunidad.</div>
+              <div style="margin:0 16px;padding:20px 18px;border:1px dashed #D5DAE3;border-radius:18px;background:#fff;text-align:center;font-size:13.5px;line-height:1.5;color:#4B5563">Aún no estás en ninguna comunidad. Crea una con tus amigos o busca en Descubre comunidades.</div>
             </sc-if>
-          <div style="margin:0 16px;background:#fff;border:1px solid #E4E7EE;border-radius:18px;overflow:hidden;flex-shrink:0">
-            <sc-for list="{{ comunidades }}" as="c" hint-placeholder-count="3">
-              <button onClick="{{ c.onClick }}" style="display:flex;align-items:center;gap:12px;padding:13px 14px;border-bottom:1px solid #E4E7EE;width:100%;background:#fff;text-align:left">
-                <div style="width:42px;height:42px;border-radius:13px;background:#F5F6F9;display:grid;place-items:center;font-size:19px;flex:none">{{ c.ic }}</div>
-                <div style="flex:1;min-width:0"><b style="display:block;font-size:14.5px;font-weight:600">{{ c.nombre }}</b><span style="font-size:12.5px;color:#6B7280">{{ c.para }} · {{ c.dirige }}</span></div>
-                <span style="font-size:20px;color:#9CA3AF">{{ c.flecha }}</span>
-              </button>
-            </sc-for>
-          </div>
+            <div style="margin:0 16px;display:flex;flex-direction:column;gap:8px">
+              <sc-for list="{{ cx.misComs }}" as="c" hint-placeholder-count="0">
+                <div style="display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:16px;background:#fff;border:1px solid #E4E7EE">
+                  <button onClick="{{ c.onClick }}" style="display:flex;align-items:center;gap:12px;flex:1;min-width:0;text-align:left">
+                    <div style="width:42px;height:42px;border-radius:14px;background:{{ c.color }};display:grid;place-items:center;flex:none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"></path></svg></div>
+                    <div style="flex:1;min-width:0"><b style="display:block;font-size:14.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.nombre }}</b><span style="font-size:12.5px;color:#6B7280;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.sub }}</span></div>
+                  </button>
+                  <sc-if value="{{ c.hayBoton }}" hint-placeholder-val="{{ false }}"><button onClick="{{ c.boton }}" style="flex:none;padding:8px 12px;border-radius:999px;background:{{ c.btnBg }};color:#fff;font-weight:700;font-size:12.5px">{{ c.btnTxt }}</button></sc-if>
+                </div>
+              </sc-for>
+            </div>
           </sc-if>
-          <!-- CONNECT · Descubre comunidades -->
+          <!-- CONNECT · Crear comunidad -->
+          <sc-if value="{{ cx.enNuevaComunidad }}" hint-placeholder-val="{{ false }}">
+            <div style="margin:16px 16px 10px;display:flex;align-items:center;gap:12px">
+              <button onClick="{{ cx.volver }}" aria-label="Volver" style="width:36px;height:36px;border-radius:50%;background:#F0F2F6;font-size:18px;flex:none">‹</button>
+              <div style="flex:1;min-width:0;font-family:Outfit;font-weight:800;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ cx.tituloVista }}</div>
+            </div>
+            <div style="padding:0 16px;display:flex;flex-direction:column;gap:12px">
+              <input value="{{ cx.fNombre }}" onChange="{{ cx.onNombre }}" placeholder="Nombre de la comunidad" maxlength="50" style="width:100%;box-sizing:border-box;border:1px solid #E4E7EE;background:#fff;border-radius:14px;padding:13px 14px;font-size:15px;outline:none">
+              <input value="{{ cx.fDesc }}" onChange="{{ cx.onDesc }}" placeholder="¿De qué va? (opcional)" maxlength="300" style="width:100%;box-sizing:border-box;border:1px solid #E4E7EE;background:#fff;border-radius:14px;padding:13px 14px;font-size:15px;outline:none">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:5px;border-radius:16px;background:#E9ECF2">
+                <button onClick="{{ cx.tipoPrivada }}" style="height:44px;border-radius:12px;text-align:center;font-family:Outfit;font-weight:800;font-size:14.5px;background:{{ cx.privBg }};color:{{ cx.privTx }}">Privada</button>
+                <button onClick="{{ cx.tipoPublica }}" style="height:44px;border-radius:12px;text-align:center;font-family:Outfit;font-weight:800;font-size:14.5px;background:{{ cx.pubBg }};color:{{ cx.pubTx }}">Pública</button>
+              </div>
+              <div style="font-size:12.5px;line-height:1.45;color:#4B5563">{{ cx.tipoTxt }}</div>
+              <sc-if value="{{ cx.esPrivada }}" hint-placeholder-val="{{ true }}">
+                <div style="font-size:11px;font-weight:700;letter-spacing:.06em;color:#9CA3AF;margin-top:4px">INVITA A TUS AMIGOS</div>
+              <sc-if value="{{ cx.sinAmigosSel }}" hint-placeholder-val="{{ false }}"><div style="padding:14px;border:1px dashed #D5DAE3;border-radius:14px;background:#fff;font-size:13px;color:#4B5563">Aún no tienes amigos aprobados. Haceos amigos con el código Bro y podrás añadirlos.</div></sc-if>
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <sc-for list="{{ cx.amigosSel }}" as="a" hint-placeholder-count="0">
+                  <button onClick="{{ a.toggle }}" style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:14px;background:#fff;border:1px solid {{ a.borde }};width:100%;text-align:left">
+                    <div style="width:36px;height:36px;border-radius:50%;background:{{ a.color }};color:#fff;display:grid;place-items:center;font-family:Outfit;font-weight:700;flex:none">{{ a.ini }}</div>
+                    <div style="flex:1;font-weight:700;font-size:14.5px">{{ a.nombre }}</div>
+                    <div style="width:24px;height:24px;border-radius:50%;border:2px solid {{ a.borde }};background:{{ a.check }};display:grid;place-items:center;color:#fff;font-size:14px;font-weight:800">{{ a.tick }}</div>
+                  </button>
+                </sc-for>
+              </div>
+              </sc-if>
+              <button onClick="{{ cx.crearComunidad }}" style="width:100%;height:50px;border-radius:16px;background:{{ cx.crearBg }};color:#fff;font-family:Outfit;font-weight:800;font-size:15.5px;margin-top:6px">{{ cx.crearTxt }}</button>
+            </div>
+          </sc-if>
+          <!-- CONNECT · Descubre comunidades (públicas revisadas por BroS Life; para entrar, permiso de los padres) -->
           <sc-if value="{{ cx.enDescubrir }}" hint-placeholder-val="{{ false }}">
             <div style="margin:16px 16px 10px;display:flex;align-items:center;gap:12px">
               <button onClick="{{ cx.volver }}" aria-label="Volver" style="width:36px;height:36px;border-radius:50%;background:#F0F2F6;font-size:18px;flex:none">‹</button>
-              <div style="font-family:Outfit;font-weight:800;font-size:17px">Descubre comunidades</div>
+              <div style="flex:1;min-width:0;font-family:Outfit;font-weight:800;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ cx.tituloVista }}</div>
             </div>
-            <div style="margin:0 16px;padding:20px 18px;border:1px dashed #D5DAE3;border-radius:18px;background:#fff;text-align:center;font-size:13.5px;line-height:1.5;color:#4B5563">Muy pronto: comunidades de tu colegio, tu barrio y tus aficiones, siempre revisadas por BroS Life.</div>
+            <div style="margin:0 16px 10px;font-size:12.5px;line-height:1.45;color:#4B5563">Comunidades públicas revisadas por BroS Life. Para entrar, tu familia tiene que dar permiso. Dentro solo hay publicaciones del grupo, nunca mensajes privados.</div>
+            <sc-if value="{{ cx.sinDescubrir }}" hint-placeholder-val="{{ false }}">
+              <div style="margin:0 16px;padding:20px 18px;border:1px dashed #D5DAE3;border-radius:18px;background:#fff;text-align:center;font-size:13.5px;line-height:1.5;color:#4B5563">Todavía no hay comunidades públicas. ¡Pronto habrá de tu colegio, tu barrio y tus aficiones!</div>
+            </sc-if>
+            <div style="margin:0 16px;display:flex;flex-direction:column;gap:8px">
+              <sc-for list="{{ cx.descubre }}" as="c" hint-placeholder-count="0">
+                <div style="display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:16px;background:#fff;border:1px solid #E4E7EE">
+                  <button onClick="{{ c.onClick }}" style="display:flex;align-items:center;gap:12px;flex:1;min-width:0;text-align:left">
+                    <div style="width:42px;height:42px;border-radius:14px;background:{{ c.color }};display:grid;place-items:center;flex:none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"></path></svg></div>
+                    <div style="flex:1;min-width:0"><b style="display:block;font-size:14.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.nombre }}</b><span style="font-size:12.5px;color:#6B7280;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.sub }}</span></div>
+                  </button>
+                  <sc-if value="{{ c.hayBoton }}" hint-placeholder-val="{{ false }}"><button onClick="{{ c.boton }}" style="flex:none;padding:8px 12px;border-radius:999px;background:{{ c.btnBg }};color:#fff;font-weight:700;font-size:12.5px">{{ c.btnTxt }}</button></sc-if>
+                </div>
+              </sc-for>
+            </div>
           </sc-if>
         </sc-if>
 
@@ -1962,6 +2070,50 @@ class Component extends DCLogic {
     if (!res.ok || (j && j.error)) throw new Error((j && (j.error || j.message)) || 'Sin conexión');
     return j;
   }
+  // CONNECT: grupos de amigos y comunidades (la base de datos aplica las reglas: solo amigos aprobados, permisos de familia)
+  async cxCargar() {
+    const t = tokenBro(); if (!t) return;
+    try {
+      const [g, c, d] = await Promise.all([this.rpc('grupos_bro', { p_token: t }), this.rpc('comunidades_de_bro', { p_token: t }), this.rpc('descubrir_comunidades', { p_token: t })]);
+      this.setState({ cxGrupos: Array.isArray(g) ? g : [], cxComs: Array.isArray(c) ? c : [], cxDescubre: Array.isArray(d) ? d : [] });
+    } catch (e) {}
+  }
+  async cxCrear(que) {
+    const t = tokenBro(), F = this.state.cxForm || {}; if (!t) return this.avisar('Este móvil no está vinculado a un Bro.');
+    this.setState({ cxCreando: true });
+    try {
+      if (que === 'grupo') {
+        const j = await this.rpc('crear_grupo', { p_token: t, p_nombre: F.nombre, p_miembros: F.sel || [] });
+        await this.cxCargar(); this.setState({ cxCreando: false });
+        this.cxAbrirHilo({ tipo: 'grupo', id: j.grupo, nombre: F.nombre.trim() });
+      } else {
+        const j = await this.rpc('crear_comunidad', { p_token: t, p_nombre: F.nombre, p_descripcion: F.desc || '', p_tipo: F.tipo || 'privada', p_miembros: F.tipo === 'publica' ? [] : (F.sel || []) });
+        await this.cxCargar(); this.setState({ cxCreando: false, connectV: 'comunidades' });
+        this.avisar(j.estado === 'activa' ? 'Comunidad creada.' : 'Se lo hemos pedido a tu familia. Después la revisa BroS Life.');
+      }
+    } catch (e) { this.setState({ cxCreando: false }); this.avisar(e.message || 'No se ha podido crear.'); }
+  }
+  async cxAbrirHilo(h) {
+    this.setState({ connectV: 'hilo', cxHilo: { ...h, desde: this.state.connectV }, cxMsgs: [], cxTxt: '' });
+    const leer = async () => { const t = tokenBro(); if (!t || this.state.connectV !== 'hilo') return clearInterval(this.tHilo);
+      try { const m = await this.rpc(h.tipo === 'grupo' ? 'mensajes_grupo' : 'posts_comunidad', h.tipo === 'grupo' ? { p_token: t, p_grupo: h.id } : { p_token: t, p_comunidad: h.id });
+        if (Array.isArray(m)) { const antes = (this.state.cxMsgs || []).length; this.setState({ cxMsgs: m }); if (m.length !== antes) requestAnimationFrame(() => { const el = this.scrollRef.current; if (el) el.scrollTop = el.scrollHeight; }); } } catch (e) {} };
+    clearInterval(this.tHilo); leer(); this.tHilo = setInterval(leer, 3000);
+  }
+  async cxEnviar() {
+    const t = tokenBro(), h = this.state.cxHilo, txt = (this.state.cxTxt || '').trim(); if (!t || !h || !txt) return;
+    this.setState({ cxTxt: '' });
+    try {
+      await this.rpc(h.tipo === 'grupo' ? 'enviar_grupo' : 'publicar_comunidad', h.tipo === 'grupo' ? { p_token: t, p_grupo: h.id, p_txt: txt } : { p_token: t, p_comunidad: h.id, p_txt: txt });
+      const m = await this.rpc(h.tipo === 'grupo' ? 'mensajes_grupo' : 'posts_comunidad', h.tipo === 'grupo' ? { p_token: t, p_grupo: h.id } : { p_token: t, p_comunidad: h.id });
+      if (Array.isArray(m)) this.setState({ cxMsgs: m }, () => { const el = this.scrollRef.current; if (el) el.scrollTop = el.scrollHeight; });
+    } catch (e) { this.setState({ cxTxt: txt }); this.avisar('No se ha podido enviar.'); }
+  }
+  async cxUnirse(id) {
+    const t = tokenBro(); if (!t) return;
+    try { await this.rpc('unirse_comunidad', { p_token: t, p_comunidad: id }); this.setState({ cxPedidas: [...(this.state.cxPedidas || []), id] }); this.avisar('Se lo hemos pedido a tu familia.'); this.cxCargar(); }
+    catch (e) { this.avisar('No se ha podido pedir.'); }
+  }
   async vigilarAmigoNuevo() {
     if (this.state.qrExito || !tokenBro()) return;
     await this.cargarAmigos();
@@ -2788,7 +2940,7 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
     if (a.compartir) this.compartirComunidad();
     if (a.pantalla === 'aprender' && (!this.state.lm || a.libro)) this.lmInicio(a.libro);
     if (a.test) { const r = (this.state.db.rewards || []).find(x => x.id === a.test); if (r && r.conds.some(c => c.tipo === 'test' && !c.hecho)) this.setState({ quiz: { id: a.test, i: 0, ok: 0 } }); }
-    if (a.pantalla === 'comunidades') this.setState({ connectV: null });
+    if (a.pantalla === 'comunidades') { clearInterval(this.tHilo); this.setState({ connectV: null }); this.cxCargar(); }
     if (a.pantalla === 'contenido') { if (a.buscar) this.buscarC(a.buscar); else this.setState({ resC: null, qC: '', videoC: null, canalC: null, listaCanales: false, leerC: null }); this.cargarMisCanales(); }
     if (a.pantalla === 'qr') {
       this.qrDesde = Date.now(); this.amigosAntes = null; this.setState({ qrSemilla: Math.floor(Math.random() * 1e6) + 1, escAmigo: false, msgAmigo: null, codigoAmigo: '', qrTab: 'mio', qrExito: null });
@@ -3257,12 +3409,55 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
         ? (s.amigosR || []).map(b => ({ nombre: b.nombre, apellido: '', ini: (b.nombre || '?')[0].toUpperCase(), color: ({ Azul: '#3068ED', Naranja: '#E56648', Verde: '#4E8A2A', Negro: '#111111', Rosa: '#D9467A' })[b.correa] || '#3068ED', sinLeer: !!b.sinLeer, ultimo: b.estado === 'pendiente' ? 'Esperando permiso de los padres' : (b.ultimo || 'Escríbele algo'), onClick: () => this.ejecutar({ pantalla: 'chat', id: b.id }) }))
         : db.bros.map(b => { const ch = db.chats[b.nombre]; return { ...b, ini: b.nombre[0], sinLeer: ch && ch.sinLeer, ultimo: ch ? ch.mensajes[ch.mensajes.length - 1].txt : b.de, onClick: () => this.ejecutar({ pantalla: 'chat', id: b.nombre }) }; }),
       sinAmigos: !!tokenBro() && Array.isArray(s.amigosR) && s.amigosR.length === 0,
-      cx: (() => { const v = s.connectV, nAm = tokenBro() ? (s.amigosR || []).length : db.bros.length, nCom = (db.comunidades || []).length;
-        const ir = x => () => { this.setState({ connectV: x }); if (this.scrollRef.current) this.scrollRef.current.scrollTop = 0; };
+      cx: (() => { const v = s.connectV, F = s.cxForm || {}, amigosAct = (s.amigosR || []).filter(a => a.estado === 'activa');
+        const nAm = tokenBro() ? (s.amigosR || []).length : db.bros.length, coms = s.cxComs || [], grupos = s.cxGrupos || [];
+        const ir = x => () => { this.setState({ connectV: x, cxTxt: '' }); if (x === 'conversaciones' || x === 'comunidades' || x === 'descubrir') this.cxCargar(); if (this.scrollRef.current) this.scrollRef.current.scrollTop = 0; };
+        const COL = { Azul: '#3068ED', Naranja: '#E56648', Verde: '#4E8A2A', Negro: '#111111', Rosa: '#D9467A' };
+        const sel = F.sel || [], H = s.cxHilo;
+        const estadoTxt = c => c.miembro === 'pendiente_padres' ? 'Esperando permiso de tu familia' : c.estado === 'pendiente_padres' ? 'Pública · esperando permiso de tu familia' : c.estado === 'pendiente_revision' ? 'Pública · BroS Life la está revisando' : (c.tipo === 'publica' ? 'Pública' : 'Privada') + ' · ' + c.n + (c.n === 1 ? ' miembro' : ' miembros');
+        const titulos = { conversaciones: 'Mis conversaciones', comunidades: 'Mis comunidades', descubrir: 'Descubre comunidades', nuevoGrupo: 'Nuevo grupo', nuevaComunidad: 'Crear comunidad', hilo: H ? H.nombre : '' };
+        const listo = (F.nombre || '').trim().length >= 2 && (v === 'nuevaComunidad' ? (F.tipo === 'publica' || sel.length >= 0) : sel.length >= 1) && !s.cxCreando;
         return { inicio: !v, enConversaciones: v === 'conversaciones', enComunidades: v === 'comunidades', enDescubrir: v === 'descubrir',
-          verConversaciones: ir('conversaciones'), verComunidades: ir('comunidades'), verDescubrir: ir('descubrir'), volver: ir(null),
-          conversacionesSub: nAm ? nAm + (nAm === 1 ? ' amigo' : ' amigos') : 'Aún no tienes amigos', comunidadesSub: nCom ? nCom + (nCom === 1 ? ' comunidad' : ' comunidades') : 'Aún no estás en ninguna',
-          descubrirSub: 'Encuentra gente con tus aficiones', sinComunidades: !nCom }; })(),
+          enNuevoGrupo: v === 'nuevoGrupo', enNuevaComunidad: v === 'nuevaComunidad', enHilo: v === 'hilo',
+          verConversaciones: ir('conversaciones'), verComunidades: ir('comunidades'), verDescubrir: ir('descubrir'),
+          volver: () => { const atras = { nuevoGrupo: 'conversaciones', nuevaComunidad: 'comunidades', hilo: H && H.tipo === 'grupo' ? 'conversaciones' : H && H.desde === 'descubrir' ? 'descubrir' : 'comunidades' }[v] || null; clearInterval(this.tHilo); ir(atras)(); },
+          tituloVista: titulos[v] || '',
+          conversacionesSub: nAm ? nAm + (nAm === 1 ? ' amigo' : ' amigos') + (grupos.length ? ' · ' + grupos.length + (grupos.length === 1 ? ' grupo' : ' grupos') : '') : 'Aún no tienes amigos',
+          comunidadesSub: coms.length ? coms.length + (coms.length === 1 ? ' comunidad' : ' comunidades') : 'Crea una o únete a una',
+          descubrirSub: 'Comunidades públicas revisadas por BroS Life',
+          // grupos
+          hayGrupos: grupos.length > 0,
+          grupos: grupos.map(g => ({ nombre: g.nombre, sub: g.ultimo || ('Con ' + (g.con || '')), onClick: () => this.cxAbrirHilo({ tipo: 'grupo', id: g.id, nombre: g.nombre }) })),
+          nuevoGrupo: () => { this.setState({ connectV: 'nuevoGrupo', cxForm: { nombre: '', sel: [] } }); this.cargarAmigos(); },
+          nuevaComunidad: () => { this.setState({ connectV: 'nuevaComunidad', cxForm: { nombre: '', desc: '', tipo: 'privada', sel: [] } }); this.cargarAmigos(); },
+          fNombre: F.nombre || '', onNombre: e => this.setState({ cxForm: { ...this.state.cxForm, nombre: e.target.value } }),
+          fDesc: F.desc || '', onDesc: e => this.setState({ cxForm: { ...this.state.cxForm, desc: e.target.value } }),
+          sinAmigosSel: !amigosAct.length,
+          amigosSel: amigosAct.map(a => { const on = sel.includes(a.id); return { nombre: a.nombre, ini: (a.nombre || '?')[0].toUpperCase(), color: COL[a.correa] || '#3068ED',
+            borde: on ? '#3068ED' : '#E4E7EE', check: on ? '#3068ED' : '#fff', tick: on ? '✓' : '',
+            toggle: () => this.setState({ cxForm: { ...this.state.cxForm, sel: on ? sel.filter(x => x !== a.id) : [...sel, a.id] } }) }; }),
+          crearBg: listo ? (v === 'nuevaComunidad' ? '#6f49d8' : '#3068ED') : '#A9B4CC',
+          crearTxt: s.cxCreando ? 'Creando…' : v === 'nuevaComunidad' ? (F.tipo === 'publica' ? 'Pedir crearla' : 'Crear comunidad') : 'Crear grupo',
+          crearGrupo: () => listo && this.cxCrear('grupo'), crearComunidad: () => listo && this.cxCrear('comunidad'),
+          esPrivada: F.tipo !== 'publica',
+          tipoPrivada: () => this.setState({ cxForm: { ...F, tipo: 'privada' } }), tipoPublica: () => this.setState({ cxForm: { ...F, tipo: 'publica' } }),
+          privBg: F.tipo !== 'publica' ? '#fff' : 'transparent', privTx: F.tipo !== 'publica' ? '#6f49d8' : '#4B5563',
+          pubBg: F.tipo === 'publica' ? '#fff' : 'transparent', pubTx: F.tipo === 'publica' ? '#6f49d8' : '#4B5563',
+          tipoTxt: F.tipo === 'publica' ? 'Cualquier Bro podrá pedir unirse. Tu familia tiene que aprobarla y BroS Life la revisa antes de que salga en Descubre.' : 'Solo para ti y los amigos que invites. Nadie más puede verla ni entrar.',
+          // comunidades
+          sinComunidades: !coms.length,
+          misComs: coms.map(c => ({ nombre: c.nombre, sub: estadoTxt(c), color: c.tipo === 'publica' ? '#22A559' : '#6f49d8', hayBoton: false,
+            onClick: () => (c.estado === 'activa' && c.miembro === 'activo') ? this.cxAbrirHilo({ tipo: 'comunidad', id: c.id, nombre: c.nombre }) : this.avisar(estadoTxt(c)) })),
+          sinDescubrir: !(s.cxDescubre || []).length,
+          descubre: (s.cxDescubre || []).map(c => { const pe = (s.cxPedidas || []).includes(c.id); return { nombre: c.nombre, sub: (c.descripcion || 'Comunidad pública') + ' · ' + c.n + (c.n === 1 ? ' miembro' : ' miembros'), color: '#22A559',
+            hayBoton: true, btnTxt: pe ? 'Pedido ✓' : 'Pedir unirme', btnBg: pe ? '#9CA3AF' : '#22A559', boton: () => !pe && this.cxUnirse(c.id), onClick: () => this.avisar(c.descripcion || c.nombre) }; }),
+          // hilo (grupo o comunidad)
+          msgs: (s.cxMsgs || []).map(m => ({ txt: m.txt, de: m.de, verDe: !m.mio, lado: m.mio ? 'flex-end' : 'flex-start', bg: m.mio ? '#3068ED' : '#fff', color: m.mio ? '#fff' : '#111', borde: m.mio ? '#3068ED' : '#E4E7EE' })),
+          chatVacio: !(s.cxMsgs || []).length, chatVacioTxt: H && H.tipo === 'comunidad' ? 'Aún no hay publicaciones. ¡Sé el primero!' : 'Aún no hay mensajes. Saluda al grupo.',
+          puedeEscribir: v === 'hilo', hayEstadoCom: false, estadoCom: '',
+          txt: s.cxTxt || '', onTxt: e => this.setState({ cxTxt: e.target.value }), onKey: e => { if (e.key === 'Enter') this.cxEnviar(); },
+          placeholder: H && H.tipo === 'comunidad' ? 'Publica en ' + H.nombre : 'Mensaje al grupo', enviar: () => this.cxEnviar()
+        }; })(),
       chatCon: tokenBro() ? (((s.amigosR || []).find(b => b.id === s.id) || {}).nombre || 'tu amigo') : s.id, chatTxt: s.chatTxt,
       chatPrivacidad: tokenBro() ? 'Tus padres no leen esto.' : 'Laura no lee esto.',
       chatPendiente: !!tokenBro() && ((s.amigosR || []).find(b => b.id === s.id) || {}).estado === 'pendiente',

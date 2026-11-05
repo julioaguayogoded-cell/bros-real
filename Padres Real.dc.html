@@ -8,7 +8,7 @@
 <body>
 <x-dc>
 <helmet>
-<script>(function(){if(window.__brosP)return;window.__brosP=1;var q=new URLSearchParams(location.search).get('perfil');if(q)window.name='bros:'+q.replace(/[^a-z0-9_-]/gi,'').slice(0,20);var m=/^bros:(.+)$/.exec(window.name||'');if(!m)return;var P='P:'+m[1]+':',S=Storage.prototype,g=S.getItem,s=S.setItem,r=S.removeItem;var es=function(x){try{return x===window.localStorage}catch(e){return false}};S.getItem=function(a){return g.call(this,es(this)?P+a:a)};S.setItem=function(a,b){return s.call(this,es(this)?P+a:a,b)};S.removeItem=function(a){return r.call(this,es(this)?P+a:a)};window.BROS_PERFIL=m[1];})();window.BROS_V='2026-11-05.2';</script>
+<script>(function(){if(window.__brosP)return;window.__brosP=1;var q=new URLSearchParams(location.search).get('perfil');if(q)window.name='bros:'+q.replace(/[^a-z0-9_-]/gi,'').slice(0,20);var m=/^bros:(.+)$/.exec(window.name||'');if(!m)return;var P='P:'+m[1]+':',S=Storage.prototype,g=S.getItem,s=S.setItem,r=S.removeItem;var es=function(x){try{return x===window.localStorage}catch(e){return false}};S.getItem=function(a){return g.call(this,es(this)?P+a:a)};S.setItem=function(a,b){return s.call(this,es(this)?P+a:a,b)};S.removeItem=function(a){return r.call(this,es(this)?P+a:a)};window.BROS_PERFIL=m[1];})();window.BROS_V='2026-11-06.1';</script>
 <title>Bro OS</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -2501,8 +2501,8 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
       })(),
       hayPeticiones: padre && (this.state.peticionesR || []).length > 0,
       peticiones: (this.state.peticionesR || []).map(p => ({ ...p,
-        texto: p.tipo === 'canal' ? 'quiere ver el canal de YouTube' : p.tipo === 'web' ? 'quiere entrar en la web' : 'quiere la app',
-        nota: p.tipo === 'canal' ? (p.nivel === 'con_permiso' ? `BroS Life lo recomienda a partir de ${p.edad_min} años.` : 'No está en el catálogo de BroS Life: revísalo antes.') + ' Solo verá vídeos de este canal, sin Shorts.' : '',
+        texto: ({ canal: 'quiere ver el canal de YouTube', web: 'quiere entrar en la web', app: 'quiere la app', comunidad: 'quiere crear la comunidad pública', unirse: 'quiere unirse a la comunidad pública' })[p.tipo] || 'pide',
+        nota: p.tipo === 'comunidad' ? (p.detalle || '') + ' Si la apruebas, BroS Life la revisa antes de que otros Bros puedan verla.' : p.tipo === 'unirse' ? (p.detalle || '') : p.tipo === 'canal' ? (p.nivel === 'con_permiso' ? `BroS Life lo recomienda a partir de ${p.edad_min} años.` : 'No está en el catálogo de BroS Life: revísalo antes.') + ' Solo verá vídeos de este canal, sin Shorts.' : '',
         si: () => this.decidirPeticion(p.id, true), no: () => this.decidirPeticion(p.id, false) })),
       hayAmistades: padre && (this.state.amistadesR || []).length > 0,
       amistades: (this.state.amistadesR || []).map(a => ({ ...a, dif: a.difAnios ?? Math.abs((a.hijoEdad || 0) - (a.amigoEdad || 0)), si: () => this.decidirAmistad(a.id, true), no: () => this.decidirAmistad(a.id, false) })),
