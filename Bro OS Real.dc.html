@@ -567,8 +567,8 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
           <!-- + AMIGO: uno enseña su código, el otro lo escanea. Listo. -->
           <sc-if value="{{ qr.verPestanas }}" hint-placeholder-val="{{ true }}">
             <div style="margin:16px 16px 0;display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:5px;border-radius:18px;background:#E9ECF2">
-              <button onClick="{{ qr.verMio }}" style="height:48px;border-radius:14px;font-family:Outfit;font-weight:800;font-size:15.5px;background:{{ qr.tabMioBg }};color:{{ qr.tabMioTx }};box-shadow:{{ qr.tabMioSombra }}">Mi código</button>
-              <button onClick="{{ qr.verEscanear }}" style="height:48px;border-radius:14px;font-family:Outfit;font-weight:800;font-size:15.5px;background:{{ qr.tabEscBg }};color:{{ qr.tabEscTx }};box-shadow:{{ qr.tabEscSombra }}">Escanear</button>
+              <button onClick="{{ qr.verMio }}" style="height:48px;border-radius:14px;text-align:center;font-family:Outfit;font-weight:800;font-size:15.5px;background:{{ qr.tabMioBg }};color:{{ qr.tabMioTx }};box-shadow:{{ qr.tabMioSombra }}">Mi código</button>
+              <button onClick="{{ qr.verEscanear }}" style="height:48px;border-radius:14px;text-align:center;font-family:Outfit;font-weight:800;font-size:15.5px;background:{{ qr.tabEscBg }};color:{{ qr.tabEscTx }};box-shadow:{{ qr.tabEscSombra }}">Escanear</button>
             </div>
           </sc-if>
           <sc-if value="{{ qr.enMio }}" hint-placeholder-val="{{ true }}">
@@ -613,7 +613,7 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
                 <div style="font-size:13.5px;font-weight:600;text-align:center;color:{{ qr.msgColor }};text-wrap:pretty">{{ qr.msg }}</div>
               </sc-if>
               <div style="width:100%;max-width:300px;display:flex;gap:8px;margin-top:4px">
-                <input value="{{ qr.codigoAmigo }}" onChange="{{ qr.onCodigoAmigo }}" onKeyDown="{{ qr.onKeyAmigo }}" maxlength="6" autocapitalize="characters" autocomplete="off" placeholder="o escribe su código" style="flex:1;min-width:0;height:46px;border:1px solid #E4E7EE;border-radius:14px;padding:0 14px;font-family:ui-monospace,Menlo,monospace;font-size:16px;letter-spacing:.15em;text-transform:uppercase;outline:none">
+                <input value="{{ qr.codigoAmigo }}" onChange="{{ qr.onCodigoAmigo }}" onKeyDown="{{ qr.onKeyAmigo }}" maxlength="6" autocapitalize="characters" autocomplete="off" placeholder="O escribe su código" style="flex:1;min-width:0;height:46px;border:1px solid #E4E7EE;border-radius:14px;padding:0 14px;font-family:Inter,system-ui,sans-serif;font-weight:700;font-size:15px;outline:none">
                 <button onClick="{{ qr.conectar }}" style="flex:none;height:46px;padding:0 16px;border-radius:14px;background:{{ qr.btnBg }};color:#fff;font-weight:800;font-size:14px">OK</button>
               </div>
             </div>
@@ -2889,7 +2889,7 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
     const ses = s.sesion[modo], f = ses.flujo;
     const pantalla = padre ? (s.pantallaPadre || 'bro') : s.pantalla;
     const p = { limites: pantalla === 'limites', consentimientos: pantalla === 'consentimientos', aprender: pantalla === 'aprender', comunidades: pantalla === 'comunidades', chat: pantalla === 'chat', proyectos: pantalla === 'proyectos', proyecto: pantalla === 'proyecto', partido: pantalla === 'partido', comunidad: pantalla === 'comunidad', apps: pantalla === 'apps', logros: pantalla === 'logros', contenido: pantalla === 'contenido', aura: pantalla === 'aura', qr: pantalla === 'qr', monedero: pantalla === 'monedero', otra: pantalla === 'otra' };
-    const titulos = { monedero: ['Wallet', 'Tu tarjeta Bro · Lit Pay'], aprender: ['Learning mode', 'Tú piensas, Bro te ayuda'], qr: ['Nuevo amigo', 'En persona, con vuestro código Bro'], aura: ['Aura', 'Sueño y movimiento'], logros: ['Achieve', 'Tus logros y rewards'], partido: ['Mi partido', 'De la idea a la realidad'], comunidad: ['Fútbol La Colonia', '24 Bros · los del barrio'], contenido: ['Enjoy safe', 'Para ver y aprender'], comunidades: ['Connect', 'Tus comunidades y mensajes'], chat: [s.id, 'Conexión mutua'], proyectos: ['Build', 'Lo que estás construyendo'], proyecto: ['Proyecto', 'Paso a paso, decides tú'], apps: ['My apps', 'Lo que decide mamá'], otra: ['Bro', ''] };
+    const titulos = { monedero: ['Wallet', 'Tu tarjeta Bro · Lit Pay'], aprender: ['Learning mode', 'Tú piensas, Bro te ayuda'], qr: ['Nuevo amigo', 'Solo en persona'], aura: ['Aura', 'Sueño y movimiento'], logros: ['Achieve', 'Tus logros y rewards'], partido: ['Mi partido', 'De la idea a la realidad'], comunidad: ['Fútbol La Colonia', '24 Bros · los del barrio'], contenido: ['Enjoy safe', 'Para ver y aprender'], comunidades: ['Connect', 'Tus comunidades y mensajes'], chat: [s.id, 'Conexión mutua'], proyectos: ['Build', 'Lo que estás construyendo'], proyecto: ['Proyecto', 'Paso a paso, decides tú'], apps: ['My apps', 'Lo que decide mamá'], otra: ['Bro', ''] };
     const [titulo, subtitulo] = padre ? (pantalla === 'consentimientos' ? ['Privacidad', 'Permisos de ' + db.nino.nombre] : pantalla === 'limites' ? ['Límites y horarios', 'Móvil de ' + db.nino.nombre] : ['Bro Parent', db.madre.nombre + ' · ' + (db.hijos || [{ nombre: db.nino.nombre }]).map(h => h.nombre).join(' y ')]) : pantalla === 'bro' ? ['Bro', db.nino.nombre + ' · perfil ' + db.nino.edad] : titulos[pantalla];
     const hayTexto = !!s.texto.trim();
     const maxSem = Math.max(...db.aura.semana.flat());
@@ -3005,7 +3005,7 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
       hayHoy: !padre,
       cabeceraHora: !padre && pantalla === 'bro',
       padAbajo: padre ? '100px' : '24px',
-      verFlotante: !padre && pantalla !== 'bro' && !(s.sesion && s.sesion[this.modo()] && s.sesion[this.modo()].conv && s.sesion[this.modo()].conv.length) && !s.escuchando,
+      verFlotante: !padre && pantalla !== 'bro' && pantalla !== 'qr' && !(s.sesion && s.sesion[this.modo()] && s.sesion[this.modo()].conv && s.sesion[this.modo()].conv.length) && !s.escuchando,
       verDock: padre || !!(s.sesion && s.sesion[this.modo()] && s.sesion[this.modo()].conv && s.sesion[this.modo()].conv.length) || !!s.escuchando || !!s.texto,
       est: (e => {
         const red = e.red, nm = Math.max(0, Math.min(4, e.nivelMovil || 0)), nw = Math.max(0, Math.min(4, e.nivelWifi == null ? 4 : e.nivelWifi));
