@@ -29,21 +29,31 @@
     <bros-estado></bros-estado>
   </div>
 
-  <bro-flotante></bro-flotante>
   <div ref="{{ scrollRef }}" style="flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch">
 
     <sc-if value="{{ p.lista }}" hint-placeholder-val="{{ true }}">
       <div style="padding:18px 16px 28px;display:flex;flex-direction:column;gap:14px">
-        <button onClick="{{ irIdea }}" style="display:flex;align-items:center;gap:14px;background:#111;color:#fff;border-radius:22px;padding:18px;text-align:left">
-          <img src="facew.png" alt="" style="width:44px;height:44px;flex:none">
-          <div style="flex:1"><div style="font-family:Outfit;font-weight:800;font-size:19px">Tengo una idea</div><div style="font-size:13px;opacity:.8;margin-top:2px">Bro AI te ayuda a hacerla realidad</div></div>
-          <span style="font-size:24px">›</span>
+        <!-- Bro AI en modo construir (mono de trabajo): arriba, protagonista -->
+        <div style="display:flex;justify-content:center;padding:6px 0 2px">
+          <button onClick="{{ irIdea }}" aria-label="Bro AI en modo construir" style="position:relative;width:156px;height:188px;flex:none;background:none;border:0;padding:0">
+            <div style="position:absolute;left:0;top:32px;width:156px;height:156px;border-radius:50%;padding:9px;box-sizing:border-box;background:repeating-conic-gradient(from 0deg,#111 0 10deg,#F5B400 10deg 20deg);box-shadow:0 12px 30px rgba(130,185,79,.35)">
+              <div style="width:100%;height:100%;border-radius:50%;background:#fff;display:grid;place-items:center"><img src="bro-cara.svg" alt="" style="width:54%;height:54%;margin-top:26%"></div>
+            </div>
+            <img src="bro-casco.svg" alt="" style="position:absolute;left:-7px;top:0;width:170px">
+          </button>
+        </div>
+        <!-- Nuevo proyecto (tarjeta como en el resto de BroS Life) -->
+        <button onClick="{{ irIdea }}" style="width:100%;display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:16px;background:#fff;border:1px solid #E4E7EE;text-align:left">
+          <div style="width:40px;height:40px;border-radius:12px;background:#82B94F;display:grid;place-items:center;flex:none"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></div>
+          <div style="flex:1;min-width:0"><div style="font-family:Outfit;font-weight:700;font-size:15px">Nuevo proyecto</div><div style="font-size:12.5px;color:#6B7280">Bro AI te ayuda a hacerlo realidad</div></div>
+          <span style="font-size:20px;color:#9CA3AF">›</span>
         </button>
+        <div style="margin-top:10px;font-size:11px;font-weight:700;letter-spacing:.06em;color:#9CA3AF">MIS PROYECTOS</div>
         <sc-if value="{{ cargandoLista }}" hint-placeholder-val="{{ false }}">
           <div style="text-align:center;color:#6B7280;font-size:13px;padding:20px">Cargando tus proyectos…</div>
         </sc-if>
         <sc-if value="{{ listaVacia }}" hint-placeholder-val="{{ false }}">
-          <div style="text-align:center;color:#6B7280;font-size:14px;line-height:1.5;padding:26px 10px;text-wrap:pretty">Todavía no tienes proyectos.<br>Un videojuego, un cómic, un mercadillo, un partido… ¿qué te apetece crear?</div>
+          <div style="text-align:center;color:#6B7280;font-size:14px;line-height:1.5;padding:26px 10px;text-wrap:pretty">Aún no tienes proyectos en marcha.<br>Un videojuego, un cómic, un mercadillo, un partido… ¿qué te apetece crear?</div>
         </sc-if>
         <sc-for list="{{ proyectos }}" as="x" hint-placeholder-count="0">
           <button onClick="{{ x.abrir }}" style="background:#fff;border:1px solid #E4E7EE;border-radius:20px;padding:15px;text-align:left;display:flex;flex-direction:column;gap:9px">
