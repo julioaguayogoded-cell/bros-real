@@ -1575,6 +1575,33 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
           </sc-if>
 
           <!-- CANALES: tarjeta (como Webs) que abre la lista agrupada por temas -->
+          <sc-if value="{{ en.verTarjeta }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:10px 16px 0">
+              <button onClick="{{ en.abrir }}" style="width:100%;display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:16px;background:#fff;border:1px solid #E4E7EE;text-align:left">
+                <div style="width:40px;height:40px;border-radius:12px;background:#9333EA;display:grid;place-items:center;flex:none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM21 16a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"></path></svg></div>
+                <div style="flex:1;min-width:0"><div style="font-family:Outfit;font-weight:700;font-size:15px">Entretenimiento</div><div style="font-size:12.5px;color:#6B7280">Música, series, pelis y podcasts</div></div>
+                <span style="font-size:20px;color:#9CA3AF">›</span>
+              </button>
+            </div>
+          </sc-if>
+          <sc-if value="{{ en.abierto }}" hint-placeholder-val="{{ false }}">
+            <div style="margin:16px 16px 4px;display:flex;align-items:center;gap:12px">
+              <button onClick="{{ en.cerrar }}" aria-label="Volver" style="width:36px;height:36px;border-radius:50%;background:#F0F2F6;font-size:18px;flex:none">‹</button>
+              <div style="flex:1;min-width:0;font-family:Outfit;font-weight:800;font-size:17px">Entretenimiento</div>
+            </div>
+            <sc-for list="{{ en.grupos }}" as="g" hint-placeholder-count="3">
+              <div style="margin:18px 16px 8px;display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:{{ g.color }}"></span><span style="font-size:11px;font-weight:700;letter-spacing:.06em;color:{{ g.color }}">{{ g.grupo }}</span></div>
+              <div style="display:flex;flex-direction:column;gap:8px;padding:0 16px">
+                <sc-for list="{{ g.apps }}" as="a" hint-placeholder-count="2">
+                  <div style="display:flex;align-items:center;gap:12px;padding:10px 12px 10px 14px;border-radius:16px;background:#fff;border:1px solid #E4E7EE">
+                    <div style="width:42px;height:42px;border-radius:12px;flex:none;background-color:#F5F6F9;background-size:62%;background-repeat:no-repeat;background-position:center;background-image:url({{ a.icono }})"></div>
+                    <div style="flex:1;min-width:0"><div style="font-family:Outfit;font-weight:700;font-size:15px">{{ a.nombre }}</div><div style="font-size:12px;color:#6B7280;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ a.que }}</div></div>
+                    <button onClick="{{ a.onClick }}" style="flex:none;min-width:84px;height:36px;padding:0 14px;border-radius:999px;text-align:center;background:{{ a.btnBg }};color:{{ a.btnTx }};font-weight:800;font-size:13px">{{ a.btnTxt }}</button>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-for>
+          </sc-if>
           <sc-if value="{{ co.verCanales }}" hint-placeholder-val="{{ false }}">
             <div style="padding:10px 16px 0">
               <button onClick="{{ co.abrirListaCanales }}" style="width:100%;display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:16px;background:#fff;border:1px solid #E4E7EE;text-align:left">
@@ -1990,6 +2017,19 @@ const VIDEOS_YT = {
   v3: { yt: '38ZpBSjxyDo', t: 'El «Canard», explicado por un récord mundial', canal: 'WIRED · John Collins', dur: 'Largo' }
 };
 // MY TODAY STUFF · tarjetas de PRUEBA para comprobar el deslizamiento. Poner a false para quitarlas.
+// ENTRETENIMIENTO aprobado por defecto por BroS Life (música, pelis, series, podcast, audiolibros)
+const ENTRETENIMIENTO = [
+  { grupo: 'MÚSICA', color: '#22A559', apps: [
+    { nombre: 'LOS40', pkg: 'com.prisaradio.replicapp.loscuarenta', dominio: 'los40.com', que: 'Radio y listas de éxitos' },
+    { nombre: 'Spotify', pkg: 'com.spotify.music', dominio: 'spotify.com', que: 'Música y podcasts' } ] },
+  { grupo: 'SERIES Y PELIS', color: '#E50914', apps: [
+    { nombre: 'Netflix', pkg: 'com.netflix.mediaclient', dominio: 'netflix.com', que: 'Usa el perfil infantil o el de tu edad' },
+    { nombre: 'Disney+', pkg: 'com.disney.disneyplus', dominio: 'disneyplus.com', que: 'Disney, Pixar, Marvel, Star Wars' },
+    { nombre: 'Movistar Plus+', pkg: 'es.plus.yomvi', dominio: 'movistarplus.es', que: 'Series, cine y deporte' } ] },
+  { grupo: 'PODCAST Y AUDIOLIBROS', color: '#9333EA', apps: [
+    { nombre: 'iVoox', pkg: 'com.ivoox.app', dominio: 'ivoox.com', que: 'Podcasts y audiolibros' },
+    { nombre: 'Podimo', pkg: 'com.podimo', dominio: 'podimo.com', que: 'Podcasts y audiolibros' } ] }
+];
 const HOY_PRUEBA = true;
 const HOY_PRUEBA_ITEMS = [
   { k: 'Recordatorio', titulo: 'Llevar la mochila de natación', urgente: false, accion: { aviso: 'Tarjeta de prueba' } },
@@ -2021,7 +2061,7 @@ class Component extends DCLogic {
     this.alRedimensionar();
     this.reloj = setInterval(() => this.setState({ ahoraMismo: new Date() }), 30000);
     // Al volver a la pantalla (desbloquear), la hora real al instante
-    this.alVolver = () => { if (!document.hidden) this.setState({ ahoraMismo: new Date() }); };
+    this.alVolver = () => { if (!document.hidden) { this.setState({ ahoraMismo: new Date() }); if (this.state.entC) this.comprobarInstaladas(); } };
     document.addEventListener('visibilitychange', this.alVolver); window.addEventListener('focus', this.alVolver);
     // Estado REAL del móvil (red, cobertura, batería). Nunca valores inventados.
     window.__broEstado = e => this.setState({ estadoMovil: e });
@@ -2605,6 +2645,9 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
     } catch (e) { this.avisar('No se ha podido pedir. Prueba otra vez.'); }
   }
   // APRENDE LEYENDO: buscar y abrir artículos de fuentes fiables (el servidor revisa y guarda lo bloqueado para la familia)
+  comprobarInstaladas() {
+    try { if (window.BroNativo && BroNativo.instaladas) this.setState({ appsInstaladas: JSON.parse(BroNativo.instaladas(JSON.stringify(ENTRETENIMIENTO.flatMap(g => g.apps.map(a => a.pkg))))) }); } catch (e) {}
+  }
   async leerFetch(body) {
     const res = await fetch(BRO_AI_URL.replace('/Bro-ai', '/bro-leer'), { method: 'POST', headers: this.cabCanal().h, body: JSON.stringify({ edad: (this.state.db && this.state.db.nino && this.state.db.nino.edad) || 12, ...body }) });
     return res.json();
@@ -2941,7 +2984,7 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
     if (a.pantalla === 'aprender' && (!this.state.lm || a.libro)) this.lmInicio(a.libro);
     if (a.test) { const r = (this.state.db.rewards || []).find(x => x.id === a.test); if (r && r.conds.some(c => c.tipo === 'test' && !c.hecho)) this.setState({ quiz: { id: a.test, i: 0, ok: 0 } }); }
     if (a.pantalla === 'comunidades') { clearInterval(this.tHilo); this.setState({ connectV: null }); this.cxCargar(); }
-    if (a.pantalla === 'contenido') { if (a.buscar) this.buscarC(a.buscar); else this.setState({ resC: null, qC: '', videoC: null, canalC: null, listaCanales: false, leerC: null }); this.cargarMisCanales(); }
+    if (a.pantalla === 'contenido') { if (a.buscar) this.buscarC(a.buscar); else this.setState({ resC: null, qC: '', videoC: null, canalC: null, listaCanales: false, leerC: null, entC: false }); this.cargarMisCanales(); }
     if (a.pantalla === 'qr') {
       this.qrDesde = Date.now(); this.amigosAntes = null; this.setState({ qrSemilla: Math.floor(Math.random() * 1e6) + 1, escAmigo: false, msgAmigo: null, codigoAmigo: '', qrTab: 'mio', qrExito: null });
       if (tokenBro()) this.cargarQR();
@@ -3235,12 +3278,20 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
           compartir: async () => { try { if (navigator.share) await navigator.share({ title: d.nombre, text: `${d.nombre} · ${d.dia} ${d.hora} · ${d.lugar}`, url }); else { await navigator.clipboard.writeText(url); this.avisar('Enlace del cartel copiado.'); } } catch (e) {} }
         };
       })(),
+      en: (() => { const E = s.entC, inst = s.appsInstaladas || [];
+        return { verTarjeta: !E && !s.leerC && !s.resC && !s.canalC && !s.listaCanales && !s.videoC, abierto: !!E,
+          abrir: () => { this.setState({ entC: true }); this.comprobarInstaladas(); if (this.scrollRef.current) this.scrollRef.current.scrollTop = 0; },
+          cerrar: () => this.setState({ entC: false }),
+          grupos: ENTRETENIMIENTO.map(g => ({ grupo: g.grupo, color: g.color, apps: g.apps.map(a => { const ok = inst.includes(a.pkg);
+            return { ...a, icono: 'https://www.google.com/s2/favicons?sz=128&domain=' + a.dominio, btnTxt: ok ? 'Abrir' : 'Instalar', btnBg: ok ? g.color : '#F0F2F6', btnTx: ok ? '#fff' : '#111',
+              onClick: () => (window.BroNativo && BroNativo.abrirApp) ? BroNativo.abrirApp(a.pkg) : this.avisar(a.nombre + ' se abre en el móvil Bro.') }; }) })) };
+      })(),
       le: (() => {
         const L = s.leerC;
         const art = L && L.articulo;
         return {
           verTarjeta: !L && !s.resC && !s.canalC && !s.listaCanales && !s.videoC,
-          verResto: !L,
+          verResto: !L && !s.entC,
           abierto: !!L,
           abrir: () => { this.setState({ leerC: { q: '' } }); if (this.scrollRef.current) this.scrollRef.current.scrollTop = 0; },
           atras: () => { if (L && L.articulo) this.setState({ leerC: { ...L, articulo: null } }); else this.setState({ leerC: null }); if (this.scrollRef.current) this.scrollRef.current.scrollTop = 0; },
@@ -3290,7 +3341,7 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
           hayResultados: esV && !!(r && r.resultados && r.resultados.length),
           sinResultados: esV && !!(r && !r.bloqueado && !r.error && r.tema && !r.resultados.length),
           errorBusqueda: esV && !!(r && r.error),
-          inicio: esV && !r && !s.leerC && !s.listaCanales && !s.canalC,
+          inicio: esV && !r && !s.leerC && !s.listaCanales && !s.canalC && !s.entC,
           inicioWeb: !esV && !w && !(r && r.bloqueado),
           txtInicioWeb: tipo === 'imagenes' ? 'Imágenes públicas y libres de Wikimedia Commons. Bro filtra lo que no es para ti.' : 'Artículos de Vikidia, la enciclopedia para 8 a 13 años, y de Wikipedia. Los lees aquí, sin salir de Bro.',
           webCargando: !!(w && w.cargando),
@@ -3333,7 +3384,7 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
           ...(() => {
             const cc = s.canalC, lista = s.misCanales || [];
             return {
-              verCanales: esV && !r && !cc && !act && !s.listaCanales && !s.leerC,
+              verCanales: esV && !r && !cc && !act && !s.listaCanales && !s.leerC && !s.entC,
               canalesSub: lista.length ? lista.length + ' canales de YouTube aprobados para ti' : 'Tus canales de YouTube aprobados',
               abrirListaCanales: () => { this.setState({ listaCanales: true }); if (this.scrollRef.current) this.scrollRef.current.scrollTop = 0; },
               cerrarListaCanales: () => this.setState({ listaCanales: false }),
