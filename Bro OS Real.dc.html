@@ -8,7 +8,7 @@
 <body>
 <x-dc>
 <helmet>
-<script>(function(){if(window.__brosP)return;window.__brosP=1;var q=new URLSearchParams(location.search).get('perfil');if(q)window.name='bros:'+q.replace(/[^a-z0-9_-]/gi,'').slice(0,20);var m=/^bros:(.+)$/.exec(window.name||'');if(!m)return;var P='P:'+m[1]+':',S=Storage.prototype,g=S.getItem,s=S.setItem,r=S.removeItem;var es=function(x){try{return x===window.localStorage}catch(e){return false}};S.getItem=function(a){return g.call(this,es(this)?P+a:a)};S.setItem=function(a,b){return s.call(this,es(this)?P+a:a,b)};S.removeItem=function(a){return r.call(this,es(this)?P+a:a)};window.BROS_PERFIL=m[1];})();window.BROS_V='2026-11-04.1';</script>
+<script>(function(){if(window.__brosP)return;window.__brosP=1;var q=new URLSearchParams(location.search).get('perfil');if(q)window.name='bros:'+q.replace(/[^a-z0-9_-]/gi,'').slice(0,20);var m=/^bros:(.+)$/.exec(window.name||'');if(!m)return;var P='P:'+m[1]+':',S=Storage.prototype,g=S.getItem,s=S.setItem,r=S.removeItem;var es=function(x){try{return x===window.localStorage}catch(e){return false}};S.getItem=function(a){return g.call(this,es(this)?P+a:a)};S.setItem=function(a,b){return s.call(this,es(this)?P+a:a,b)};S.removeItem=function(a){return r.call(this,es(this)?P+a:a)};window.BROS_PERFIL=m[1];})();window.BROS_V='2026-11-06.2';</script>
 <title>Bro OS</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -859,6 +859,55 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
                 <button onClick="{{ rw.quiz.cerrar }}" style="margin-top:14px;height:44px;padding:0 18px;border-radius:14px;background:#fff;color:#111;font-weight:700">Cerrar</button>
               </sc-if>
             </div>
+          </sc-if>
+
+          <!-- RETOS DE TU FAMILIA (los aceptas tú) -->
+          <sc-if value="{{ rw.hayFamiliaProp }}" hint-placeholder-val="{{ false }}">
+            <div style="margin:16px 16px 10px;font-size:11.5px;font-weight:700;color:#3068ED;letter-spacing:.05em">RETOS QUE TE PROPONE TU FAMILIA</div>
+            <sc-for list="{{ rw.familiaProp }}" as="f" hint-placeholder-count="0">
+              <div style="margin:0 16px 10px;background:#fff;border:1px solid #E4E7EE;border-top:4px solid #3068ED;border-radius:18px;padding:14px 16px;display:flex;flex-direction:column;gap:6px">
+                <div style="font-size:11px;font-weight:700;color:#3068ED">DE {{ f.de }}</div>
+                <div style="font-family:Outfit;font-weight:800;font-size:17px;line-height:1.25">{{ f.titulo }}</div>
+                <div style="font-size:14px;color:#111">🎁 Si lo consigues: <b>{{ f.outcome }}</b></div>
+                <div style="font-size:12px;color:#6B7280">{{ f.validacion }}<sc-if value="{{ f.vigencia }}" hint-placeholder-val="{{ false }}"> · {{ f.vigencia }}</sc-if></div>
+                <button onClick="{{ f.aceptar }}" style="margin-top:6px;height:46px;border-radius:14px;background:#E56648;color:#fff;font-family:Outfit;font-weight:800;font-size:15px;text-align:center">Acepto el reto</button>
+              </div>
+            </sc-for>
+          </sc-if>
+          <!-- PROPÓN UN REWARD A TU FAMILIA -->
+          <sc-if value="{{ rw.verProponer }}" hint-placeholder-val="{{ true }}">
+            <div style="padding:16px 16px 4px">
+              <button onClick="{{ rw.abrirProponer }}" style="width:100%;display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:16px;background:#fff;border:1px solid #E4E7EE;text-align:left">
+                <div style="width:40px;height:40px;border-radius:12px;background:#E56648;display:grid;place-items:center;flex:none"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></div>
+                <div style="flex:1;min-width:0"><div style="font-family:Outfit;font-weight:700;font-size:15px">Propón un reward</div><div style="font-size:12.5px;color:#6B7280">Tú pones el reto, tu familia decide</div></div>
+                <span style="font-size:20px;color:#9CA3AF">›</span>
+              </button>
+            </div>
+          </sc-if>
+          <sc-if value="{{ rw.enProponer }}" hint-placeholder-val="{{ false }}">
+            <div style="margin:16px 16px 0;background:#fff;border:1px solid #E4E7EE;border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:10px">
+              <div style="font-family:Outfit;font-weight:800;font-size:16px">Propón un reward a tu familia</div>
+              <div style="font-size:12px;font-weight:700;color:#6B7280">SI YO…</div>
+              <input value="{{ rw.pTitulo }}" onChange="{{ rw.onPTitulo }}" placeholder="Leo El Principito esta semana" maxlength="80" style="width:100%;box-sizing:border-box;border:1px solid #E4E7EE;background:#fff;border-radius:14px;padding:13px 14px;font-size:15px;outline:none">
+              <div style="font-size:12px;font-weight:700;color:#6B7280">ME GUSTARÍA…</div>
+              <input value="{{ rw.pOutcome }}" onChange="{{ rw.onPOutcome }}" placeholder="Ir al cine el domingo" maxlength="80" style="width:100%;box-sizing:border-box;border:1px solid #E4E7EE;background:#fff;border-radius:14px;padding:13px 14px;font-size:15px;outline:none">
+              <div style="display:flex;gap:8px">
+                <button onClick="{{ rw.cerrarProponer }}" style="flex:1;height:46px;border-radius:14px;background:#F0F2F6;font-weight:700;text-align:center">Cancelar</button>
+                <button onClick="{{ rw.enviarProp }}" style="flex:2;height:46px;border-radius:14px;background:#E56648;color:#fff;font-family:Outfit;font-weight:800;text-align:center">Enviar a mi familia</button>
+              </div>
+            </div>
+          </sc-if>
+          <sc-if value="{{ rw.hayMisProps }}" hint-placeholder-val="{{ false }}">
+            <div style="margin:16px 16px 8px;font-size:11.5px;font-weight:700;color:#6B7280;letter-spacing:.05em">TUS PROPUESTAS</div>
+            <sc-for list="{{ rw.misProps }}" as="m" hint-placeholder-count="0">
+              <div style="margin:0 16px 8px;background:#fff;border:1px solid #E4E7EE;border-radius:14px;padding:11px 14px">
+                <div style="font-weight:700;font-size:14.5px">{{ m.titulo }} → {{ m.outcome }}</div>
+                <div style="font-size:12px;font-weight:700;color:{{ m.estadoTx }};margin-top:3px">{{ m.estadoTxt }}</div>
+              </div>
+            </sc-for>
+          </sc-if>
+          <sc-if value="{{ rw.sinNada }}" hint-placeholder-val="{{ false }}">
+            <div style="margin:16px;padding:18px;border:1px dashed #D5DAE3;border-radius:18px;background:#fff;text-align:center;font-size:13.5px;line-height:1.5;color:#4B5563">Aún no tienes retos. Cuando tu familia te proponga uno, aparecerá aquí. También puedes proponerlo tú.</div>
           </sc-if>
 
           <sc-if value="{{ rw.hayMarcas }}" hint-placeholder-val="{{ true }}">
@@ -2493,7 +2542,7 @@ class Component extends DCLogic {
       onJoin: unirse(r.id), onContrato: () => this.setState({ contratoAbierto: r.id })
     }));
     const ab = lista.find(r => r.id === s.contratoAbierto);
-    const enMarcha = lista.filter(r => r.estado !== 'propuesta' && r.estado !== 'pide_unirse' && r.estado !== 'conseguido').map(r => {
+    const enMarcha = lista.filter(r => !['propuesta', 'pide_unirse', 'conseguido', 'propuesto', 'rechazado'].includes(r.estado)).map(r => {
       const [etiqueta, color] = ORIGEN[r.origen] || ['BRO', '#111'];
       return {
         ...r, logo: LOGOS[r.id] || r.logo, logoSrc: LOGOS[r.id] || r.logo || 'logo.png', etiqueta, color, esMarca: r.origen === 'marca', de: r.origen === 'marca' ? (r.contrato ? `Contrato firmado por ${r.contrato.por.toLowerCase()} · ${r.contrato.firmado.toLowerCase()}` : r.marca) : r.de,
@@ -2526,7 +2575,21 @@ class Component extends DCLogic {
       hayContrato: !!ab, contrato: ab ? { ...ab, logoSrc: LOGOS[ab.id] || ab.logo || 'logo.png', puedeJoin: ab.estado === 'propuesta', onJoin: unirse(ab.id) } : { conds: [] },
       cerrarContrato: () => this.setState({ contratoAbierto: null }),
       enMarcha, hayEnMarcha: enMarcha.length > 0,
-      conseguidos, hayConseguidos: conseguidos.length > 0
+      conseguidos, hayConseguidos: conseguidos.length > 0,
+      // Retos que te propone tu familia: los aceptas tú
+      familiaProp: lista.filter(r => r.origen === 'familia' && r.estado === 'propuesta').map(r => ({ ...r, de: r.de || 'Tu familia',
+        aceptar: async () => { const x = await this.llamar('aceptarReto', { id: r.id }); this.avisar(x.di || '¡Reto aceptado!'); } })),
+      hayFamiliaProp: lista.some(r => r.origen === 'familia' && r.estado === 'propuesta'),
+      // Tus propuestas a tu familia
+      misProps: lista.filter(r => r.estado === 'propuesto' || r.estado === 'rechazado').map(r => ({ ...r, estadoTxt: r.estado === 'propuesto' ? 'Esperando a tu familia' : 'Tu familia ha dicho que no', estadoTx: r.estado === 'propuesto' ? '#E56648' : '#6B7280' })),
+      hayMisProps: lista.some(r => r.estado === 'propuesto' || r.estado === 'rechazado'),
+      verProponer: !s.rwProp, abrirProponer: () => this.setState({ rwProp: { titulo: '', outcome: '' } }), enProponer: !!s.rwProp,
+      pTitulo: (s.rwProp && s.rwProp.titulo) || '', onPTitulo: e => this.setState({ rwProp: { ...s.rwProp, titulo: e.target.value } }),
+      pOutcome: (s.rwProp && s.rwProp.outcome) || '', onPOutcome: e => this.setState({ rwProp: { ...s.rwProp, outcome: e.target.value } }),
+      cerrarProponer: () => this.setState({ rwProp: null }),
+      enviarProp: async () => { const P = s.rwProp || {}; if (!(P.titulo || '').trim() || !(P.outcome || '').trim()) return this.avisar('Escribe qué harás y qué te gustaría.');
+        const x = await this.llamar('proponerReward', P); this.setState({ rwProp: null }); this.avisar(x.di || 'Enviado a tu familia.'); },
+      sinNada: !lista.some(r => r.estado !== 'rechazado') && !s.rwProp
     };
   }
   async marcarCond(r, i) {

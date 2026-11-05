@@ -8,7 +8,7 @@
 <body>
 <x-dc>
 <helmet>
-<script>(function(){if(window.__brosP)return;window.__brosP=1;var q=new URLSearchParams(location.search).get('perfil');if(q)window.name='bros:'+q.replace(/[^a-z0-9_-]/gi,'').slice(0,20);var m=/^bros:(.+)$/.exec(window.name||'');if(!m)return;var P='P:'+m[1]+':',S=Storage.prototype,g=S.getItem,s=S.setItem,r=S.removeItem;var es=function(x){try{return x===window.localStorage}catch(e){return false}};S.getItem=function(a){return g.call(this,es(this)?P+a:a)};S.setItem=function(a,b){return s.call(this,es(this)?P+a:a,b)};S.removeItem=function(a){return r.call(this,es(this)?P+a:a)};window.BROS_PERFIL=m[1];})();window.BROS_V='2026-11-06.1';</script>
+<script>(function(){if(window.__brosP)return;window.__brosP=1;var q=new URLSearchParams(location.search).get('perfil');if(q)window.name='bros:'+q.replace(/[^a-z0-9_-]/gi,'').slice(0,20);var m=/^bros:(.+)$/.exec(window.name||'');if(!m)return;var P='P:'+m[1]+':',S=Storage.prototype,g=S.getItem,s=S.setItem,r=S.removeItem;var es=function(x){try{return x===window.localStorage}catch(e){return false}};S.getItem=function(a){return g.call(this,es(this)?P+a:a)};S.setItem=function(a,b){return s.call(this,es(this)?P+a:a,b)};S.removeItem=function(a){return r.call(this,es(this)?P+a:a)};window.BROS_PERFIL=m[1];})();window.BROS_V='2026-11-06.2';</script>
 <title>Bro OS</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -140,6 +140,50 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
                   
                 </sc-for>
               </div>
+              <!-- + REWARD (papá o mamá): 4 pasos -->
+              <sc-if value="{{ nr.verBoton }}" hint-placeholder-val="{{ false }}">
+                <div style="width:100%;max-width:380px">
+                  <button onClick="{{ nr.abrir }}" style="width:100%;display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:18px;background:#E56648;color:#fff;text-align:left;box-shadow:0 8px 20px rgba(229,102,72,.28)">
+                    <div style="width:44px;height:44px;border-radius:14px;background:rgba(255,255,255,.2);display:grid;place-items:center;flex:none"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></div>
+                    <div style="flex:1;min-width:0"><div style="font-family:Outfit;font-weight:800;font-size:18px">Reward</div><div style="font-size:12.5px;opacity:.9">Propón un reto a {{ nr.hijo }}</div></div>
+                  </button>
+                </div>
+              </sc-if>
+              <sc-if value="{{ nr.abierto }}" hint-placeholder-val="{{ false }}">
+                <div style="width:100%;max-width:380px;text-align:left;background:{{ t.card }};border:1px solid {{ t.line }};border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:10px">
+                  <div style="display:flex;align-items:center;justify-content:space-between"><div style="font-family:Outfit;font-weight:800;font-size:18px;color:{{ t.txt }}">Nuevo reward para {{ nr.hijo }}</div><button onClick="{{ nr.cerrar }}" style="font-size:20px;color:{{ t.muted }}">✕</button></div>
+                  <div style="font-size:11px;font-weight:700;letter-spacing:.06em;color:#E56648;margin-top:6px">1 · ¿QUÉ TIENE QUE CONSEGUIR?</div>
+                  <div style="display:flex;flex-wrap:wrap;gap:6px"><sc-for list="{{ nr.ideasReto }}" as="c" hint-placeholder-count="0"><button onClick="{{ c.onClick }}" style="padding:8px 12px;border-radius:999px;background:{{ c.bg }};color:{{ c.tx }};border:1px solid {{ c.borde }};font-size:13px;font-weight:700">{{ c.t }}</button></sc-for></div>
+                  <input value="{{ nr.titulo }}" onChange="{{ nr.onTitulo }}" placeholder="O escríbelo: aprobar el examen de mates" maxlength="80" style="width:100%;box-sizing:border-box;border:1px solid {{ t.line }};background:{{ t.card }};color:{{ t.txt }};border-radius:14px;padding:13px 14px;font-size:15px;outline:none">
+                  <div style="font-size:11px;font-weight:700;letter-spacing:.06em;color:#E56648;margin-top:6px">2 · ¿QUÉ GANA SI LO CONSIGUE?</div>
+                  <div style="display:flex;flex-wrap:wrap;gap:6px"><sc-for list="{{ nr.ideasPremio }}" as="c" hint-placeholder-count="0"><button onClick="{{ c.onClick }}" style="padding:8px 12px;border-radius:999px;background:{{ c.bg }};color:{{ c.tx }};border:1px solid {{ c.borde }};font-size:13px;font-weight:700">{{ c.t }}</button></sc-for></div>
+                  <input value="{{ nr.outcome }}" onChange="{{ nr.onOutcome }}" placeholder="O escríbelo: pizza el viernes" maxlength="80" style="width:100%;box-sizing:border-box;border:1px solid {{ t.line }};background:{{ t.card }};color:{{ t.txt }};border-radius:14px;padding:13px 14px;font-size:15px;outline:none">
+                  <sc-if value="{{ nr.hayAviso }}" hint-placeholder-val="{{ false }}"><div style="font-size:12.5px;line-height:1.45;color:#7A5212;background:#FDF6E8;border:1px solid #F3DDB0;border-radius:12px;padding:10px 12px">💡 Idea de BroS: las experiencias juntos (un plan en familia, elegir la cena, una salida) suelen motivar más y durar más que el dinero o la pantalla extra. Tú decides.</div></sc-if>
+                  <div style="font-size:11px;font-weight:700;letter-spacing:.06em;color:#E56648;margin-top:6px">3 · ¿CÓMO SABRÉIS QUE LO HA HECHO?</div>
+                  <div style="display:flex;flex-direction:column;gap:6px"><sc-for list="{{ nr.validas }}" as="c" hint-placeholder-count="0"><button onClick="{{ c.onClick }}" style="text-align:left;padding:11px 12px;border-radius:12px;background:{{ c.bg }};color:{{ c.tx }};border:1px solid {{ c.borde }};font-size:13.5px;font-weight:700">{{ c.t }}</button></sc-for></div>
+                  <div style="font-size:11px;font-weight:700;letter-spacing:.06em;color:#E56648;margin-top:6px">4 · ¿HASTA CUÁNDO?</div>
+                  <div style="display:flex;flex-wrap:wrap;gap:6px"><sc-for list="{{ nr.plazos }}" as="c" hint-placeholder-count="0"><button onClick="{{ c.onClick }}" style="padding:8px 12px;border-radius:999px;background:{{ c.bg }};color:{{ c.tx }};border:1px solid {{ c.borde }};font-size:13px;font-weight:700">{{ c.t }}</button></sc-for></div>
+                  <button onClick="{{ nr.enviar }}" style="margin-top:6px;height:50px;border-radius:16px;text-align:center;background:{{ nr.enviarBg }};color:#fff;font-family:Outfit;font-weight:800;font-size:16px">Enviar a {{ nr.hijo }}</button>
+                  <div style="font-size:11.5px;color:{{ t.muted }};text-align:center">Le llegará como propuesta. Empieza cuando {{ nr.hijo }} lo acepte.</div>
+                </div>
+              </sc-if>
+              <!-- Propuestas del Bro -->
+              <sc-if value="{{ nr.hayProps }}" hint-placeholder-val="{{ false }}">
+                <div style="width:100%;max-width:380px;text-align:left;display:flex;flex-direction:column;gap:8px">
+                  <div style="font-size:11px;font-weight:700;letter-spacing:.06em;color:#E56648;padding:0 2px">{{ nr.hijoMay }} TE PROPONE</div>
+                  <sc-for list="{{ nr.props }}" as="q" hint-placeholder-count="0">
+                    <div style="background:{{ t.card }};border:1px solid {{ t.line }};border-radius:16px;padding:12px 13px;display:flex;flex-direction:column;gap:8px">
+                      <div style="font-size:14px;line-height:1.4;color:{{ t.txt }}">Si <b>{{ q.titulo }}</b>, le gustaría <b>{{ q.outcome }}</b>.</div>
+                      <sc-if value="{{ q.ajustando }}" hint-placeholder-val="{{ false }}"><input value="{{ q.nuevo }}" onChange="{{ q.onNuevo }}" placeholder="Propón otro reward" style="border:1px solid {{ t.line }};background:{{ t.card }};color:{{ t.txt }};border-radius:12px;padding:10px 12px;font-size:14px;outline:none"></sc-if>
+                      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px">
+                        <button onClick="{{ q.no }}" style="height:40px;border-radius:12px;background:transparent;border:1px solid {{ t.line }};color:{{ t.txt }};font-weight:700;font-size:13px;text-align:center">No</button>
+                        <button onClick="{{ q.ajustar }}" style="height:40px;border-radius:12px;background:transparent;border:1px solid #E56648;color:#E56648;font-weight:700;font-size:13px;text-align:center">{{ q.ajustarTxt }}</button>
+                        <button onClick="{{ q.si }}" style="height:40px;border-radius:12px;background:#E56648;color:#fff;font-weight:700;font-size:13px;text-align:center">Aceptar</button>
+                      </div>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-if>
               <sc-if value="{{ hayGraves }}" hint-placeholder-val="{{ false }}">
                 <div style="width:100%;max-width:380px;text-align:left;display:flex;flex-direction:column;gap:8px">
                   <div style="font-size:11px;font-weight:700;letter-spacing:.06em;color:#D92D20;padding:0 2px">AVISO IMPORTANTE</div>
@@ -2498,6 +2542,29 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
         const graves = L.filter(q => q.gravedad === 'grave' && !q.vista), resto = L.filter(q => !(q.gravedad === 'grave' && !q.vista)).slice(0, 15);
         const fila = q => ({ ...q, cuando: cuando(q.creada), donde: MOD[q.modulo] || q.modulo, cat: q.categoria || 'no adecuado', vista: () => this.busquedaVista([q.id]), borrar: () => this.busquedaBorrar(q.id) });
         return { hayGraves: padre && graves.length > 0, graves: graves.map(fila), hayBusquedas: padre && resto.length > 0, busquedas: resto.map(fila) };
+      })(),
+      nr: (() => { const F = this.state.nrw, hijo = (db.nino && db.nino.nombre) || 'tu hijo';
+        const chip = (lista, k) => lista.map(t0 => { const on = F && F[k] === t0; return { t: t0, bg: on ? '#E56648' : 'transparent', tx: on ? '#fff' : t.txt, borde: on ? '#E56648' : t.line, onClick: () => this.setState({ nrw: { ...this.state.nrw, [k]: t0 } }) }; });
+        const listo = F && (F.titulo || '').trim() && (F.outcome || '').trim();
+        const props = (db.rewards || []).filter(r => r.estado === 'propuesto');
+        return { hijo, hijoMay: hijo.toUpperCase(), verBoton: padre && !F, abierto: padre && !!F,
+          abrir: () => this.setState({ nrw: { titulo: '', outcome: '', validacion: 'mama', hasta: 'Esta semana' } }), cerrar: () => this.setState({ nrw: null }),
+          ideasReto: chip(['Aprobar el examen', 'Leer un libro', 'Ordenar su cuarto', 'Dormir bien la semana', 'Entrenar 3 días', 'Ayudar en casa'], 'titulo'), ideasPremio: chip(['Pizza el viernes', 'Cine en familia', 'Elegir la cena', 'Plan de bici juntos', '1 h extra de consola', 'Salir con amigos'], 'outcome'),
+          titulo: (F && F.titulo) || '', onTitulo: e => this.setState({ nrw: { ...this.state.nrw, titulo: e.target.value } }),
+          outcome: (F && F.outcome) || '', onOutcome: e => this.setState({ nrw: { ...this.state.nrw, outcome: e.target.value } }),
+          hayAviso: !!F && /(€|euro|dinero|paga|consola|pantalla|m[oó]vil|tablet|videojuego|juego extra|hora extra)/i.test(F.outcome || ''),
+          validas: [['mama', 'Lo marca él y yo lo valido'], ['aura', 'Lo comprueba Aura [sueño o pasos]'], ['test', 'Test de Bro AI [lectura]']].map(([k, t0]) => { const on = F && F.validacion === k; return { t: t0, bg: on ? 'rgba(229,102,72,.12)' : 'transparent', tx: t.txt, borde: on ? '#E56648' : t.line, onClick: () => this.setState({ nrw: { ...this.state.nrw, validacion: k } }) }; }),
+          plazos: chip(['Esta semana', 'Este mes', 'Este trimestre'], 'hasta'),
+          enviarBg: listo ? '#E56648' : '#E8B3A6',
+          enviar: async () => { if (!listo) return this.avisar('Elige el reto y el reward.'); const quien = (this.state.famReal && this.state.famReal.miNombre) || 'Tu familia';
+            const x = await this.llamar('crearRewardFamilia', { ...F, de: quien }); this.setState({ nrw: null }); this.avisar(x.di || 'Enviado.'); },
+          hayProps: padre && props.length > 0,
+          props: props.map(r => { const aj = (this.state.ajusteRw || {})[r.id];
+            return { ...r, ajustando: aj !== undefined, nuevo: aj || '', ajustarTxt: aj !== undefined ? 'Enviar cambio' : 'Cambiar',
+              onNuevo: e => this.setState({ ajusteRw: { ...(this.state.ajusteRw || {}), [r.id]: e.target.value } }),
+              ajustar: async () => { if (aj === undefined) return this.setState({ ajusteRw: { ...(this.state.ajusteRw || {}), [r.id]: '' } }); if (!aj.trim()) return; await this.llamar('responderPropuesta', { id: r.id, si: true, outcome: aj.trim() }); this.avisar('Aceptado con tu cambio.'); },
+              si: async () => { await this.llamar('responderPropuesta', { id: r.id, si: true }); this.avisar('Aceptado.'); },
+              no: async () => { await this.llamar('responderPropuesta', { id: r.id, si: false }); this.avisar('Hecho.'); } }; }) };
       })(),
       hayPeticiones: padre && (this.state.peticionesR || []).length > 0,
       peticiones: (this.state.peticionesR || []).map(p => ({ ...p,

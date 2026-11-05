@@ -1201,7 +1201,7 @@ function datosPartido(r, tri) {
 function pedirReserva(db) { if (db.partido && db.partido.reserva === 'sin_pedir') db.partido.reserva = 'esperando'; return {}; }
 
 function actualizarReward(rw) {
-  if (['propuesta', 'pide_unirse', 'conseguido'].includes(rw.estado)) return;
+  if (['propuesta', 'pide_unirse', 'conseguido', 'propuesto', 'rechazado'].includes(rw.estado)) return;
   if (rw.conds.length && rw.conds.every(c => c.hecho)) { rw.estado = 'conseguido'; rw.fecha = 'Hoy'; return; }
   rw.estado = rw.conds.some(c => c.esperando && !c.hecho) ? 'por_validar' : 'en_marcha';
 }
@@ -1231,6 +1231,39 @@ function aprobarPrueba(db, { id }) {
   if (c) c.hecho = true;
   if (rw) actualizarReward(rw);
   return { conseguido: rw && rw.estado === 'conseguido', outcome: rw && rw.outcome };
+}
+
+// ---------- Rewards de la familia (Padres Real) y propuestas del Bro ----------
+const VALIDA = { mama: 'Tú lo marcas, tu familia lo valida', aura: 'Prueba: lo valida Aura', test: 'Prueba: test de Bro AI' };
+function crearRewardFamilia(db, { titulo, outcome, validacion, hasta, de }) {
+  titulo = String(titulo || '').trim().slice(0, 80); outcome = String(outcome || '').trim().slice(0, 80);
+  if (!titulo || !outcome) return { error: 'Falta el reto o el reward' };
+  const tipo = VALIDA[validacion] ? validacion : 'mama';
+  (db.rewards = db.rewards || []).unshift({ id: nuevoId(), origen: 'familia', de: de || 'Tu familia', estado: 'propuesta', titulo, outcome,
+    validacion: VALIDA[tipo], vigencia: hasta ? 'Hasta ' + String(hasta).slice(0, 40) : '', nuevo: true, conds: [{ t: titulo, tipo, hecho: false }] });
+  return { di: 'Reward enviado. Le llegará como propuesta.' };
+}
+function aceptarReto(db, { id }) {
+  const rw = (db.rewards || []).find(x => x.id === id);
+  if (!rw || rw.origen !== 'familia' || rw.estado !== 'propuesta') return {};
+  rw.estado = 'en_marcha'; rw.aceptado = new Date().toISOString();
+  return { di: '¡Reto aceptado!' };
+}
+function proponerReward(db, { titulo, outcome }) {
+  titulo = String(titulo || '').trim().slice(0, 80); outcome = String(outcome || '').trim().slice(0, 80);
+  if (!titulo || !outcome) return { error: 'Falta qué harás o qué te gustaría' };
+  (db.rewards = db.rewards || []).unshift({ id: nuevoId(), origen: 'bro', de: 'Propuesto por ti', estado: 'propuesto', titulo, outcome,
+    validacion: VALIDA.mama, conds: [{ t: titulo, tipo: 'mama', hecho: false }] });
+  return { di: 'Se lo he mandado a tu familia.' };
+}
+function responderPropuesta(db, { id, si, outcome, titulo }) {
+  const rw = (db.rewards || []).find(x => x.id === id);
+  if (!rw || rw.estado !== 'propuesto') return {};
+  if (!si) { rw.estado = 'rechazado'; return { di: 'Hecho.' }; }
+  if (outcome) rw.outcome = String(outcome).slice(0, 80);
+  if (titulo) { rw.titulo = String(titulo).slice(0, 80); rw.conds[0].t = rw.titulo; }
+  rw.estado = 'en_marcha'; rw.de = 'Propuesto por ti · aceptado por tu familia';
+  return { di: 'Aceptado.' };
 }
 
 function pedirUnirse(db, { id }) {
@@ -1292,7 +1325,7 @@ function corregirTexto(db, { texto }) {
 }
 
 // ---------- Puerta de entrada: el front llama por nombre ----------
-const RUTAS = { estado: () => ({}), pedirPaso, pedirCanal, pedirAppNueva, actualizarLimite, dormir, despertar, consentir, esAdecuado, temaWeb, pedirMonedero, temaAprender, corregirTexto, buscarContenido, temasContenido: () => ({ temas: temasContenido() }), interpretar, elegirOpcion, verVideo, avanzarProyecto, flujo, enviarMensaje, leerChat, pedirApp, pedirMonedero, decidir, sumarLogro, crearAcuerdo, marcarCondicion, aprobarPrueba, pedirUnirse, pedirReserva, compartirPartido, compartirPrivado, respuestaAmigo, marcarColegio, leerAvisos };
+const RUTAS = { estado: () => ({}), crearRewardFamilia, aceptarReto, proponerReward, responderPropuesta, pedirPaso, pedirCanal, pedirAppNueva, actualizarLimite, dormir, despertar, consentir, esAdecuado, temaWeb, pedirMonedero, temaAprender, corregirTexto, buscarContenido, temasContenido: () => ({ temas: temasContenido() }), interpretar, elegirOpcion, verVideo, avanzarProyecto, flujo, enviarMensaje, leerChat, pedirApp, pedirMonedero, decidir, sumarLogro, crearAcuerdo, marcarCondicion, aprobarPrueba, pedirUnirse, pedirReserva, compartirPartido, compartirPrivado, respuestaAmigo, marcarColegio, leerAvisos };
 
 export function ejecutar(db, ruta, datos = {}) {
   const base = datosIniciales();
