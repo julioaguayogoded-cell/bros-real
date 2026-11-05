@@ -2104,7 +2104,7 @@ class Component extends DCLogic {
     // Estado REAL del móvil (red, cobertura, batería). Nunca valores inventados.
     window.__broEstado = e => this.setState({ estadoMovil: e });
     window.__broRedes = l => this.setState({ redesWifi: l, buscandoWifi: false });
-    window.__broWifi = () => this.wifiRefrescar(false);
+    window.__broWifi = () => { this.wifiRefrescar(false); setTimeout(() => this.wifiRefrescar(false), 1500); setTimeout(() => this.wifiRefrescar(true), 3500); };
     const leerEstado = async () => {
       try { if (window.BroNativo && BroNativo.estadoMovil) { this.setState({ estadoMovil: JSON.parse(BroNativo.estadoMovil()) }); return; } } catch (e) {}
       const e = { red: navigator.onLine ? 'desconocida' : 'ninguna' };
