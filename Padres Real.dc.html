@@ -8,7 +8,7 @@
 <body>
 <x-dc>
 <helmet>
-<script>(function(){if(window.__brosP)return;window.__brosP=1;var q=new URLSearchParams(location.search).get('perfil');if(q)window.name='bros:'+q.replace(/[^a-z0-9_-]/gi,'').slice(0,20);var m=/^bros:(.+)$/.exec(window.name||'');if(!m)return;var P='P:'+m[1]+':',S=Storage.prototype,g=S.getItem,s=S.setItem,r=S.removeItem;var es=function(x){try{return x===window.localStorage}catch(e){return false}};S.getItem=function(a){return g.call(this,es(this)?P+a:a)};S.setItem=function(a,b){return s.call(this,es(this)?P+a:a,b)};S.removeItem=function(a){return r.call(this,es(this)?P+a:a)};window.BROS_PERFIL=m[1];})();window.BROS_V='2026-11-06.3';</script>
+<script>(function(){if(window.__brosP)return;window.__brosP=1;var q=new URLSearchParams(location.search).get('perfil');if(q)window.name='bros:'+q.replace(/[^a-z0-9_-]/gi,'').slice(0,20);var m=/^bros:(.+)$/.exec(window.name||'');if(!m)return;var P='P:'+m[1]+':',S=Storage.prototype,g=S.getItem,s=S.setItem,r=S.removeItem;var es=function(x){try{return x===window.localStorage}catch(e){return false}};S.getItem=function(a){return g.call(this,es(this)?P+a:a)};S.setItem=function(a,b){return s.call(this,es(this)?P+a:a,b)};S.removeItem=function(a){return r.call(this,es(this)?P+a:a)};window.BROS_PERFIL=m[1];})();window.BROS_V='2026-11-06.4';</script>
 <title>Bro OS</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -164,14 +164,14 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
                   <div style="font-size:11px;font-weight:700;letter-spacing:.06em;color:#E56648;margin-top:6px">4 · ¿HASTA CUÁNDO?</div>
                   <div style="display:flex;flex-wrap:wrap;gap:6px"><sc-for list="{{ nr.plazos }}" as="c" hint-placeholder-count="0"><button onClick="{{ c.onClick }}" style="padding:8px 12px;border-radius:999px;background:{{ c.bg }};color:{{ c.tx }};border:1px solid {{ c.borde }};font-size:13px;font-weight:700">{{ c.t }}</button></sc-for></div>
                   <sc-if value="{{ nr.listo }}" hint-placeholder-val="{{ false }}"><div style="background:#FFFBF3;border:1px solid #F1E2C2;border-radius:14px;padding:12px 13px;display:flex;flex-direction:column;gap:6px;text-align:left">
-                    <div style="font-size:10.5px;font-weight:800;letter-spacing:.06em;color:#9A5B00">📜 CONTRATO</div>
+                    <div style="font-size:10.5px;font-weight:800;letter-spacing:.06em;color:#9A5B00">🤝 TRATO</div>
                     <div style="font-size:13.5px;line-height:1.45;color:#111">{{ nr.k.yo }}</div>
                     <div style="font-size:13.5px;line-height:1.45;color:#111">{{ nr.k.ellos }}</div>
                     <div style="font-size:12px;color:#6B7280">Cómo se comprueba: {{ nr.k.como }}</div>
                     <div style="font-size:11.5px;color:#9A5B00">{{ nr.k.nota }}</div>
                   </div></sc-if>
-                  <button onClick="{{ nr.enviar }}" style="margin-top:6px;height:50px;border-radius:16px;text-align:center;background:{{ nr.enviarBg }};color:#fff;font-family:Outfit;font-weight:800;font-size:16px">Firmar y enviar a {{ nr.hijo }}</button>
-                  <div style="font-size:11.5px;color:{{ t.muted }};text-align:center">Tú firmas al enviarlo. Empieza cuando {{ nr.hijo }} lo firme también.</div>
+                  <button onClick="{{ nr.enviar }}" style="margin-top:6px;height:50px;border-radius:16px;text-align:center;background:{{ nr.enviarBg }};color:#fff;font-family:Outfit;font-weight:800;font-size:16px">Proponer el trato a {{ nr.hijo }}</button>
+                  <div style="font-size:11.5px;color:{{ t.muted }};text-align:center">Empieza cuando {{ nr.hijo }} diga «¡Trato hecho!».</div>
                 </div>
               </sc-if>
               <!-- Propuestas del Bro -->
@@ -181,7 +181,7 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
                   <sc-for list="{{ nr.props }}" as="q" hint-placeholder-count="0">
                     <div style="background:{{ t.card }};border:1px solid {{ t.line }};border-radius:16px;padding:12px 13px;display:flex;flex-direction:column;gap:8px">
                       <div style="background:#FFFBF3;border:1px solid #F1E2C2;border-radius:14px;padding:12px 13px;display:flex;flex-direction:column;gap:6px;text-align:left">
-                    <div style="font-size:10.5px;font-weight:800;letter-spacing:.06em;color:#9A5B00">📜 CONTRATO</div>
+                    <div style="font-size:10.5px;font-weight:800;letter-spacing:.06em;color:#9A5B00">🤝 TRATO</div>
                     <div style="font-size:13.5px;line-height:1.45;color:#111">{{ q.k.yo }}</div>
                     <div style="font-size:13.5px;line-height:1.45;color:#111">{{ q.k.ellos }}</div>
                     <div style="font-size:12px;color:#6B7280">Cómo se comprueba: {{ q.k.como }}</div>
@@ -191,7 +191,7 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
                       <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px">
                         <button onClick="{{ q.no }}" style="height:40px;border-radius:12px;background:transparent;border:1px solid {{ t.line }};color:{{ t.txt }};font-weight:700;font-size:13px;text-align:center">No</button>
                         <button onClick="{{ q.ajustar }}" style="height:40px;border-radius:12px;background:transparent;border:1px solid #E56648;color:#E56648;font-weight:700;font-size:13px;text-align:center">{{ q.ajustarTxt }}</button>
-                        <button onClick="{{ q.si }}" style="height:40px;border-radius:12px;background:#E56648;color:#fff;font-weight:700;font-size:13px;text-align:center">Firmar</button>
+                        <button onClick="{{ q.si }}" style="height:40px;border-radius:12px;background:#E56648;color:#fff;font-weight:700;font-size:13px;text-align:center">¡Trato hecho!</button>
                       </div>
                     </div>
                   </sc-for>
@@ -1692,7 +1692,7 @@ const VIDEOS_YT = {
 const FONDOS_VIDEO = ['linear-gradient(135deg,#3068ED,#6f49d8)', 'linear-gradient(135deg,#82B94F,#3e8e6a)', 'linear-gradient(135deg,#E56648,#c2417a)'];
 
 
-// Contrato de reward: el compromiso de las dos partes, en palabras sencillas
+// Trato de reward: el compromiso de las dos partes, en palabras sencillas
 function textoContrato(r, nino) {
   const fBro = (r.firmas || []).find(f => f.rol === 'bro'), fFam = (r.firmas || []).find(f => f.rol === 'familia');
   const bro = (fBro && fBro.quien) || nino || 'Bro', fam = (fFam && fFam.quien) || (r.de && !/^Propuesto/.test(r.de) ? r.de : 'Mi familia');
@@ -2573,7 +2573,7 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
         const VAL = { mama: 'Tú lo marcas, tu familia lo valida', aura: 'Prueba: lo valida Aura', test: 'Prueba: test de Bro AI' };
         const props = (db.rewards || []).filter(r => r.estado === 'propuesto');
         return { hijo, hijoMay: hijo.toUpperCase(), verBoton: padre && !F, abierto: padre && !!F, listo: !!listo,
-          k: F ? { ...textoContrato({ titulo: F.titulo || '…', outcome: F.outcome || '…', vigencia: F.hasta ? 'Hasta ' + F.hasta : '', validacion: VAL[F.validacion], firmas: [{ rol: 'bro', quien: hijo }, { rol: 'familia', quien }] }, hijo), nota: 'Firmas tú al enviar · ' + hijo + ' firma al aceptarlo' } : {},
+          k: F ? { ...textoContrato({ titulo: F.titulo || '…', outcome: F.outcome || '…', vigencia: F.hasta ? 'Hasta ' + F.hasta : '', validacion: VAL[F.validacion], firmas: [{ rol: 'bro', quien: hijo }, { rol: 'familia', quien }] }, hijo), nota: 'Empieza cuando ' + hijo + ' también diga que sí' } : {},
           abrir: () => this.setState({ nrw: { titulo: '', outcome: '', validacion: 'mama', hasta: 'Esta semana' } }), cerrar: () => this.setState({ nrw: null }),
           ideasReto: chip(['Aprobar el examen', 'Leer un libro', 'Ordenar su cuarto', 'Dormir bien la semana', 'Entrenar 3 días', 'Ayudar en casa'], 'titulo'), ideasPremio: chip(['Pizza el viernes', 'Cine en familia', 'Elegir la cena', 'Plan de bici juntos', '1 h extra de consola', 'Salir con amigos'], 'outcome'),
           titulo: (F && F.titulo) || '', onTitulo: e => this.setState({ nrw: { ...this.state.nrw, titulo: e.target.value } }),
@@ -2586,10 +2586,10 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
             const x = await this.llamar('crearRewardFamilia', { ...F, de: quien }); this.setState({ nrw: null }); this.avisar(x.di || 'Enviado.'); },
           hayProps: padre && props.length > 0,
           props: props.map(r => { const aj = (this.state.ajusteRw || {})[r.id];
-            return { ...r, k: { ...textoContrato({ ...r, firmas: [...(r.firmas || []), { rol: 'familia', quien: (this.state.famReal && this.state.famReal.miNombre) || 'Tu familia' }] }, hijo), nota: hijo + ' ya lo ha firmado · faltas tú' }, ajustando: aj !== undefined, nuevo: aj || '', ajustarTxt: aj !== undefined ? 'Enviar cambio' : 'Cambiar',
+            return { ...r, k: { ...textoContrato({ ...r, firmas: [...(r.firmas || []), { rol: 'familia', quien: (this.state.famReal && this.state.famReal.miNombre) || 'Tu familia' }] }, hijo), nota: hijo + ' ya ha dicho que sí · faltas tú' }, ajustando: aj !== undefined, nuevo: aj || '', ajustarTxt: aj !== undefined ? 'Enviar cambio' : 'Cambiar',
               onNuevo: e => this.setState({ ajusteRw: { ...(this.state.ajusteRw || {}), [r.id]: e.target.value } }),
-              ajustar: async () => { if (aj === undefined) return this.setState({ ajusteRw: { ...(this.state.ajusteRw || {}), [r.id]: '' } }); if (!aj.trim()) return; await this.llamar('responderPropuesta', { id: r.id, si: true, outcome: aj.trim(), de: (this.state.famReal && this.state.famReal.miNombre) || 'Tu familia' }); this.avisar('Contrato firmado con tu cambio.'); },
-              si: async () => { await this.llamar('responderPropuesta', { id: r.id, si: true, de: (this.state.famReal && this.state.famReal.miNombre) || 'Tu familia' }); this.avisar('Contrato firmado.'); },
+              ajustar: async () => { if (aj === undefined) return this.setState({ ajusteRw: { ...(this.state.ajusteRw || {}), [r.id]: '' } }); if (!aj.trim()) return; await this.llamar('responderPropuesta', { id: r.id, si: true, outcome: aj.trim(), de: (this.state.famReal && this.state.famReal.miNombre) || 'Tu familia' }); this.avisar('Cambio enviado. ¡Trato hecho!'); },
+              si: async () => { await this.llamar('responderPropuesta', { id: r.id, si: true, de: (this.state.famReal && this.state.famReal.miNombre) || 'Tu familia' }); this.avisar('¡Trato hecho!'); },
               no: async () => { await this.llamar('responderPropuesta', { id: r.id, si: false }); this.avisar('Hecho.'); } }; }) };
       })(),
       hayPeticiones: padre && (this.state.peticionesR || []).length > 0,

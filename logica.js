@@ -1250,14 +1250,14 @@ function aceptarReto(db, { id, quien }) {
   if (!rw || rw.origen !== 'familia' || rw.estado !== 'propuesta') return {};
   rw.estado = 'en_marcha'; rw.aceptado = new Date().toISOString();
   (rw.firmas = rw.firmas || []).push({ quien: quien || (db.nino && db.nino.nombre) || 'Bro', rol: 'bro', fecha: hoyTxt() });
-  return { di: 'Contrato firmado. ¡A por ello!' };
+  return { di: '¡Trato hecho! A por ello.' };
 }
 function proponerReward(db, { titulo, outcome, quien }) {
   titulo = String(titulo || '').trim().slice(0, 80); outcome = String(outcome || '').trim().slice(0, 80);
   if (!titulo || !outcome) return { error: 'Falta qué harás o qué te gustaría' };
   (db.rewards = db.rewards || []).unshift({ id: nuevoId(), origen: 'bro', de: 'Propuesto por ti', estado: 'propuesto', titulo, outcome,
     validacion: VALIDA.mama, conds: [{ t: titulo, tipo: 'mama', hecho: false }], firmas: [{ quien: quien || (db.nino && db.nino.nombre) || 'Bro', rol: 'bro', fecha: hoyTxt() }] });
-  return { di: 'Contrato firmado y enviado a tu familia.' };
+  return { di: 'Trato enviado a tu familia.' };
 }
 function responderPropuesta(db, { id, si, outcome, titulo, de }) {
   const rw = (db.rewards || []).find(x => x.id === id);
