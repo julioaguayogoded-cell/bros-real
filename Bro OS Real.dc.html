@@ -78,7 +78,7 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
             <sc-if value="{{ verSubtitulo }}" hint-placeholder-val="{{ true }}"><div style="font-size:12px;color:{{ t.muted }}">{{ subtitulo }}</div></sc-if>
           </div>
         </sc-if>
-        <div aria-label="{{ est.etiqueta }}" style="display:flex;align-items:center;gap:6px;flex:none;color:{{ t.txt }}">
+        <div aria-label="{{ est.etiqueta }}" onClick="{{ abrirConexiones }}" role="button" style="display:flex;align-items:center;gap:6px;flex:none;color:{{ t.txt }};cursor:pointer;padding:6px 4px;margin:-6px -4px">
           <sc-if value="{{ est.hayMovil }}" hint-placeholder-val="{{ false }}">
             <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="7" width="3" height="4" rx="1" opacity="{{ est.b1 }}"></rect><rect x="4.5" y="5" width="3" height="6" rx="1" opacity="{{ est.b2 }}"></rect><rect x="9" y="2.5" width="3" height="8.5" rx="1" opacity="{{ est.b3 }}"></rect><rect x="13.5" y="0" width="3" height="11" rx="1" opacity="{{ est.b4 }}"></rect></svg>
           </sc-if>
@@ -738,6 +738,43 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
               <button onClick="{{ qr.listo }}" style="width:100%;height:46px;border-radius:14px;background:#F0F2F6;font-weight:700;font-size:14.5px">Listo</button>
             </div>
           </sc-if>
+        </sc-if>
+        <!-- CONEXIONES: wifi y datos móviles, sin salir de BroS Life -->
+        <sc-if value="{{ p.conexiones }}" hint-placeholder-val="{{ false }}">
+          <div style="margin:16px 16px 0;background:#fff;border:1px solid #E4E7EE;border-radius:18px;padding:14px 16px;display:flex;align-items:center;gap:12px">
+            <div style="width:42px;height:42px;border-radius:12px;background:#3068ED;display:grid;place-items:center;flex:none"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M5 12.5a10 10 0 0 1 14 0M8.5 16a5 5 0 0 1 7 0M2 9a15 15 0 0 1 20 0M12 19.5h.01"></path></svg></div>
+            <div style="flex:1;min-width:0"><div style="font-family:Outfit;font-weight:800;font-size:16px">Wifi</div><div style="font-size:12.5px;color:#6B7280;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ cn.wifiSub }}</div></div>
+            <button onClick="{{ cn.toggleWifi }}" aria-label="Activar o desactivar wifi" style="flex:none;width:54px;height:32px;border-radius:999px;background:{{ cn.swBg }};position:relative;transition:background .2s"><span style="position:absolute;top:3px;left:{{ cn.swX }};width:26px;height:26px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:left .2s"></span></button>
+          </div>
+          <sc-if value="{{ cn.verRedes }}" hint-placeholder-val="{{ false }}">
+            <div style="margin:18px 16px 8px;display:flex;align-items:center;justify-content:space-between">
+              <span style="font-size:11px;font-weight:700;letter-spacing:.06em;color:#9CA3AF">REDES CERCANAS</span>
+              <button onClick="{{ cn.buscar }}" style="font-size:12.5px;font-weight:700;color:#3068ED">{{ cn.buscarTxt }}</button>
+            </div>
+            <div style="margin:0 16px;background:#fff;border:1px solid #E4E7EE;border-radius:18px;overflow:hidden">
+              <sc-if value="{{ cn.sinRedes }}" hint-placeholder-val="{{ false }}"><div style="padding:16px;font-size:13.5px;color:#6B7280;text-align:center">{{ cn.sinRedesTxt }}</div></sc-if>
+              <sc-for list="{{ cn.redes }}" as="r" hint-placeholder-count="0">
+                <div style="border-bottom:1px solid #F0F2F6">
+                  <button onClick="{{ r.onClick }}" style="width:100%;display:flex;align-items:center;gap:12px;padding:13px 16px;text-align:left">
+                    <svg width="20" height="16" viewBox="0 0 16 12" fill="#111" style="flex:none"><path d="M8 12 5.6 9.4a3.4 3.4 0 0 1 4.8 0Z" opacity="{{ r.w1 }}"></path><path d="M3.5 7.3a6.4 6.4 0 0 1 9 0l-1.4 1.4a4.4 4.4 0 0 0-6.2 0Z" opacity="{{ r.w2 }}"></path><path d="M1.4 5.2a9.4 9.4 0 0 1 13.2 0l-1.4 1.4a7.4 7.4 0 0 0-10.4 0Z" opacity="{{ r.w3 }}"></path><path d="M-.6 3.1a12.4 12.4 0 0 1 17.2 0l-1.4 1.4a10.4 10.4 0 0 0-14.4 0Z" opacity="{{ r.w4 }}"></path></svg>
+                    <div style="flex:1;min-width:0;font-size:15px;font-weight:{{ r.peso }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.ssid }}</div>
+                    <span style="font-size:12px;color:{{ r.estadoColor }};font-weight:700">{{ r.estado }}</span>
+                    <sc-if value="{{ r.segura }}" hint-placeholder-val="{{ false }}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2.4" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg></sc-if>
+                  </button>
+                  <sc-if value="{{ r.pidiendo }}" hint-placeholder-val="{{ false }}">
+                    <div style="display:flex;gap:8px;padding:0 16px 14px">
+                      <input type="password" value="{{ cn.clave }}" onChange="{{ cn.onClave }}" onKeyDown="{{ cn.onKeyClave }}" placeholder="Contraseña del wifi" autocomplete="off" style="flex:1;min-width:0;height:46px;border:1px solid #E4E7EE;border-radius:14px;padding:0 14px;font-size:15px;outline:none">
+                      <button onClick="{{ cn.conectar }}" style="flex:none;height:46px;padding:0 16px;border-radius:14px;background:#3068ED;color:#fff;font-weight:800;font-size:14px">Conectar</button>
+                    </div>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+          <div style="margin:18px 16px 0;background:#fff;border:1px solid #E4E7EE;border-radius:18px;padding:14px 16px;display:flex;align-items:center;gap:12px">
+            <div style="width:42px;height:42px;border-radius:12px;background:#22A559;display:grid;place-items:center;flex:none"><svg width="22" height="18" viewBox="0 0 17 11" fill="#fff"><rect x="0" y="7" width="3" height="4" rx="1"></rect><rect x="4.5" y="5" width="3" height="6" rx="1"></rect><rect x="9" y="2.5" width="3" height="8.5" rx="1"></rect><rect x="13.5" y="0" width="3" height="11" rx="1"></rect></svg></div>
+            <div style="flex:1;min-width:0"><div style="font-family:Outfit;font-weight:800;font-size:16px">Datos móviles</div><div style="font-size:12.5px;color:#6B7280">{{ cn.datosSub }}</div></div>
+          </div>
         </sc-if>
         <!-- AURA -->
         <sc-if value="{{ p.aura }}" hint-placeholder-val="{{ false }}">
@@ -1980,7 +2017,7 @@ const NAV = [
   ['monedero', ['wallet', 'cartera', 'monedero', 'mi dinero', 'dinero', 'tarjeta', 'mi tarjeta', 'paga', 'mi paga', 'ahorro', 'mis ahorros', 'hucha', 'saldo']],
   ['aprender', ['learning', 'learning mode', 'deberes', 'estudiar', 'modo estudio', 'trabajo del cole', 'presentacion del cole']]
 ];
-const DESTINOS = ['monedero', 'aprender', 'comunidades', 'comunidad', 'chat', 'proyectos', 'proyecto', 'partido', 'apps', 'logros', 'contenido', 'aura', 'qr'];
+const DESTINOS = ['conexiones', 'monedero', 'aprender', 'comunidades', 'comunidad', 'chat', 'proyectos', 'proyecto', 'partido', 'apps', 'logros', 'contenido', 'aura', 'qr'];
 // Código tipo QR (de muestra, no escaneable): 25×25 con las tres esquinas de posición
 function celdasQR(semilla) {
   let x = semilla || 7;
@@ -2005,6 +2042,7 @@ const PILARES = [
   // Cámara y fotos del propio móvil: las fotos se quedan en el móvil, nunca en BroS Life
   { t: 'Cámara', accion: 'abrirCamara', color: 'linear-gradient(160deg,#B4B9C2,#6B7280)', icono: 'M2.5 8.5a2 2 0 0 1 2-2h2.8l1.5-2h6.4l1.5 2h2.8a2 2 0 0 1 2 2v9.5a2 2 0 0 1-2 2h-15a2 2 0 0 1-2-2zM12 17.3a4.4 4.4 0 1 0 0-8.8 4.4 4.4 0 0 0 0 8.8zM12 14.5a1.6 1.6 0 1 0 0-3.2 1.6 1.6 0 0 0 0 3.2M18.2 9.6h.01' },
   { t: 'Fotos', accion: 'abrirFotos', color: '#F5B400', icono: 'M7.5 3.5H18a2.5 2.5 0 0 1 2.5 2.5v10.5M3.5 9A2 2 0 0 1 5.5 7h9.5a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5.5a2 2 0 0 1-2-2zM3.5 17.5l4-4 3 3 2-2 4.5 4.5M12.5 11h.01' },
+  { t: 'Conexiones', pantalla: 'conexiones', color: '#475569', icono: 'M5 12.5a10 10 0 0 1 14 0M8.5 16a5 5 0 0 1 7 0M2 9a15 15 0 0 1 20 0M12 19.5h.01' },
   // Básicos del móvil. Llamar abre el teléfono; SOS y Contactos se configuran más adelante.
   { t: 'Llamar', accion: 'abrirTelefono', color: '#22A559', icono: 'M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z' },
   { t: 'Contactos', accion: 'abrirContactos', color: '#0EA5B7', icono: 'M5 3h12a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5zM5 3v18M12 12a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5M8.5 16.5a3.5 3.5 0 0 1 7 0' },
@@ -2065,6 +2103,8 @@ class Component extends DCLogic {
     document.addEventListener('visibilitychange', this.alVolver); window.addEventListener('focus', this.alVolver);
     // Estado REAL del móvil (red, cobertura, batería). Nunca valores inventados.
     window.__broEstado = e => this.setState({ estadoMovil: e });
+    window.__broRedes = l => this.setState({ redesWifi: l, buscandoWifi: false });
+    window.__broWifi = () => this.wifiRefrescar(false);
     const leerEstado = async () => {
       try { if (window.BroNativo && BroNativo.estadoMovil) { this.setState({ estadoMovil: JSON.parse(BroNativo.estadoMovil()) }); return; } } catch (e) {}
       const e = { red: navigator.onLine ? 'desconocida' : 'ninguna' };
@@ -2645,6 +2685,21 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
     } catch (e) { this.avisar('No se ha podido pedir. Prueba otra vez.'); }
   }
   // APRENDE LEYENDO: buscar y abrir artículos de fuentes fiables (el servidor revisa y guarda lo bloqueado para la familia)
+  // CONEXIONES (wifi nativo del launcher)
+  wifiRefrescar(buscar) {
+    if (!window.BroNativo || !BroNativo.wifiEstado) return;
+    try { this.setState({ wifiE: JSON.parse(BroNativo.wifiEstado()) }); } catch (e) {}
+    if (buscar && BroNativo.wifiBuscar) { this.setState({ buscandoWifi: true }); BroNativo.wifiBuscar(); }
+  }
+  wifiConectar(ssid, clave) {
+    if (!ssid || !window.BroNativo || !BroNativo.wifiConectar) return;
+    this.setState({ wifiConectando: ssid, wifiPide: null, wifiClave: '' });
+    BroNativo.wifiConectar(ssid, clave);
+    let n = 0; clearInterval(this.tWifi);
+    this.tWifi = setInterval(() => { n++; this.wifiRefrescar(false); const W = this.state.wifiE || {};
+      if (W.conectada === ssid) { clearInterval(this.tWifi); this.setState({ wifiConectando: null }); this.avisar('Conectado a ' + ssid + '.'); }
+      else if (n > 12) { clearInterval(this.tWifi); this.setState({ wifiConectando: null }); this.avisar('No he podido conectar. Revisa la contraseña.'); } }, 1000);
+  }
   comprobarInstaladas() {
     try { if (window.BroNativo && BroNativo.instaladas) this.setState({ appsInstaladas: JSON.parse(BroNativo.instaladas(JSON.stringify(ENTRETENIMIENTO.flatMap(g => g.apps.map(a => a.pkg))))) }); } catch (e) {}
   }
@@ -2983,6 +3038,7 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
     if (a.compartir) this.compartirComunidad();
     if (a.pantalla === 'aprender' && (!this.state.lm || a.libro)) this.lmInicio(a.libro);
     if (a.test) { const r = (this.state.db.rewards || []).find(x => x.id === a.test); if (r && r.conds.some(c => c.tipo === 'test' && !c.hecho)) this.setState({ quiz: { id: a.test, i: 0, ok: 0 } }); }
+    if (a.pantalla === 'conexiones') { this.setState({ redesWifi: null, wifiPide: null }); setTimeout(() => this.wifiRefrescar(true), 50); }
     if (a.pantalla === 'comunidades') { clearInterval(this.tHilo); this.setState({ connectV: null }); this.cxCargar(); }
     if (a.pantalla === 'contenido') { if (a.buscar) this.buscarC(a.buscar); else this.setState({ resC: null, qC: '', videoC: null, canalC: null, listaCanales: false, leerC: null, entC: false }); this.cargarMisCanales(); }
     if (a.pantalla === 'qr') {
@@ -3088,8 +3144,8 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
 
     const ses = s.sesion[modo], f = ses.flujo;
     const pantalla = padre ? (s.pantallaPadre || 'bro') : s.pantalla;
-    const p = { limites: pantalla === 'limites', consentimientos: pantalla === 'consentimientos', aprender: pantalla === 'aprender', comunidades: pantalla === 'comunidades', chat: pantalla === 'chat', proyectos: pantalla === 'proyectos', proyecto: pantalla === 'proyecto', partido: pantalla === 'partido', comunidad: pantalla === 'comunidad', apps: pantalla === 'apps', logros: pantalla === 'logros', contenido: pantalla === 'contenido', aura: pantalla === 'aura', qr: pantalla === 'qr', monedero: pantalla === 'monedero', otra: pantalla === 'otra' };
-    const titulos = { monedero: ['Wallet', 'Tu tarjeta Bro · Lit Pay'], aprender: ['Learning mode', 'Tú piensas, Bro te ayuda'], qr: ['Nuevo amigo', 'Solo en persona'], aura: ['Aura', 'Sueño y movimiento'], logros: ['Achieve', 'Tus logros y rewards'], partido: ['Mi partido', 'De la idea a la realidad'], comunidad: ['Fútbol La Colonia', '24 Bros · los del barrio'], contenido: ['Enjoy safe', 'Para ver y aprender'], comunidades: ['Connect', 'Tus comunidades y mensajes'], chat: [s.id, 'Conexión mutua'], proyectos: ['Build', 'Lo que estás construyendo'], proyecto: ['Proyecto', 'Paso a paso, decides tú'], apps: ['My apps', 'Lo que decide mamá'], otra: ['Bro', ''] };
+    const p = { conexiones: pantalla === 'conexiones', limites: pantalla === 'limites', consentimientos: pantalla === 'consentimientos', aprender: pantalla === 'aprender', comunidades: pantalla === 'comunidades', chat: pantalla === 'chat', proyectos: pantalla === 'proyectos', proyecto: pantalla === 'proyecto', partido: pantalla === 'partido', comunidad: pantalla === 'comunidad', apps: pantalla === 'apps', logros: pantalla === 'logros', contenido: pantalla === 'contenido', aura: pantalla === 'aura', qr: pantalla === 'qr', monedero: pantalla === 'monedero', otra: pantalla === 'otra' };
+    const titulos = { conexiones: ['Conexiones', 'Wifi y datos móviles'], monedero: ['Wallet', 'Tu tarjeta Bro · Lit Pay'], aprender: ['Learning mode', 'Tú piensas, Bro te ayuda'], qr: ['Nuevo amigo', 'Solo en persona'], aura: ['Aura', 'Sueño y movimiento'], logros: ['Achieve', 'Tus logros y rewards'], partido: ['Mi partido', 'De la idea a la realidad'], comunidad: ['Fútbol La Colonia', '24 Bros · los del barrio'], contenido: ['Enjoy safe', 'Para ver y aprender'], comunidades: ['Connect', 'Tus comunidades y mensajes'], chat: [s.id, 'Conexión mutua'], proyectos: ['Build', 'Lo que estás construyendo'], proyecto: ['Proyecto', 'Paso a paso, decides tú'], apps: ['My apps', 'Lo que decide mamá'], otra: ['Bro', ''] };
     const [titulo, subtitulo] = padre ? (pantalla === 'consentimientos' ? ['Privacidad', 'Permisos de ' + db.nino.nombre] : pantalla === 'limites' ? ['Límites y horarios', 'Móvil de ' + db.nino.nombre] : ['Bro Parent', db.madre.nombre + ' · ' + (db.hijos || [{ nombre: db.nino.nombre }]).map(h => h.nombre).join(' y ')]) : pantalla === 'bro' ? ['Bro', db.nino.nombre + ' · perfil ' + db.nino.edad] : titulos[pantalla];
     const hayTexto = !!s.texto.trim();
     const maxSem = Math.max(...db.aura.semana.flat());
@@ -3150,6 +3206,7 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
       hayUrgentes: padre && (db.sugerenciasPadre || []).length > 0,
       padreTodoOk: padre && !(db.sugerenciasPadre || []).length,
       abrirQR: () => { if (!padre) this.ejecutar({ pantalla: 'qr' }); },
+      abrirConexiones: () => { if (!padre) this.ejecutar({ pantalla: 'conexiones' }); },
       videoAmigoRef: this.videoAmigoRef,
       nombreHijo: db.nino.nombre, edadHijo: db.nino.edad, inicialHijo: (db.nino.nombre || 'J')[0].toUpperCase(),
       qr: (() => {
@@ -3285,6 +3342,21 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
           grupos: ENTRETENIMIENTO.map(g => ({ grupo: g.grupo, color: g.color, apps: g.apps.map(a => { const ok = inst.includes(a.pkg);
             return { ...a, icono: 'https://www.google.com/s2/favicons?sz=128&domain=' + a.dominio, btnTxt: ok ? 'Abrir' : 'Instalar', btnBg: ok ? g.color : '#F0F2F6', btnTx: ok ? '#fff' : '#111',
               onClick: () => (window.BroNativo && BroNativo.abrirApp) ? BroNativo.abrirApp(a.pkg) : this.avisar(a.nombre + ' se abre en el móvil Bro.') }; }) })) };
+      })(),
+      cn: (() => { const W = s.wifiE || {}, R = s.redesWifi, C = s.wifiConectando;
+        const op = (n, k) => n >= k ? '1' : '.25';
+        return { wifiSub: !W.activo ? 'Desactivado' : C ? 'Conectando a ' + C + '…' : W.conectada ? 'Conectado a ' + W.conectada : 'Activado · sin conectar',
+          swBg: W.activo ? '#3068ED' : '#D5DAE3', swX: W.activo ? '25px' : '3px',
+          toggleWifi: () => { if (window.BroNativo && BroNativo.wifiActivar) { BroNativo.wifiActivar(!W.activo); this.setState({ wifiE: { ...W, activo: !W.activo }, redesWifi: null }); setTimeout(() => this.wifiRefrescar(true), 1500); } },
+          verRedes: !!W.activo, buscar: () => this.wifiRefrescar(true), buscarTxt: s.buscandoWifi ? 'Buscando…' : 'Buscar de nuevo',
+          sinRedes: !R || !R.length, sinRedesTxt: !R ? 'Buscando redes…' : 'No encuentro redes wifi cerca.',
+          redes: (R || []).map(r => { const yo = W.conectada === r.ssid, pide = s.wifiPide === r.ssid;
+            return { ssid: r.ssid, segura: r.segura, w1: op(r.nivel, 1), w2: op(r.nivel, 2), w3: op(r.nivel, 3), w4: op(r.nivel, 4), peso: yo ? 800 : 500,
+              estado: yo ? 'Conectado' : C === r.ssid ? 'Conectando…' : '', estadoColor: yo ? '#22A559' : '#6B7280', pidiendo: pide,
+              onClick: () => { if (yo) return; if (r.segura) this.setState({ wifiPide: pide ? null : r.ssid, wifiClave: '' }); else this.wifiConectar(r.ssid, ''); } }; }),
+          clave: s.wifiClave || '', onClave: e => this.setState({ wifiClave: e.target.value }), onKeyClave: e => { if (e.key === 'Enter') this.wifiConectar(s.wifiPide, s.wifiClave || ''); },
+          conectar: () => this.wifiConectar(s.wifiPide, s.wifiClave || ''),
+          datosSub: !W.sim ? 'Sin tarjeta SIM' : (W.operador || 'Operador') + (W.datos === false ? ' · datos desactivados' : ' · datos activados') };
       })(),
       le: (() => {
         const L = s.leerC;
