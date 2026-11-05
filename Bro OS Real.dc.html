@@ -2164,7 +2164,7 @@ function textoContrato(r, nino) {
 // SONIDO DE REWARD: campana sintetizada (sin archivos). Ajuste 'bros-sonido-reward' (campana | ninguno) para personalizarlo más adelante.
 function sonarReward() {
   let tipo = 'campana'; try { tipo = localStorage.getItem('bros-sonido-reward') || 'campana'; } catch (e) {}
-  try { navigator.vibrate && navigator.vibrate([0, 60, 80, 120]); } catch (e) {}
+  try { if (window.BroNativo && BroNativo.vibrar) BroNativo.vibrar(); else if (navigator.vibrate) navigator.vibrate([0, 60, 80, 120]); } catch (e) {}
   if (tipo === 'ninguno') return;
   try {
     const C = window.AudioContext || window.webkitAudioContext; if (!C) return;
