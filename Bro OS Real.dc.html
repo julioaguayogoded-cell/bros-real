@@ -595,79 +595,28 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
         </sc-if>
 
         <sc-if value="{{ p.apps }}" hint-placeholder-val="{{ false }}">
-          <!-- Instaladas: como la pantalla de inicio de un móvil -->
-          <div style="display:flex;align-items:baseline;justify-content:space-between;margin:18px 18px 12px">
-            <div style="font-family:Outfit;font-size:20px;font-weight:800;letter-spacing:-.02em">Tus apps</div>
-            <span style="font-size:12px;color:#6B7280;white-space:nowrap">{{ apps.nInstaladas }} aceptadas</span>
-          </div>
-          <sc-if value="{{ apps.hayInstaladas }}" hint-placeholder-val="{{ true }}">
-          <div style="margin:0 16px;background:#fff;border:1px solid #E4E7EE;border-radius:22px;padding:18px 10px 14px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px 4px">
-            <sc-for list="{{ apps.instaladas }}" as="a" hint-placeholder-count="4">
-              <button onClick="{{ a.onAbrir }}" style="display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0">
-                <div style="width:58px;height:58px;border-radius:17px;background:{{ a.color }};display:grid;place-items:center;font-size:27px;box-shadow:{{ a.sombra }}">{{ a.ic }}</div>
+          <!-- MY APPS: apps de otros verticales (deporte, club, movilidad, dinero). Juegos, música y series están en Enjoy safe. -->
+          <div style="flex-shrink:0;margin:18px 16px 10px;font-size:11px;font-weight:700;letter-spacing:.06em;color:#111">TUS APPS</div>
+          <div style="flex-shrink:0;margin:0 16px;background:#fff;border:1px solid #E4E7EE;border-radius:22px;padding:18px 8px 14px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));row-gap:16px">
+            <sc-for list="{{ ma.aprobadas }}" as="a" hint-placeholder-count="4">
+              <button onClick="{{ a.onClick }}" style="display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0">
+                <div style="width:56px;height:56px;border-radius:16px;background:{{ a.fondo }};box-shadow:0 4px 12px rgba(17,17,17,.08);position:relative;display:grid;place-items:center;color:#fff;font-family:Outfit;font-weight:800;font-size:24px">{{ a.ini }}<div style="position:absolute;inset:0;border-radius:16px;background-size:60%;background-repeat:no-repeat;background-position:center;background-image:url({{ a.icono }})"></div>
+                  <sc-if value="{{ a.falta }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;right:-4px;bottom:-4px;width:20px;height:20px;border-radius:50%;background:#111;color:#fff;font-size:12px;font-weight:800;display:grid;place-items:center">↓</span></sc-if>
+                </div>
                 <span style="font-size:11.5px;font-weight:600;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ a.nombre }}</span>
-                <span style="font-size:10px;color:#6B7280;margin-top:-4px">{{ a.tiempoTxt }}</span>
               </button>
             </sc-for>
           </div>
-          </sc-if>
-          <sc-if value="{{ apps.sinInstaladas }}" hint-placeholder-val="{{ false }}">
-            <div style="margin:0 16px;padding:16px;border:1px dashed #D5DAE3;border-radius:20px;background:#fff;text-align:center;font-size:13.5px;color:#4B5563">Todavía no tienes apps aceptadas.</div>
-          </sc-if>
-
-          <!-- Pedir una app nueva -->
-          <div style="margin:16px 16px 0;background:#fff;border:1px solid #E4E7EE;border-radius:20px;padding:14px;display:flex;flex-direction:column;gap:10px">
-            <div style="font-family:Outfit;font-size:16px;font-weight:700">¿Quieres otra app?</div>
-            <div style="display:flex;gap:8px">
-              <input value="{{ apps.q }}" onChange="{{ apps.onQ }}" onKeyDown="{{ apps.onKey }}" placeholder="Escribe su nombre" aria-label="App que quieres" style="flex:1;min-width:0;height:46px;border:1px solid #D5DAE3;border-radius:14px;padding:0 14px;font-size:16px;outline:none;font-family:inherit;color:#111;background:#fff">
-              <button onClick="{{ apps.pedir }}" style="flex:none;height:46px;padding:0 16px;border-radius:14px;background:{{ apps.btnBg }};color:#fff;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center">{{ apps.btnTxt }}</button>
-            </div>
-            <sc-if value="{{ apps.hayRes }}" hint-placeholder-val="{{ false }}">
-              <div style="padding:11px 13px;border-radius:14px;background:{{ apps.resBg }};color:{{ apps.resTx }};font-size:13.5px;font-weight:600;line-height:1.4;text-wrap:pretty">{{ apps.resTxt }}</div>
-            </sc-if>
-            <div style="font-size:11.5px;color:#6B7280;line-height:1.4">Bro la revisa. Si es para tu edad, se la pide a tu familia y ella decide.</div>
+          <div style="flex-shrink:0;margin:6px 18px 0;font-size:11.5px;color:#9CA3AF">Los juegos, la música y las series están en Enjoy safe.</div>
+          <div style="flex-shrink:0;margin:22px 16px 8px;font-size:11px;font-weight:700;letter-spacing:.06em;color:#9CA3AF">NO APROBADAS · Y POR QUÉ</div>
+          <div style="flex-shrink:0;margin:0 16px;display:flex;flex-direction:column;gap:8px">
+            <sc-for list="{{ ma.noAptas }}" as="a" hint-placeholder-count="3">
+              <div style="display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border-radius:16px;background:#fff;border:1px solid #E4E7EE">
+                <div style="width:40px;height:40px;border-radius:12px;flex:none;background:#D5DAE3;position:relative;display:grid;place-items:center;color:#fff;font-family:Outfit;font-weight:800;font-size:18px">{{ a.ini }}<div style="position:absolute;inset:0;border-radius:12px;background-size:58%;background-repeat:no-repeat;background-position:center;background-image:url({{ a.icono }});filter:grayscale(1);opacity:.7"></div></div>
+                <div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:6px"><span style="font-family:Outfit;font-weight:700;font-size:15px">{{ a.nombre }}</span><span style="font-size:10.5px;font-weight:800;color:#B42318;background:#FDE7E7;border-radius:6px;padding:2px 6px">NO APROBADA</span></div><div style="font-size:12.5px;line-height:1.45;color:#4B5563;margin-top:3px">{{ a.que }}</div></div>
+              </div>
+            </sc-for>
           </div>
-
-          <!-- Pendientes de mamá -->
-          <sc-if value="{{ apps.hayPendientes }}" hint-placeholder-val="{{ true }}">
-            <div style="font-family:Outfit;font-size:16px;font-weight:700;margin:24px 18px 10px">Con tu familia</div>
-            <div style="display:flex;flex-direction:column;gap:9px;padding:0 16px">
-              <sc-for list="{{ apps.pendientes }}" as="a" hint-placeholder-count="1">
-                <div style="display:flex;gap:12px;align-items:center;background:#fff;border:1px solid #E4E7EE;border-radius:18px;padding:12px 14px;box-shadow:{{ a.sombra }}">
-                  <div style="width:46px;height:46px;border-radius:14px;background:{{ a.color }};display:grid;place-items:center;font-size:22px;flex:none;opacity:.55">{{ a.ic }}</div>
-                  <div style="flex:1;min-width:0">
-                    <b style="display:block;font-family:Outfit;font-size:15px">{{ a.nombre }}</b>
-                    <span style="font-size:12px;color:#6B7280">{{ a.nota }}</span>
-                  </div>
-                  <span style="flex:none;padding:5px 10px;border-radius:999px;font-size:11px;font-weight:700;background:{{ a.pillBg }};color:{{ a.pillTx }}">{{ a.pill }}</span>
-                </div>
-              </sc-for>
-            </div>
-          </sc-if>
-
-          <!-- No aceptadas, con el porqué -->
-          <sc-if value="{{ apps.hayNo }}" hint-placeholder-val="{{ true }}">
-            <div style="display:flex;align-items:baseline;justify-content:space-between;margin:24px 18px 10px">
-              <div style="font-family:Outfit;font-size:16px;font-weight:700">No aceptadas</div>
-              <span style="font-size:12px;color:#6B7280">{{ apps.nNo }}</span>
-            </div>
-            <div style="display:flex;flex-direction:column;gap:9px;padding:0 16px">
-              <sc-for list="{{ apps.no }}" as="a" hint-placeholder-count="3">
-                <div style="display:flex;gap:12px;align-items:flex-start;background:#fff;border:1px solid #E4E7EE;border-radius:18px;padding:12px 14px">
-                  <div style="width:42px;height:42px;border-radius:13px;background:{{ a.color }};display:grid;place-items:center;font-size:20px;flex:none;filter:grayscale(1);opacity:.45">{{ a.ic }}</div>
-                  <div style="flex:1;min-width:0">
-                    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-                      <b style="font-family:Outfit;font-size:15px;color:#57606f">{{ a.nombre }}</b>
-                      <span style="padding:3px 9px;border-radius:999px;font-size:10.5px;font-weight:700;background:{{ a.pillBg }};color:{{ a.pillTx }}">{{ a.pill }}</span>
-                    </div>
-                    <div style="font-size:12.5px;color:#374151;margin-top:4px;text-wrap:pretty">{{ a.nota }}</div>
-                  </div>
-                </div>
-              </sc-for>
-            </div>
-          </sc-if>
-
-          <div style="margin:18px 16px 0;font-size:12.5px;color:#6B7280;text-align:center;text-wrap:pretty">También puedes decírselo a Bro.</div>
         </sc-if>
 
         <!-- QR: código Bro para conectar en persona -->
@@ -1765,6 +1714,35 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
               </button>
             </div>
           </sc-if>
+          <sc-if value="{{ jg.verTarjeta }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:10px 16px 0">
+              <button onClick="{{ jg.abrir }}" style="width:100%;display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:16px;background:#fff;border:1px solid #E4E7EE;text-align:left">
+                <div style="width:40px;height:40px;border-radius:12px;background:#F97316;display:grid;place-items:center;flex:none"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 11h4M8 9v4M15 12h.01M18 10h.01M17.3 5H6.7a4 4 0 0 0-3.96 3.43l-.73 5.1A3 3 0 0 0 7.05 16l1.45-1.5h7l1.45 1.5a3 3 0 0 0 5.04-2.47l-.73-5.1A4 4 0 0 0 17.3 5z"></path></svg></div>
+                <div style="flex:1;min-width:0"><div style="font-family:Outfit;font-weight:700;font-size:15px">Juegos</div><div style="font-size:12.5px;color:#6B7280">Juegos revisados para tu edad</div></div>
+                <span style="font-size:20px;color:#9CA3AF">›</span>
+              </button>
+            </div>
+          </sc-if>
+          <sc-if value="{{ jg.abierto }}" hint-placeholder-val="{{ false }}">
+            <div style="margin:16px 16px 4px;display:flex;align-items:center;gap:12px">
+              <button onClick="{{ jg.cerrar }}" aria-label="Volver" style="width:36px;height:36px;border-radius:50%;background:#F0F2F6;font-size:18px;flex:none">‹</button>
+              <div style="flex:1;min-width:0;font-family:Outfit;font-weight:800;font-size:17px">Juegos</div>
+            </div>
+            <sc-for list="{{ jg.grupos }}" as="g" hint-placeholder-count="2">
+              <sc-if value="{{ g.hay }}" hint-placeholder-val="{{ true }}">
+              <div style="margin:18px 16px 8px;display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:{{ g.color }}"></span><span style="font-size:11px;font-weight:700;letter-spacing:.06em;color:{{ g.color }}">{{ g.titulo }}</span></div>
+              <div style="display:flex;flex-direction:column;gap:8px;padding:0 16px">
+                <sc-for list="{{ g.apps }}" as="a" hint-placeholder-count="2">
+                  <div style="display:flex;align-items:center;gap:12px;padding:10px 12px 10px 14px;border-radius:16px;background:#fff;border:1px solid #E4E7EE;opacity:{{ a.op }}">
+                    <div style="width:42px;height:42px;border-radius:12px;flex:none;background-color:#F5F6F9;background-size:62%;background-repeat:no-repeat;background-position:center;background-image:url({{ a.icono }})"></div>
+                    <div style="flex:1;min-width:0"><div style="font-family:Outfit;font-weight:700;font-size:15px">{{ a.nombre }}</div><div style="font-size:12px;color:#6B7280;line-height:1.35">{{ a.que }}</div></div>
+                    <sc-if value="{{ a.hayBtn }}" hint-placeholder-val="{{ true }}"><button onClick="{{ a.onClick }}" style="flex:none;min-width:84px;height:36px;padding:0 12px;border-radius:999px;text-align:center;background:{{ a.btnBg }};color:{{ a.btnTx }};font-weight:800;font-size:12.5px">{{ a.btnTxt }}</button></sc-if>
+                  </div>
+                </sc-for>
+              </div>
+              </sc-if>
+            </sc-for>
+          </sc-if>
           <sc-if value="{{ en.abierto }}" hint-placeholder-val="{{ false }}">
             <div style="margin:16px 16px 4px;display:flex;align-items:center;gap:12px">
               <button onClick="{{ en.cerrar }}" aria-label="Volver" style="width:36px;height:36px;border-radius:50%;background:#F0F2F6;font-size:18px;flex:none">‹</button>
@@ -2258,6 +2236,24 @@ const ENTRETENIMIENTO = [
   { grupo: 'PODCAST Y AUDIOLIBROS', color: '#9333EA', apps: [
     { nombre: 'iVoox', pkg: 'com.ivoox.app', dominio: 'ivoox.com', que: 'Podcasts y audiolibros' },
     { nombre: 'Podimo', pkg: 'com.podimo', dominio: 'podimo.com', que: 'Podcasts y audiolibros' } ] }
+];
+// JUEGOS (Enjoy safe): aprobados por defecto, con permiso de la familia, y no aptos con el porqué
+const JUEGOS = [
+  { nombre: 'Subway Surfers', pkg: 'com.kiloo.subwaysurf', dominio: 'subwaysurfers.com', que: 'Corre y esquiva · PEGI 7', estado: 'aprobado' },
+  { nombre: 'Dream League Soccer', pkg: 'com.firsttouchgames.dls7', dominio: 'dreamleaguesoccer.com', que: 'Fútbol · PEGI 3', estado: 'aprobado' },
+  { nombre: 'Fortnite', pkg: 'com.epicgames.fortnite', dominio: 'fortnite.com', que: 'PEGI 12 · compras dentro del juego y chat de voz con desconocidos', estado: 'permiso' },
+  { nombre: 'GTA', pkg: 'com.rockstargames.gtasa', dominio: 'rockstargames.com', que: 'PEGI 18 por violencia. BroS Life no lo permite.', estado: 'noApto' }
+];
+// MY APPS: apps de otros verticales (deporte, club, movilidad, dinero). No aprobadas, con el porqué.
+const APPS_OTRAS = [
+  { nombre: 'Matchapp', clave: 'Matchapp', dominio: 'matchapp.es', que: 'Partidos y resultados', estado: 'aprobado' },
+  { nombre: 'RCCVM', clave: 'RCCVM', dominio: 'rccvm.es', que: 'Club de Campo Villa de Madrid', estado: 'aprobado' },
+  { nombre: 'Waze', clave: 'com.waze', dominio: 'waze.com', que: 'Rutas y mapas', estado: 'aprobado' },
+  { nombre: 'Wallet', interna: 'monedero', dominio: 'thebros.life', que: 'Tu tarjeta Bro', estado: 'aprobado' },
+  { nombre: 'TikTok', dominio: 'tiktok.com', que: 'Es para mayores de 13 y enseña vídeos sin fin de desconocidos. Para vídeos tienes tus Canales.', estado: 'noApto' },
+  { nombre: 'Instagram', dominio: 'instagram.com', que: 'Perfiles públicos y mensajes de desconocidos. Para hablar con amigos tienes Connect.', estado: 'noApto' },
+  { nombre: 'Snapchat', dominio: 'snapchat.com', que: 'Mensajes que desaparecen y ubicación compartida con desconocidos.', estado: 'noApto' },
+  { nombre: 'Chrome', dominio: 'google.com', que: 'Navegador sin filtro. Para webs seguras tienes Navega.', estado: 'noApto' }
 ];
 const HOY_PRUEBA = true;
 const HOY_PRUEBA_ITEMS = [
@@ -2920,7 +2916,13 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
       else if (n > 12) { clearInterval(this.tWifi); this.setState({ wifiConectando: null }); this.avisar('No he podido conectar. Revisa la contraseña.'); } }, 1000);
   }
   comprobarInstaladas() {
-    try { if (window.BroNativo && BroNativo.instaladas) this.setState({ appsInstaladas: JSON.parse(BroNativo.instaladas(JSON.stringify(ENTRETENIMIENTO.flatMap(g => g.apps.map(a => a.pkg))))) }); } catch (e) {}
+    const lista = [...ENTRETENIMIENTO.flatMap(g => g.apps.map(a => a.pkg)), ...JUEGOS.map(j => j.pkg), ...APPS_OTRAS.filter(a => a.clave).map(a => a.clave)];
+    try { if (window.BroNativo && BroNativo.instaladas) this.setState({ appsInstaladas: JSON.parse(BroNativo.instaladas(JSON.stringify(lista))) }); } catch (e) {}
+  }
+  async pedirApp(ref, nombre, motivo) {
+    const t = tokenBro(); if (!t) return this.avisar('Este móvil no está vinculado a un Bro.');
+    try { await this.rpc('pedir_app', { p_token: t, p_ref: ref, p_nombre: nombre, p_motivo: 'Quiere ' + nombre + '. ' + (motivo || '') }); this.avisar('Se lo he pedido a tu familia.'); this.cargarMisCanales(); }
+    catch (e) { this.avisar('No se ha podido pedir. Prueba otra vez.'); }
   }
   async leerFetch(body) {
     const res = await fetch(BRO_AI_URL.replace('/Bro-ai', '/bro-leer'), { method: 'POST', headers: this.cabCanal().h, body: JSON.stringify({ edad: (this.state.db && this.state.db.nino && this.state.db.nino.edad) || 12, ...body }) });
@@ -3257,9 +3259,10 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
     if (a.compartir) this.compartirComunidad();
     if (a.pantalla === 'aprender' && (!this.state.lm || a.libro)) this.lmInicio(a.libro);
     if (a.test) { const r = (this.state.db.rewards || []).find(x => x.id === a.test); if (r && r.conds.some(c => c.tipo === 'test' && !c.hecho)) this.setState({ quiz: { id: a.test, i: 0, ok: 0 } }); }
+    if (a.pantalla === 'apps') setTimeout(() => this.comprobarInstaladas(), 50);
     if (a.pantalla === 'conexiones') { this.setState({ redesWifi: null, wifiPide: null }); setTimeout(() => this.wifiRefrescar(true), 50); }
     if (a.pantalla === 'comunidades') { clearInterval(this.tHilo); this.setState({ connectV: null }); this.cxCargar(); }
-    if (a.pantalla === 'contenido') { if (a.buscar) this.buscarC(a.buscar); else this.setState({ resC: null, qC: '', videoC: null, canalC: null, listaCanales: false, leerC: null, entC: false }); this.cargarMisCanales(); }
+    if (a.pantalla === 'contenido') { if (a.buscar) this.buscarC(a.buscar); else this.setState({ resC: null, qC: '', videoC: null, canalC: null, listaCanales: false, leerC: null, entC: false, juegosC: false }); this.cargarMisCanales(); }
     if (a.pantalla === 'qr') {
       this.qrDesde = Date.now(); this.amigosAntes = null; this.setState({ qrSemilla: Math.floor(Math.random() * 1e6) + 1, escAmigo: false, msgAmigo: null, codigoAmigo: '', qrTab: 'mio', qrExito: null });
       if (tokenBro()) this.cargarQR();
@@ -3553,7 +3556,7 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
       cabeceraTitulo: padre || pantalla !== 'bro',
       // El título de cada módulo con el color de su icono (Connect azul, Enjoy safe rojo, Build verde, Achieve naranja…)
       // Módulos (Connect, Enjoy safe, Build, Achieve, Aura): título grande en su color y sin explicación debajo
-      ...(() => { const mod = !padre && ['comunidades', 'comunidad', 'chat', 'contenido', 'proyectos', 'logros', 'aura'].includes(pantalla);
+      ...(() => { const mod = !padre && ['comunidades', 'comunidad', 'chat', 'contenido', 'proyectos', 'logros', 'aura', 'apps'].includes(pantalla);
         return { verSubtitulo: !mod, tituloTam: mod ? '26px' : '19px', tituloPeso: mod ? 800 : 700 }; })(),
       tituloColor: (!padre && ({ comunidades: '#3068ED', comunidad: '#3068ED', chat: '#3068ED', contenido: '#FF0000', proyectos: '#82B94F', logros: '#E56648', aura: '#0E8C84' })[pantalla]) || 'inherit',
       hora: (s.ahoraMismo || new Date()).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),
@@ -3615,8 +3618,26 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
           compartir: async () => { try { if (navigator.share) await navigator.share({ title: d.nombre, text: `${d.nombre} · ${d.dia} ${d.hora} · ${d.lugar}`, url }); else { await navigator.clipboard.writeText(url); this.avisar('Enlace del cartel copiado.'); } } catch (e) {} }
         };
       })(),
+      ma: (() => { const inst = s.appsInstaladas || [];
+        const FON = { Matchapp: '#0B7A3E', RCCVM: '#14532D', Waze: '#33CCFF', Wallet: '#fff', TikTok: '#111', Instagram: '#C13584', Snapchat: '#FFFC00', Chrome: '#4285F4' };
+        const v = a => ({ ...a, ini: a.interna ? '' : a.nombre.charAt(0), fondo: FON[a.nombre] || '#9CA3AF', icono: a.interna ? 'logo.png' : 'https://www.google.com/s2/favicons?sz=128&domain=' + a.dominio, falta: !a.interna && !inst.includes(a.clave),
+          onClick: () => a.interna ? this.ejecutar({ pantalla: a.interna }) : (window.BroNativo && BroNativo.abrirApp) ? BroNativo.abrirApp(a.clave) : this.avisar(a.nombre + ' se abre en el móvil Bro.') });
+        return { aprobadas: APPS_OTRAS.filter(a => a.estado === 'aprobado').map(v), noAptas: APPS_OTRAS.filter(a => a.estado === 'noApto').map(v) };
+      })(),
+      jg: (() => { const J = s.juegosC, inst = s.appsInstaladas || [], pet = s.misPeticiones || [];
+        const estadoDe = j => { if (j.estado !== 'permiso') return j.estado; const p = pet.find(x => x.tipo === 'app' && x.ref === j.pkg); return p ? (p.estado === 'si' ? 'aprobado' : p.estado === 'no' ? 'denegado' : 'pedido') : 'permiso'; };
+        const vista = j => { const e = estadoDe(j), ok = inst.includes(j.pkg);
+          const b = e === 'aprobado' ? (ok ? ['Jugar', '#F97316', '#fff'] : ['Instalar', '#F0F2F6', '#111']) : e === 'permiso' ? ['Pedir permiso', '#3068ED', '#fff'] : e === 'pedido' ? ['Pedido ✓', '#C7D2FE', '#3730A3'] : e === 'denegado' ? ['Dijeron que no', '#F0F2F6', '#6B7280'] : null;
+          return { ...j, icono: 'https://www.google.com/s2/favicons?sz=128&domain=' + j.dominio, op: e === 'noApto' ? .6 : 1, hayBtn: !!b, btnTxt: b && b[0], btnBg: b && b[1], btnTx: b && b[2],
+            onClick: () => e === 'aprobado' ? ((window.BroNativo && BroNativo.abrirApp) ? BroNativo.abrirApp(j.pkg) : this.avisar(j.nombre + ' se abre en el móvil Bro.')) : e === 'permiso' ? this.pedirApp(j.pkg, j.nombre, j.que) : null }; };
+        const G = [['PARA TI', '#F97316', x => estadoDe(x) === 'aprobado'], ['CON PERMISO DE TU FAMILIA', '#3068ED', x => ['permiso', 'pedido', 'denegado'].includes(estadoDe(x))], ['NO PERMITIDOS EN BROS LIFE', '#9CA3AF', x => estadoDe(x) === 'noApto']];
+        return { verTarjeta: !J && !s.entC && !s.leerC && !s.resC && !s.canalC && !s.listaCanales && !s.videoC, abierto: !!J,
+          abrir: () => { this.setState({ juegosC: true }); this.comprobarInstaladas(); this.cargarMisCanales(); if (this.scrollRef.current) this.scrollRef.current.scrollTop = 0; },
+          cerrar: () => this.setState({ juegosC: false }),
+          grupos: G.map(([titulo, color, f]) => { const apps = JUEGOS.filter(f).map(vista); return { titulo, color, apps, hay: apps.length > 0 }; }) };
+      })(),
       en: (() => { const E = s.entC, inst = s.appsInstaladas || [];
-        return { verTarjeta: !E && !s.leerC && !s.resC && !s.canalC && !s.listaCanales && !s.videoC, abierto: !!E,
+        return { verTarjeta: !E && !s.juegosC && !s.leerC && !s.resC && !s.canalC && !s.listaCanales && !s.videoC, abierto: !!E,
           abrir: () => { this.setState({ entC: true }); this.comprobarInstaladas(); if (this.scrollRef.current) this.scrollRef.current.scrollTop = 0; },
           cerrar: () => this.setState({ entC: false }),
           grupos: ENTRETENIMIENTO.map(g => ({ grupo: g.grupo, color: g.color, apps: g.apps.map(a => { const ok = inst.includes(a.pkg);
@@ -3643,7 +3664,7 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
         const art = L && L.articulo;
         return {
           verTarjeta: !L && !s.resC && !s.canalC && !s.listaCanales && !s.videoC,
-          verResto: !L && !s.entC,
+          verResto: !L && !s.entC && !s.juegosC,
           abierto: !!L,
           abrir: () => { this.setState({ leerC: { q: '' } }); if (this.scrollRef.current) this.scrollRef.current.scrollTop = 0; },
           atras: () => { if (L && L.articulo) this.setState({ leerC: { ...L, articulo: null } }); else this.setState({ leerC: null }); if (this.scrollRef.current) this.scrollRef.current.scrollTop = 0; },
@@ -3693,7 +3714,7 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
           hayResultados: esV && !!(r && r.resultados && r.resultados.length),
           sinResultados: esV && !!(r && !r.bloqueado && !r.error && r.tema && !r.resultados.length),
           errorBusqueda: esV && !!(r && r.error),
-          inicio: esV && !r && !s.leerC && !s.listaCanales && !s.canalC && !s.entC,
+          inicio: esV && !r && !s.leerC && !s.listaCanales && !s.canalC && !s.entC && !s.juegosC,
           inicioWeb: !esV && !w && !(r && r.bloqueado),
           txtInicioWeb: tipo === 'imagenes' ? 'Imágenes públicas y libres de Wikimedia Commons. Bro filtra lo que no es para ti.' : 'Artículos de Vikidia, la enciclopedia para 8 a 13 años, y de Wikipedia. Los lees aquí, sin salir de Bro.',
           webCargando: !!(w && w.cargando),
@@ -3736,7 +3757,7 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
           ...(() => {
             const cc = s.canalC, lista = s.misCanales || [];
             return {
-              verCanales: esV && !r && !cc && !act && !s.listaCanales && !s.leerC && !s.entC,
+              verCanales: esV && !r && !cc && !act && !s.listaCanales && !s.leerC && !s.entC && !s.juegosC,
               canalesSub: lista.length ? lista.length + ' canales de YouTube aprobados para ti' : 'Tus canales de YouTube aprobados',
               abrirListaCanales: () => { this.setState({ listaCanales: true }); if (this.scrollRef.current) this.scrollRef.current.scrollTop = 0; },
               cerrarListaCanales: () => this.setState({ listaCanales: false }),
