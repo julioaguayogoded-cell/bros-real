@@ -1235,34 +1235,39 @@ function aprobarPrueba(db, { id }) {
 
 // ---------- Rewards de la familia (Padres Real) y propuestas del Bro ----------
 const VALIDA = { mama: 'Tú lo marcas, tu familia lo valida', aura: 'Prueba: lo valida Aura', test: 'Prueba: test de Bro AI' };
+const hoyTxt = () => new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
 function crearRewardFamilia(db, { titulo, outcome, validacion, hasta, de }) {
   titulo = String(titulo || '').trim().slice(0, 80); outcome = String(outcome || '').trim().slice(0, 80);
   if (!titulo || !outcome) return { error: 'Falta el reto o el reward' };
   const tipo = VALIDA[validacion] ? validacion : 'mama';
   (db.rewards = db.rewards || []).unshift({ id: nuevoId(), origen: 'familia', de: de || 'Tu familia', estado: 'propuesta', titulo, outcome,
-    validacion: VALIDA[tipo], vigencia: hasta ? 'Hasta ' + String(hasta).slice(0, 40) : '', nuevo: true, conds: [{ t: titulo, tipo, hecho: false }] });
+    validacion: VALIDA[tipo], vigencia: hasta ? 'Hasta ' + String(hasta).slice(0, 40) : '', nuevo: true, conds: [{ t: titulo, tipo, hecho: false }],
+    firmas: [{ quien: de || 'Tu familia', rol: 'familia', fecha: hoyTxt() }] });
   return { di: 'Reward enviado. Le llegará como propuesta.' };
 }
-function aceptarReto(db, { id }) {
+function aceptarReto(db, { id, quien }) {
   const rw = (db.rewards || []).find(x => x.id === id);
   if (!rw || rw.origen !== 'familia' || rw.estado !== 'propuesta') return {};
   rw.estado = 'en_marcha'; rw.aceptado = new Date().toISOString();
-  return { di: '¡Reto aceptado!' };
+  (rw.firmas = rw.firmas || []).push({ quien: quien || (db.nino && db.nino.nombre) || 'Bro', rol: 'bro', fecha: hoyTxt() });
+  return { di: 'Contrato firmado. ¡A por ello!' };
 }
-function proponerReward(db, { titulo, outcome }) {
+function proponerReward(db, { titulo, outcome, quien }) {
   titulo = String(titulo || '').trim().slice(0, 80); outcome = String(outcome || '').trim().slice(0, 80);
   if (!titulo || !outcome) return { error: 'Falta qué harás o qué te gustaría' };
   (db.rewards = db.rewards || []).unshift({ id: nuevoId(), origen: 'bro', de: 'Propuesto por ti', estado: 'propuesto', titulo, outcome,
-    validacion: VALIDA.mama, conds: [{ t: titulo, tipo: 'mama', hecho: false }] });
-  return { di: 'Se lo he mandado a tu familia.' };
+    validacion: VALIDA.mama, conds: [{ t: titulo, tipo: 'mama', hecho: false }], firmas: [{ quien: quien || (db.nino && db.nino.nombre) || 'Bro', rol: 'bro', fecha: hoyTxt() }] });
+  return { di: 'Contrato firmado y enviado a tu familia.' };
 }
-function responderPropuesta(db, { id, si, outcome, titulo }) {
+function responderPropuesta(db, { id, si, outcome, titulo, de }) {
   const rw = (db.rewards || []).find(x => x.id === id);
   if (!rw || rw.estado !== 'propuesto') return {};
   if (!si) { rw.estado = 'rechazado'; return { di: 'Hecho.' }; }
   if (outcome) rw.outcome = String(outcome).slice(0, 80);
   if (titulo) { rw.titulo = String(titulo).slice(0, 80); rw.conds[0].t = rw.titulo; }
   rw.estado = 'en_marcha'; rw.de = 'Propuesto por ti · aceptado por tu familia';
+  (rw.firmas = rw.firmas || []).push({ quien: de || 'Tu familia', rol: 'familia', fecha: hoyTxt() });
+  if (outcome) rw.cambiado = true;
   return { di: 'Aceptado.' };
 }
 

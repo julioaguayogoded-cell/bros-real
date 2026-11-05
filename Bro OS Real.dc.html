@@ -8,7 +8,7 @@
 <body>
 <x-dc>
 <helmet>
-<script>(function(){if(window.__brosP)return;window.__brosP=1;var q=new URLSearchParams(location.search).get('perfil');if(q)window.name='bros:'+q.replace(/[^a-z0-9_-]/gi,'').slice(0,20);var m=/^bros:(.+)$/.exec(window.name||'');if(!m)return;var P='P:'+m[1]+':',S=Storage.prototype,g=S.getItem,s=S.setItem,r=S.removeItem;var es=function(x){try{return x===window.localStorage}catch(e){return false}};S.getItem=function(a){return g.call(this,es(this)?P+a:a)};S.setItem=function(a,b){return s.call(this,es(this)?P+a:a,b)};S.removeItem=function(a){return r.call(this,es(this)?P+a:a)};window.BROS_PERFIL=m[1];})();window.BROS_V='2026-11-06.2';</script>
+<script>(function(){if(window.__brosP)return;window.__brosP=1;var q=new URLSearchParams(location.search).get('perfil');if(q)window.name='bros:'+q.replace(/[^a-z0-9_-]/gi,'').slice(0,20);var m=/^bros:(.+)$/.exec(window.name||'');if(!m)return;var P='P:'+m[1]+':',S=Storage.prototype,g=S.getItem,s=S.setItem,r=S.removeItem;var es=function(x){try{return x===window.localStorage}catch(e){return false}};S.getItem=function(a){return g.call(this,es(this)?P+a:a)};S.setItem=function(a,b){return s.call(this,es(this)?P+a:a,b)};S.removeItem=function(a){return r.call(this,es(this)?P+a:a)};window.BROS_PERFIL=m[1];})();window.BROS_V='2026-11-06.3';</script>
 <title>Bro OS</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -868,9 +868,17 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
               <div style="margin:0 16px 10px;background:#fff;border:1px solid #E4E7EE;border-top:4px solid #3068ED;border-radius:18px;padding:14px 16px;display:flex;flex-direction:column;gap:6px">
                 <div style="font-size:11px;font-weight:700;color:#3068ED">DE {{ f.de }}</div>
                 <div style="font-family:Outfit;font-weight:800;font-size:17px;line-height:1.25">{{ f.titulo }}</div>
-                <div style="font-size:14px;color:#111">🎁 Si lo consigues: <b>{{ f.outcome }}</b></div>
-                <div style="font-size:12px;color:#6B7280">{{ f.validacion }}<sc-if value="{{ f.vigencia }}" hint-placeholder-val="{{ false }}"> · {{ f.vigencia }}</sc-if></div>
-                <button onClick="{{ f.aceptar }}" style="margin-top:6px;height:46px;border-radius:14px;background:#E56648;color:#fff;font-family:Outfit;font-weight:800;font-size:15px;text-align:center">Acepto el reto</button>
+                <div style="margin-top:8px;background:#FFFBF3;border:1px solid #F1E2C2;border-radius:14px;padding:12px 13px;display:flex;flex-direction:column;gap:6px">
+                  <div style="font-size:10.5px;font-weight:800;letter-spacing:.06em;color:#9A5B00">📜 CONTRATO</div>
+                  <div style="font-size:13.5px;line-height:1.45;color:#111">{{ f.k.yo }}</div>
+                  <div style="font-size:13.5px;line-height:1.45;color:#111">{{ f.k.ellos }}</div>
+                  <div style="font-size:12px;color:#6B7280">Cómo se comprueba: {{ f.k.como }}</div>
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px">
+                    <div style="border-top:1.5px solid #D9C9A6;padding-top:5px"><div style="font-size:10.5px;color:#9A5B00;font-weight:700">FIRMA {{ f.k.famMay }}</div><div style="font-family:Outfit;font-size:13px;font-weight:700;color:#111">{{ f.k.firmaFam }}</div></div>
+                    <div style="border-top:1.5px solid #D9C9A6;padding-top:5px"><div style="font-size:10.5px;color:#9A5B00;font-weight:700">FIRMA {{ f.k.broMay }}</div><div style="font-family:Outfit;font-size:13px;font-weight:700;color:#111">{{ f.k.firmaBro }}</div></div>
+                  </div>
+                </div>
+                <button onClick="{{ f.aceptar }}" style="margin-top:6px;height:46px;border-radius:14px;background:#E56648;color:#fff;font-family:Outfit;font-weight:800;font-size:15px;text-align:center">Firmo y acepto el reto</button>
               </div>
             </sc-for>
           </sc-if>
@@ -903,6 +911,7 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
               <div style="margin:0 16px 8px;background:#fff;border:1px solid #E4E7EE;border-radius:14px;padding:11px 14px">
                 <div style="font-weight:700;font-size:14.5px">{{ m.titulo }} → {{ m.outcome }}</div>
                 <div style="font-size:12px;font-weight:700;color:{{ m.estadoTx }};margin-top:3px">{{ m.estadoTxt }}</div>
+                <div style="font-size:11.5px;color:#9A5B00;margin-top:3px">📜 Tu firma: {{ m.k.firmaBro }}</div>
               </div>
             </sc-for>
           </sc-if>
@@ -990,6 +999,19 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
                   <span style="font-size:11.5px;color:#6B7280;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.de }}</span>
                 </div>
                 <div style="font-family:Outfit;font-size:18px;font-weight:700;margin-top:8px;line-height:1.2">{{ r.titulo }}</div>
+                <sc-if value="{{ r.hayContrato }}" hint-placeholder-val="{{ false }}">
+                  <button onClick="{{ r.verContrato }}" style="margin-top:6px;font-size:12px;font-weight:700;color:#9A5B00;text-align:left">📜 Contrato firmado por {{ r.k.fam }} y {{ r.k.bro }} · {{ r.verTxt }}</button>
+                  <sc-if value="{{ r.contratoAbiertoF }}" hint-placeholder-val="{{ false }}"><div style="margin-top:8px;background:#FFFBF3;border:1px solid #F1E2C2;border-radius:14px;padding:12px 13px;display:flex;flex-direction:column;gap:6px">
+                  <div style="font-size:10.5px;font-weight:800;letter-spacing:.06em;color:#9A5B00">📜 CONTRATO</div>
+                  <div style="font-size:13.5px;line-height:1.45;color:#111">{{ r.k.yo }}</div>
+                  <div style="font-size:13.5px;line-height:1.45;color:#111">{{ r.k.ellos }}</div>
+                  <div style="font-size:12px;color:#6B7280">Cómo se comprueba: {{ r.k.como }}</div>
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px">
+                    <div style="border-top:1.5px solid #D9C9A6;padding-top:5px"><div style="font-size:10.5px;color:#9A5B00;font-weight:700">FIRMA {{ r.k.famMay }}</div><div style="font-family:Outfit;font-size:13px;font-weight:700;color:#111">{{ r.k.firmaFam }}</div></div>
+                    <div style="border-top:1.5px solid #D9C9A6;padding-top:5px"><div style="font-size:10.5px;color:#9A5B00;font-weight:700">FIRMA {{ r.k.broMay }}</div><div style="font-family:Outfit;font-size:13px;font-weight:700;color:#111">{{ r.k.firmaBro }}</div></div>
+                  </div>
+                </div></sc-if>
+                </sc-if>
                 <div style="display:flex;align-items:center;gap:8px;margin-top:9px;padding:9px 11px;border-radius:12px;background:#FDF0EC">
                   <span style="font-size:10px;font-weight:800;letter-spacing:.05em;color:#E56648;flex:none">REWARD</span>
                   <span style="font-size:13.5px;font-weight:700;line-height:1.3">{{ r.outcome }}</span>
@@ -2103,6 +2125,16 @@ const VIDEOS_YT = {
   v2: { yt: 'g2_CDlFquIk', t: 'Avión fácil en 1 minuto que vuela muy lejos', canal: 'Foldable Flight', dur: '1 min' },
   v3: { yt: '38ZpBSjxyDo', t: 'El «Canard», explicado por un récord mundial', canal: 'WIRED · John Collins', dur: 'Largo' }
 };
+
+// Contrato de reward: el compromiso de las dos partes, en palabras sencillas
+function textoContrato(r, nino) {
+  const fBro = (r.firmas || []).find(f => f.rol === 'bro'), fFam = (r.firmas || []).find(f => f.rol === 'familia');
+  const bro = (fBro && fBro.quien) || nino || 'Bro', fam = (fFam && fFam.quien) || (r.de && !/^Propuesto/.test(r.de) ? r.de : 'Mi familia');
+  return { bro, fam, yo: `Yo, ${bro}, me comprometo a: ${r.titulo}${r.vigencia ? ' (' + r.vigencia.toLowerCase() + ')' : ''}.`,
+    ellos: `Si lo consigo, ${fam} se compromete a: ${r.outcome}.`, como: r.validacion || '',
+    firmaBro: fBro ? `${fBro.quien} · ${fBro.fecha}` : '', firmaFam: fFam ? `${fFam.quien} · ${fFam.fecha}` : '',
+    completo: !!(fBro && fFam) };
+}
 // MY TODAY STUFF · tarjetas de PRUEBA para comprobar el deslizamiento. Poner a false para quitarlas.
 // ENTRETENIMIENTO aprobado por defecto por BroS Life (música, pelis, series, podcast, audiolibros)
 const ENTRETENIMIENTO = [
@@ -2542,10 +2574,14 @@ class Component extends DCLogic {
       onJoin: unirse(r.id), onContrato: () => this.setState({ contratoAbierto: r.id })
     }));
     const ab = lista.find(r => r.id === s.contratoAbierto);
+    const nino = (s.db && s.db.nino && s.db.nino.nombre) || 'Bro';
+    const K = r => { const k = textoContrato(r, nino); return { ...k, famMay: k.fam.toUpperCase(), broMay: k.bro.toUpperCase() }; };
     const enMarcha = lista.filter(r => !['propuesta', 'pide_unirse', 'conseguido', 'propuesto', 'rechazado'].includes(r.estado)).map(r => {
       const [etiqueta, color] = ORIGEN[r.origen] || ['BRO', '#111'];
+      const abierto = s.contratoVer === r.id;
       return {
-        ...r, logo: LOGOS[r.id] || r.logo, logoSrc: LOGOS[r.id] || r.logo || 'logo.png', etiqueta, color, esMarca: r.origen === 'marca', de: r.origen === 'marca' ? (r.contrato ? `Contrato firmado por ${r.contrato.por.toLowerCase()} · ${r.contrato.firmado.toLowerCase()}` : r.marca) : r.de,
+        ...r, k: K(r), hayContrato: (r.firmas || []).length >= 2, contratoAbiertoF: abierto, verTxt: abierto ? 'ocultar' : 'ver',
+        verContrato: () => this.setState({ contratoVer: abierto ? null : r.id }), logo: LOGOS[r.id] || r.logo, logoSrc: LOGOS[r.id] || r.logo || 'logo.png', etiqueta, color, esMarca: r.origen === 'marca', de: r.origen === 'marca' ? (r.contrato ? `Contrato firmado por ${r.contrato.por.toLowerCase()} · ${r.contrato.firmado.toLowerCase()}` : r.marca) : r.de,
         extra: r.comun || (r.origen === 'marca' ? r.vigencia : ''),
         conds: r.conds.map((c, i) => {
           const esp = c.esperando && !c.hecho;
@@ -2577,18 +2613,18 @@ class Component extends DCLogic {
       enMarcha, hayEnMarcha: enMarcha.length > 0,
       conseguidos, hayConseguidos: conseguidos.length > 0,
       // Retos que te propone tu familia: los aceptas tú
-      familiaProp: lista.filter(r => r.origen === 'familia' && r.estado === 'propuesta').map(r => ({ ...r, de: r.de || 'Tu familia',
-        aceptar: async () => { const x = await this.llamar('aceptarReto', { id: r.id }); this.avisar(x.di || '¡Reto aceptado!'); } })),
+      familiaProp: lista.filter(r => r.origen === 'familia' && r.estado === 'propuesta').map(r => ({ ...r, de: r.de || 'Tu familia', k: K(r),
+        aceptar: async () => { const x = await this.llamar('aceptarReto', { id: r.id, quien: nino }); this.avisar(x.di || '¡Reto aceptado!'); } })),
       hayFamiliaProp: lista.some(r => r.origen === 'familia' && r.estado === 'propuesta'),
       // Tus propuestas a tu familia
-      misProps: lista.filter(r => r.estado === 'propuesto' || r.estado === 'rechazado').map(r => ({ ...r, estadoTxt: r.estado === 'propuesto' ? 'Esperando a tu familia' : 'Tu familia ha dicho que no', estadoTx: r.estado === 'propuesto' ? '#E56648' : '#6B7280' })),
+      misProps: lista.filter(r => r.estado === 'propuesto' || r.estado === 'rechazado').map(r => ({ ...r, k: K(r), estadoTxt: r.estado === 'propuesto' ? 'Esperando a tu familia' : 'Tu familia ha dicho que no', estadoTx: r.estado === 'propuesto' ? '#E56648' : '#6B7280' })),
       hayMisProps: lista.some(r => r.estado === 'propuesto' || r.estado === 'rechazado'),
       verProponer: !s.rwProp, abrirProponer: () => this.setState({ rwProp: { titulo: '', outcome: '' } }), enProponer: !!s.rwProp,
       pTitulo: (s.rwProp && s.rwProp.titulo) || '', onPTitulo: e => this.setState({ rwProp: { ...s.rwProp, titulo: e.target.value } }),
       pOutcome: (s.rwProp && s.rwProp.outcome) || '', onPOutcome: e => this.setState({ rwProp: { ...s.rwProp, outcome: e.target.value } }),
       cerrarProponer: () => this.setState({ rwProp: null }),
       enviarProp: async () => { const P = s.rwProp || {}; if (!(P.titulo || '').trim() || !(P.outcome || '').trim()) return this.avisar('Escribe qué harás y qué te gustaría.');
-        const x = await this.llamar('proponerReward', P); this.setState({ rwProp: null }); this.avisar(x.di || 'Enviado a tu familia.'); },
+        const x = await this.llamar('proponerReward', { ...P, quien: nino }); this.setState({ rwProp: null }); this.avisar(x.di || 'Enviado a tu familia.'); },
       sinNada: !lista.some(r => r.estado !== 'rechazado') && !s.rwProp
     };
   }
