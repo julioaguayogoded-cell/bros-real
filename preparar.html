@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Preparar un Bro</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{--fondo:#F5F6F9;--tinta:#111;--suave:#5B6270;--tarjeta:#fff;--azul:#3068ED}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--fondo:#0F1115;--tinta:#F3F4F6;--suave:#A0A7B4;--tarjeta:#1A1D23}}
+:root[data-theme="dark"]{--fondo:#0F1115;--tinta:#F3F4F6;--suave:#A0A7B4;--tarjeta:#1A1D23}
+body{margin:0;background:var(--fondo);color:var(--tinta);font:16px/1.5 Inter,system-ui,sans-serif}
+main{max-width:640px;margin:0 auto;padding:28px 16px 48px}
+h1{font-size:30px;margin:0 0 4px;font-weight:800}
+p.s{color:var(--suave);margin:0 0 22px}
+.qr{background:#fff;border-radius:20px;padding:22px;display:grid;place-items:center;margin-bottom:22px}
+#qr img,#qr canvas{width:min(78vw,360px)!important;height:auto!important}
+ol{background:var(--tarjeta);border-radius:20px;padding:20px 20px 20px 42px;margin:0}
+li{margin:0 0 10px}b{font-weight:800}
+</style></head><body><main>
+<h1>Preparar un Bro</h1>
+<p class="s">Para un Galaxy nuevo o recién reseteado. Sin ordenador.</p>
+<div class="qr"><div id="qr">Cargando…</div></div>
+<ol>
+<li>Enciende el móvil nuevo (o haz <b>restablecer datos de fábrica</b>). Quédate en la pantalla de bienvenida.</li>
+<li><b>Toca 6 veces seguidas</b> en un hueco vacío de esa pantalla de bienvenida. Se abre la cámara para leer un QR.</li>
+<li>Apunta a este QR. Conéctalo al <b>wifi</b> cuando te lo pida.</li>
+<li>El móvil descarga BroS Life y lo deja como gestor del móvil. Acepta lo que te pregunte.</li>
+<li>Al terminar sale <b>Primer encendido</b>. Antes de vincular: baja la barra de arriba → Ajustes → Cuentas → añade la cuenta <b>@thebros.life</b> del niño.</li>
+<li>Vincula el móvil a su Bro. En ese momento se bloquea en BroS Life y ya se gestiona en remoto.</li>
+</ol>
+</main>
+<script>
+fetch('launcher/qr.json?t=' + Date.now()).then(r => r.text()).then(t => {
+  const q = document.getElementById('qr'); q.textContent = '';
+  new QRCode(q, { text: JSON.stringify(JSON.parse(t)), width: 720, height: 720, correctLevel: QRCode.CorrectLevel.M });
+}).catch(() => { document.getElementById('qr').textContent = 'No se ha podido cargar el QR.'; });
+</script>
+</body></html>
