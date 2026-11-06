@@ -806,8 +806,12 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
               <div style="font-family:Outfit;font-weight:800;font-size:16px">🌙 Tu sueño de anoche</div>
               <div style="font-size:12px;font-weight:700;color:#0E8C84">{{ ar.suenoCalidad }}</div>
             </div>
+            <sc-if value="{{ ar.sinSueno }}" hint-placeholder-val="{{ false }}"><div style="margin-top:8px;padding:14px;border-radius:14px;background:#EEF8F7;font-size:13.5px;line-height:1.5;color:#0E5E59">Aún no hay datos de sueño. Duerme esta noche con la pulsera puesta y mañana aquí verás tu noche. Para tu edad lo ideal es {{ ar.suenoIdeal }}.</div></sc-if>
+            <sc-if value="{{ ar.haySueno }}" hint-placeholder-val="{{ true }}">
             <div style="font-family:Outfit;font-weight:800;font-size:30px;margin-top:4px">{{ ar.suenoTotal }}</div>
             <div style="font-size:12.5px;color:#6B7280">{{ ar.dormir }} → {{ ar.despertar }} · para tu edad lo ideal es {{ ar.suenoIdeal }}</div>
+            </sc-if>
+            <sc-if value="{{ ar.hayFases }}" hint-placeholder-val="{{ true }}">
             <div style="position:relative;height:86px;margin-top:14px;display:flex;align-items:flex-end;gap:1px">
               <sc-for list="{{ ar.hipno }}" as="h" hint-placeholder-count="12">
                 <div style="flex:{{ h.flex }};height:{{ h.alto }};background:{{ h.color }};border-radius:3px"></div>
@@ -819,6 +823,7 @@ a{color:#3068ED}a:hover{color:#1f4fc4}
                 <div style="background:#EEF8F7;border-radius:10px;padding:6px 7px"><div style="display:flex;align-items:center;gap:4px"><span style="width:7px;height:7px;border-radius:2px;background:{{ f.color }}"></span><span style="font-size:10px;font-weight:700;color:#4B5563">{{ f.nombre }}</span></div><div style="font-size:12.5px;font-weight:800;margin-top:1px">{{ f.tiempo }}</div></div>
               </sc-for>
             </div>
+            </sc-if>
           </div>
 
           <!-- 4. TU SEMANA -->
@@ -3472,14 +3477,15 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
         const ideal = edad <= 12 ? [540, 720] : [480, 600];
         const D = real ? { pasos: A.pasos, activos: A.activos, suenoMin: A.suenoMin || 0, dormir: A.sueno.dormir, despertar: A.sueno.despertar, pantalla: A.pantalla, semana: (A.suenoSemana || []).map(h => Math.round(Math.min(100, h / 9 * 85))) }
           : { pasos: 7842, activos: 48, suenoMin: 548, dormir: '22:31', despertar: '07:39', pantalla: 128, semana: [72, 64, 81, 58, 77, 85, 78] };
+        const sinSueno = real && !D.suenoMin; // aún no ha dormido con la pulsera: no penalizar ni inventar
         const metaAct = 60, metaPant = (db.limites && db.limites.pantallaDia) || 180;
         const pDesc = Math.min(1, D.suenoMin / ideal[0]), pMov = Math.min(1, D.activos / metaAct), pPan = Math.max(0, Math.min(1, 1 - Math.max(0, D.pantalla - 120) / 120));
-        const energia = real ? Math.round(30 + 40 * pDesc + 20 * pMov + 10 * pPan) : 78;
-        const est = energia >= 75 ? ['Con mucha energía', '#FFE27A', 'Has dormido bien. Es un gran día para algo que te reta.'] : energia >= 50 ? ['Con energía', '#FFD86B', 'Vas bien. Un rato al aire libre te dará un empujón.'] : ['Con poca batería', '#FF9E80', 'Hoy toca ir con calma y acostarte un poco antes.'];
+        const energia = real ? Math.round(30 + 40 * (sinSueno ? 0.75 : pDesc) + 20 * pMov + 10 * pPan) : 78;
+        const est = sinSueno ? ['Empezando con tu pulsera', '#FFE27A', 'Duerme esta noche con la pulsera y mañana tu energía será más precisa.'] : energia >= 75 ? ['Con mucha energía', '#FFE27A', 'Has dormido bien. Es un gran día para algo que te reta.'] : energia >= 50 ? ['Con energía', '#FFD86B', 'Vas bien. Un rato al aire libre te dará un empujón.'] : ['Con poca batería', '#FF9E80', 'Hoy toca ir con calma y acostarte un poco antes.'];
         const eC = 2 * Math.PI * 56, anillo = (r, p) => { const c = 2 * Math.PI * r; return { c, off: c * (1 - Math.max(0.02, Math.min(1, p))) }; };
         // Hipnograma de ejemplo (minutos por fase, en orden)
         const F = { profundo: ['Profundo', '#064E4B', '86px'], ligero: ['Ligero', '#22C3B5', '58px'], rem: ['REM', '#8B7CF6', '40px'], despierto: ['Despierto', '#F4A259', '20px'] };
-        const hip = real && A.sueno.fasesMin ? A.sueno.fasesMin : [['ligero', 25], ['profundo', 55], ['ligero', 40], ['rem', 20], ['profundo', 40], ['ligero', 50], ['despierto', 6], ['rem', 30], ['ligero', 60], ['profundo', 25], ['ligero', 45], ['rem', 45], ['ligero', 35], ['despierto', 4], ['rem', 25], ['ligero', 43]];
+        const hip = real ? (A.sueno.fasesMin || []) : [['ligero', 25], ['profundo', 55], ['ligero', 40], ['rem', 20], ['profundo', 40], ['ligero', 50], ['despierto', 6], ['rem', 30], ['ligero', 60], ['profundo', 25], ['ligero', 45], ['rem', 45], ['ligero', 35], ['despierto', 4], ['rem', 25], ['ligero', 43]];
         const tot = {}; hip.forEach(([f, m]) => tot[f] = (tot[f] || 0) + m);
         const dias = ['L', 'M', 'X', 'J', 'V', 'S', 'D'], hoy = (new Date().getDay() + 6) % 7;
         const sem = dias.map((d, i) => { const h = i === hoy, v = h ? energia : (i > hoy && !real ? 0 : (D.semana[i] ?? 0)); return { d, v: v || '', alto: Math.max(6, Math.round(v * 0.82)) + 'px', color: h ? 'linear-gradient(180deg,#22C3B5,#0E8C84)' : v >= 75 ? '#A7E3DC' : v >= 50 ? '#C9EEE9' : '#E3F6F3', txColor: h ? '#0E8C84' : '#9CA3AF', peso: h ? 800 : 600 }; });
@@ -3493,12 +3499,13 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
           estadoTxt: real ? 'Datos reales de tu pulsera' : 'Datos de ejemplo · conecta tu pulsera para ver los tuyos', estadoBg: real ? '#EEF6E6' : '#E6F6F4', estadoDot: real ? '#82B94F' : '#0E8C84',
           verPermiso: s.saludEstado === 'sin-permiso', pedirPermiso: () => { try { BroNativo.pedirPermisoSalud(); } catch (e) { this.avisar('Solo funciona en el móvil BroS Life'); } },
           energia, estadoEnergia: est[0], energiaColor: est[1], fraseEnergia: est[2], eC, eOff: eC * (1 - energia / 100),
-          factores: [{ k: 'DESCANSO', v: fmt(D.suenoMin) }, { k: 'MOVIMIENTO', v: D.activos + ' min' }, { k: 'PASOS', v: D.pasos.toLocaleString('es-ES') }],
+          factores: [{ k: 'DESCANSO', v: sinSueno ? 'Esta noche' : fmt(D.suenoMin) }, { k: 'MOVIMIENTO', v: D.activos + ' min' }, { k: 'PASOS', v: D.pasos.toLocaleString('es-ES') }],
           anillos: [
             { nombre: 'MOVERSE', valor: D.activos + ' min', meta: 'de ' + metaAct + ' min', color: '#FF5C7A', fondo: '#FFE3E9', r: 52, ...anillo(52, pMov) },
             { nombre: 'DESCANSO', valor: fmt(D.suenoMin), meta: 'de ' + fmt(ideal[0]), color: '#0E8C84', fondo: '#D8F1EE', r: 38, ...anillo(38, pDesc) },
             { nombre: 'PANTALLA', valor: fmt(D.pantalla), meta: 'de ocio · máx 2 h', color: '#F2A93B', fondo: '#FCEFD9', r: 24, ...anillo(24, pPan) } ],
-          suenoTotal: fmt(D.suenoMin), suenoCalidad: D.suenoMin >= ideal[0] ? 'Muy buen descanso' : D.suenoMin >= ideal[0] - 60 ? 'Buen descanso' : 'Te faltó sueño',
+          haySueno: !sinSueno, sinSueno, hayFases: hip.length > 0,
+          suenoTotal: fmt(D.suenoMin), suenoCalidad: sinSueno ? 'Sin datos todavía' : D.suenoMin >= ideal[0] ? 'Muy buen descanso' : D.suenoMin >= ideal[0] - 60 ? 'Buen descanso' : 'Te faltó sueño',
           dormir: D.dormir, despertar: D.despertar, suenoIdeal: fmt(ideal[0]) + '–' + fmt(ideal[1]),
           hipno: hip.map(([f, m]) => ({ flex: m, alto: F[f][2], color: F[f][1] })),
           fasesLeyenda: ['profundo', 'ligero', 'rem', 'despierto'].map(f => ({ nombre: F[f][0], color: F[f][1], tiempo: fmt(tot[f] || 0) })),
@@ -3513,7 +3520,7 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
           racha: buenas >= 5 ? buenas + ' mañanas con energía esta semana' : 'Tu semana va ' + (buenas >= 3 ? 'bien' : 'poco a poco'),
           rachaSub: buenas >= 5 ? 'Dormir bien se nota. ¡Sigue así!' : 'Cada noche cuenta. No hace falta ser perfecto.',
           consejos: [
-            D.suenoMin < ideal[0] ? { ic: '🌙', t: 'Acuéstate 20 min antes', d: 'Para tu edad, el cuerpo necesita ' + fmt(ideal[0]) + ' o más para crecer y recargar.' } : { ic: '🌙', t: 'Tu descanso está genial', d: 'Mantener la misma hora de dormir ayuda a que el sueño sea más profundo.' },
+            sinSueno ? { ic: '🌙', t: 'Duerme con la pulsera', d: 'Así mañana verás cuánto has dormido y cómo ha sido tu sueño.' } : D.suenoMin < ideal[0] ? { ic: '🌙', t: 'Acuéstate 20 min antes', d: 'Para tu edad, el cuerpo necesita ' + fmt(ideal[0]) + ' o más para crecer y recargar.' } : { ic: '🌙', t: 'Tu descanso está genial', d: 'Mantener la misma hora de dormir ayuda a que el sueño sea más profundo.' },
             pMov < 1 ? { ic: '⚽', t: 'Te faltan ' + Math.max(0, metaAct - D.activos) + ' min para cerrar Moverse', d: 'Un partido, bici o un paseo con alguien cuenta. Mejor si es al aire libre.' } : { ic: '⚽', t: '¡Anillo de Moverse cerrado!', d: 'Moverte cada día te da energía para mañana.' },
             { ic: '📵', t: 'La última hora, sin pantallas', d: 'La luz de la pantalla engaña al cerebro y cuesta más dormirse.' } ]
         };
