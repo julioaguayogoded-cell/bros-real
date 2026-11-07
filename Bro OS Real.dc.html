@@ -8,7 +8,7 @@
 <body>
 <x-dc>
 <helmet>
-<script>(function(){if(window.__brosP)return;window.__brosP=1;var q=new URLSearchParams(location.search).get('perfil');if(q)window.name='bros:'+q.replace(/[^a-z0-9_-]/gi,'').slice(0,20);var m=/^bros:(.+)$/.exec(window.name||'');if(!m)return;var P='P:'+m[1]+':',S=Storage.prototype,g=S.getItem,s=S.setItem,r=S.removeItem;var es=function(x){try{return x===window.localStorage}catch(e){return false}};S.getItem=function(a){return g.call(this,es(this)?P+a:a)};S.setItem=function(a,b){return s.call(this,es(this)?P+a:a,b)};S.removeItem=function(a){return r.call(this,es(this)?P+a:a)};window.BROS_PERFIL=m[1];})();window.BROS_V='2026-11-06.6';</script>
+<script>(function(){if(window.__brosP)return;window.__brosP=1;var q=new URLSearchParams(location.search).get('perfil');if(q)window.name='bros:'+q.replace(/[^a-z0-9_-]/gi,'').slice(0,20);var m=/^bros:(.+)$/.exec(window.name||'');if(!m)return;var P='P:'+m[1]+':',S=Storage.prototype,g=S.getItem,s=S.setItem,r=S.removeItem;var es=function(x){try{return x===window.localStorage}catch(e){return false}};S.getItem=function(a){return g.call(this,es(this)?P+a:a)};S.setItem=function(a,b){return s.call(this,es(this)?P+a:a,b)};S.removeItem=function(a){return r.call(this,es(this)?P+a:a)};window.BROS_PERFIL=m[1];})();window.BROS_V='2026-11-07.1';</script>
 <title>Bro OS</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -2277,8 +2277,14 @@ class Component extends DCLogic {
   ej = { nino: 0, padre: 0 };
 
   async componentDidMount() {
-    window.__broSalud = d => this.setState({ salud: d, saludEstado: 'ok' });
-    window.__broSaludEstado = e => this.setState({ saludEstado: e });
+    try { const g = JSON.parse(localStorage.getItem('bros-salud')); if (g && g.dias && g.dias[g.dias.length - 1].fecha === new Date().toLocaleDateString('sv-SE')) this.setState({ salud: g }); } catch (e) {}
+    let reintentosSalud = 0;
+    window.__broSalud = d => { reintentosSalud = 0; try { localStorage.setItem('bros-salud', JSON.stringify(d)); } catch (e) {} this.setState({ salud: d, saludEstado: 'ok' }); };
+    window.__broSaludEstado = e => {
+      // Al desbloquear, Android a veces aún no deja leer la pulsera: reintenta unos segundos después
+      if (e === 'error' && reintentosSalud < 3) { reintentosSalud++; setTimeout(() => { try { BroNativo.actualizarSalud(); } catch (x) {} }, 3000 * reintentosSalud); }
+      this.setState({ saludEstado: e });
+    };
     window.__broApp = r => { if (r === 'instalar') this.avisar('Instálala en Google Play y vuelve a pulsarla.'); if (r === 'sin-play') this.avisar('Falta Google Play en este móvil.'); if (r === 'sin-camara') this.avisar('No encuentro la cámara del móvil.'); if (r === 'sin-fotos') this.avisar('No encuentro la galería del móvil.'); };
     const pedirSaludNativa = () => { try { window.BroNativo && BroNativo.actualizarSalud(); } catch (e) {} };
     window.addEventListener('bronativo', pedirSaludNativa); setTimeout(pedirSaludNativa, 1500);
@@ -3299,7 +3305,9 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
     const ayer = d[d.length - 2];
     const mov = p => Math.round(p / 100);
     return { ...base,
-      pasos: hoy.pasos, activos: Math.min(base.metaActivos, Math.round(hoy.pasos / 120)), movimiento: mov(hoy.pasos),
+      pasos: hoy.pasos, activos: Math.min(base.metaActivos, Math.round(hoy.pasos / 120)), movimiento: mov(hoy.pasos), suenoMin: anoche.suenoMin || 0,
+      // Por día de la semana (L..D) solo hasta hoy; los días que aún no han llegado, vacíos
+      porDia: (() => { const h = (new Date().getDay() + 6) % 7; return [0, 1, 2, 3, 4, 5, 6].map(i => i > h ? null : d[d.length - 1 - (h - i)] || null); })(),
       semana: d.map((x, i) => [base.semana[i] ? base.semana[i][0] : 0, mov(x.pasos)]),
       suenoSemana: d.map(x => +(x.suenoMin / 60).toFixed(1)),
       sueno: { ...base.sueno, total: anoche.suenoMin ? hm(anoche.suenoMin) : 'Sin datos', dormir: anoche.dormir || '—', despertar: anoche.despertar || '—', ayer: ayer && ayer.suenoMin ? hm(ayer.suenoMin) : '—', calidad: anoche.suenoMin >= 540 ? 'Buena' : anoche.suenoMin >= 450 ? 'Correcta' : anoche.suenoMin ? 'Poca' : '—' },
@@ -3475,7 +3483,7 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
         const A = this.auraReal(db.aura), real = !!A.real, edad = (db.nino && db.nino.edad) || 12;
         const fmt = m => { const h = Math.floor(m / 60), x = Math.round(m % 60); return h ? h + ' h' + (x ? ' ' + x + ' min' : '') : x + ' min'; };
         const ideal = edad <= 12 ? [540, 720] : [480, 600];
-        const D = real ? { pasos: A.pasos, activos: A.activos, suenoMin: A.suenoMin || 0, dormir: A.sueno.dormir, despertar: A.sueno.despertar, pantalla: A.pantalla, semana: (A.suenoSemana || []).map(h => Math.round(Math.min(100, h / 9 * 85))) }
+        const D = real ? { pasos: A.pasos, activos: A.activos, suenoMin: A.suenoMin || 0, dormir: A.sueno.dormir, despertar: A.sueno.despertar, pantalla: A.pantalla || 0, semana: A.porDia.map(x => x && x.suenoMin ? Math.round(Math.min(100, x.suenoMin / 60 / 9 * 85)) : 0) }
           : { pasos: 7842, activos: 48, suenoMin: 548, dormir: '22:31', despertar: '07:39', pantalla: 128, semana: [72, 64, 81, 58, 77, 85, 78] };
         const sinSueno = real && !D.suenoMin; // aún no ha dormido con la pulsera: no penalizar ni inventar
         const metaAct = 60, metaPant = (db.limites && db.limites.pantallaDia) || 180;
@@ -3488,12 +3496,12 @@ ${a.img ? `<img class="img" src="${esc(a.img)}" alt="">` : ''}${cuerpo}
         const hip = real ? (A.sueno.fasesMin || []) : [['ligero', 25], ['profundo', 55], ['ligero', 40], ['rem', 20], ['profundo', 40], ['ligero', 50], ['despierto', 6], ['rem', 30], ['ligero', 60], ['profundo', 25], ['ligero', 45], ['rem', 45], ['ligero', 35], ['despierto', 4], ['rem', 25], ['ligero', 43]];
         const tot = {}; hip.forEach(([f, m]) => tot[f] = (tot[f] || 0) + m);
         const dias = ['L', 'M', 'X', 'J', 'V', 'S', 'D'], hoy = (new Date().getDay() + 6) % 7;
-        const sem = dias.map((d, i) => { const h = i === hoy, v = h ? energia : (i > hoy && !real ? 0 : (D.semana[i] ?? 0)); return { d, v: v || '', alto: Math.max(6, Math.round(v * 0.82)) + 'px', color: h ? 'linear-gradient(180deg,#22C3B5,#0E8C84)' : v >= 75 ? '#A7E3DC' : v >= 50 ? '#C9EEE9' : '#E3F6F3', txColor: h ? '#0E8C84' : '#9CA3AF', peso: h ? 800 : 600 }; });
+        const sem = dias.map((d, i) => { const h = i === hoy, v = h ? energia : (i > hoy ? 0 : (D.semana[i] ?? 0)); return { d, v: v || '', alto: Math.max(6, Math.round(v * 0.82)) + 'px', color: h ? 'linear-gradient(180deg,#22C3B5,#0E8C84)' : v >= 75 ? '#A7E3DC' : v >= 50 ? '#C9EEE9' : '#E3F6F3', txColor: h ? '#0E8C84' : '#9CA3AF', peso: h ? 800 : 600 }; });
         const buenas = sem.filter(x => x.v >= 70).length;
         // Equilibrio movimiento/pantalla (OMS, Ministerio de Sanidad): ≥60 min actividad y ≤120 min pantalla de ocio
         const MOV = 60, PAN = 120, okMov = D.activos >= MOV, okPan = D.pantalla <= PAN;
         const eq = okMov && okPan ? ['En equilibrio', '#E1F6EA', '#1E7A3A'] : (okMov || okPan) ? ['Casi en equilibrio', '#FDF1DC', '#9A5B00'] : ['Fuera de equilibrio', '#FDE7E7', '#B42318'];
-        const eqSem = real ? (A.equilibrioSemana || []) : [true, false, true, true, null, null, null];
+        const eqSem = real ? A.porDia.map(x => x && x.pasos ? Math.round(x.pasos / 120) >= MOV : null) : [true, false, true, true, null, null, null];
         const escala = Math.max(D.pantalla, PAN * 1.5);
         return {
           estadoTxt: real ? 'Datos reales de tu pulsera' : 'Datos de ejemplo · conecta tu pulsera para ver los tuyos', estadoBg: real ? '#EEF6E6' : '#E6F6F4', estadoDot: real ? '#82B94F' : '#0E8C84',
